@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A1F1F9F5-CAF8-48B1-9A4A-AE87AB0F092E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Hypermedia</RootNamespace>
+    <AssemblyName>Hypermedia</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Configuration\Builder.cs" />
+    <Compile Include="Configuration\EmptyTypeDiscovery.cs" />
+    <Compile Include="Configuration\ResourceBuilder.cs" />
+    <Compile Include="Configuration\ExpressionHelper.cs" />
+    <Compile Include="Configuration\FieldBuilder.cs" />
+    <Compile Include="Configuration\IBuilder.cs" />
+    <Compile Include="Configuration\IResourceBuilder.cs" />
+    <Compile Include="Configuration\ITypeDiscovery.cs" />
+    <Compile Include="Configuration\ReflectionTypeDiscovery.cs" />
+    <Compile Include="Configuration\RelationshipBuilder.cs" />
+    <Compile Include="Metadata\ResourceContractResolver.cs" />
+    <Compile Include="Configuration\UriTemplateBuilder.cs" />
+    <Compile Include="Metadata\FieldOptions.cs" />
+    <Compile Include="Metadata\IResourceContract.cs" />
+    <Compile Include="Metadata\IField.cs" />
+    <Compile Include="Metadata\IMember.cs" />
+    <Compile Include="Metadata\IRelationship.cs" />
+    <Compile Include="Metadata\IResourceContractResolver.cs" />
+    <Compile Include="Metadata\RelationshipType.cs" />
+    <Compile Include="Metadata\Runtime\RuntimeResourceContract.cs" />
+    <Compile Include="Metadata\Runtime\RuntimeField.cs" />
+    <Compile Include="Metadata\Runtime\RuntimeRelationship.cs" />
+    <Compile Include="Metadata\Runtime\RuntimeResourceContractResolver.cs" />
+    <Compile Include="Metadata\UriTemplate.cs" />
+    <Compile Include="Metadata\UriTemplateParameter.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TypeHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Humanizer, Version=1.37.7.0, Culture=neutral, PublicKeyToken=979442b78dfc278e, processorArchitecture=MSIL">
+      <HintPath>..\..\..\ReplyAll\Src\packages\Humanizer.1.37.7\lib\portable-win+net40+sl50+wp8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Humanizer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,16 @@
+﻿{
+  "data": {
+    "attributes": {
+      "title": "The time has come"
+    },
+    "relationships": {
+      "author": {
+        "data": {
+          "type": "authors",
+          "id": "e0523857-5675-43db-8fb7-1a396e3f1f66"
+        }
+      }
+    },
+    "type": "posts"
+  }
+}
