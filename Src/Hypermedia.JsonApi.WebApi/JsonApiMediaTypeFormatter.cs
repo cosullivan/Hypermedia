@@ -6,6 +6,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Hypermedia.Metadata;
@@ -20,11 +21,35 @@ namespace Hypermedia.JsonApi.WebApi
         const string Name = "jsonapi";
         const string MediaTypeName = "application/vnd.api+json";
 
+        //readonly HttpRequestMessage _request;
+
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="resourceContractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
         public JsonApiMediaTypeFormatter(IResourceContractResolver resourceContractResolver) : base(Name, MediaTypeName, resourceContractResolver) { }
+
+        ///// <summary>
+        ///// Constructor.
+        ///// </summary>
+        ///// <param name="resourceContractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
+        ///// <param name="request">The HTTP request message that the formatter is working with.</param>
+        //internal JsonApiMediaTypeFormatter(IResourceContractResolver resourceContractResolver, HttpRequestMessage request) : this(resourceContractResolver)
+        //{
+        //    _request = request;
+        //}
+
+        ///// <summary>
+        ///// Returns a specialized instance of the <see cref="T:System.Net.Http.Formatting.MediaTypeFormatter"/> that can format a response for the given parameters.
+        ///// </summary>
+        ///// <param name="type">The type to format.</param>
+        ///// <param name="request">The request.</param>
+        ///// <param name="mediaType">The media type.</param>
+        ///// <returns>Returns <see cref="T:System.Net.Http.Formatting.MediaTypeFormatter"/>.</returns>
+        //public override MediaTypeFormatter GetPerRequestFormatterInstance(Type type, HttpRequestMessage request, MediaTypeHeaderValue mediaType)
+        //{
+        //    return new JsonApiMediaTypeFormatter(ResourceContractResolver, request);
+        //}
 
         /// <summary>
         /// Asynchronously deserializes an object of the specified type.

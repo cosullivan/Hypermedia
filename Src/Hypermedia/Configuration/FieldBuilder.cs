@@ -141,7 +141,7 @@ namespace Hypermedia.Configuration
         /// <returns>The field builder to continue building on.</returns>
         public FieldBuilder<T> Ignore(bool value = true)
         {
-            return Options(FieldOptions.CanSerialize, value).Options(FieldOptions.CanDeserialize, value);
+            return Options(FieldOptions.CanSerialize, value == false).Options(FieldOptions.CanDeserialize, value == false);
         }
 
         /// <summary>

@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<tags>
+  <row Id="1" TagName="greek" Count="125" ExcerptPostId="116" WikiPostId="115" />
+  <row Id="2" TagName="reference-request" Count="3" ExcerptPostId="646" WikiPostId="645" />
+  <row Id="3" TagName="norse" Count="43" ExcerptPostId="335" WikiPostId="334" />
+  <row Id="4" TagName="mythical-creatures" Count="25" ExcerptPostId="157" WikiPostId="156" />
+  <row Id="5" TagName="iliad" Count="4" ExcerptPostId="733" WikiPostId="732" />
+  <row Id="6" TagName="egyptian" Count="15" ExcerptPostId="333" WikiPostId="332" />
+  <row Id="8" TagName="valhalla" Count="1" ExcerptPostId="586" WikiPostId="585" />
+  <row Id="9" TagName="folkvangr" Count="1" ExcerptPostId="844" WikiPostId="843" />
+  <row Id="10" TagName="arabic" Count="1" ExcerptPostId="842" WikiPostId="841" />
+  <row Id="11" TagName="japanese" Count="7" ExcerptPostId="424" WikiPostId="423" />
+  <row Id="13" TagName="comparative" Count="30" ExcerptPostId="457" WikiPostId="456" />
+  <row Id="14" TagName="buddhist" Count="1" ExcerptPostId="574" WikiPostId="573" />
+  <row Id="15" TagName="arthurian" Count="12" ExcerptPostId="261" WikiPostId="260" />
+  <row Id="16" TagName="scientology" Count="2" ExcerptPostId="578" WikiPostId="577" />
+  <row Id="18" TagName="cross-mythology" Count="3" ExcerptPostId="344" WikiPostId="343" />
+  <row Id="19" TagName="linguistics" Count="1" ExcerptPostId="615" WikiPostId="614" />
+  <row Id="20" TagName="gilgamesh" Count="15" ExcerptPostId="351" WikiPostId="350" />
+  <row Id="23" TagName="eclipse" Count="1" ExcerptPostId="821" WikiPostId="820" />
+  <row Id="24" TagName="deluge-myth" Count="1" ExcerptPostId="36" WikiPostId="35" />
+  <row Id="25" TagName="sumerian" Count="16" ExcerptPostId="376" WikiPostId="375" />
+  <row Id="26" TagName="hindu" Count="5" ExcerptPostId="498" WikiPostId="497" />
+  <row Id="29" TagName="pandora" Count="3" ExcerptPostId="553" WikiPostId="552" />
+  <row Id="30" TagName="modern-influence" Count="1" ExcerptPostId="52" WikiPostId="51" />
+  <row Id="34" TagName="vampires" Count="3" ExcerptPostId="447" WikiPostId="446" />
+  <row Id="40" TagName="god-items" Count="4" ExcerptPostId="253" WikiPostId="252" />
+  <row Id="41" TagName="interpretation" Count="5" ExcerptPostId="67" WikiPostId="66" />
+  <row Id="42" TagName="celtic" Count="10" ExcerptPostId="393" WikiPostId="392" />
+  <row Id="43" TagName="roman" Count="23" ExcerptPostId="159" WikiPostId="158" />
+  <row Id="46" TagName="hercules" Count="2" ExcerptPostId="404" WikiPostId="403" />
+  <row Id="47" TagName="welsh" Count="22" ExcerptPostId="339" WikiPostId="338" />
+  <row Id="49" TagName="teutonic" Count="1" ExcerptPostId="834" WikiPostId="833" />
+  <row Id="50" TagName="gods" Count="18" ExcerptPostId="341" WikiPostId="340" />
+  <row Id="52" TagName="underworld" Count="4" ExcerptPostId="389" WikiPostId="388" />
+  <row Id="53" TagName="monomyth" Count="2" ExcerptPostId="595" WikiPostId="594" />
+  <row Id="55" TagName="maya" Count="4" ExcerptPostId="450" WikiPostId="449" />
+  <row Id="57" TagName="werewolves" Count="2" ExcerptPostId="408" WikiPostId="407" />
+  <row Id="59" TagName="weapons" Count="3" ExcerptPostId="772" WikiPostId="771" />
+  <row Id="60" TagName="native-american" Count="8" ExcerptPostId="459" WikiPostId="458" />
+  <row Id="61" TagName="pacific-northwest" Count="1" ExcerptPostId="461" WikiPostId="460" />
+  <row Id="62" TagName="easter-island" Count="1" ExcerptPostId="763" WikiPostId="762" />
+  <row Id="64" TagName="creation" Count="9" ExcerptPostId="378" WikiPostId="377" />
+  <row Id="65" TagName="chronology" Count="1" ExcerptPostId="544" WikiPostId="543" />
+  <row Id="66" TagName="history" Count="7" ExcerptPostId="368" WikiPostId="367" />
+  <row Id="69" TagName="yggdrasil" Count="1" ExcerptPostId="537" WikiPostId="536" />
+  <row Id="70" TagName="hermes" Count="2" ExcerptPostId="406" WikiPostId="405" />
+  <row Id="72" TagName="chinese" Count="14" ExcerptPostId="443" WikiPostId="442" />
+  <row Id="73" TagName="sun" Count="1" ExcerptPostId="519" WikiPostId="518" />
+  <row Id="74" TagName="symbolism" Count="5" ExcerptPostId="564" WikiPostId="563" />
+  <row Id="75" TagName="ragnarok" Count="5" ExcerptPostId="294" WikiPostId="293" />
+  <row Id="76" TagName="apocalypse" Count="5" ExcerptPostId="321" WikiPostId="320" />
+  <row Id="78" TagName="christianity" Count="9" ExcerptPostId="445" WikiPostId="444" />
+  <row Id="79" TagName="korean" Count="1" ExcerptPostId="776" WikiPostId="775" />
+  <row Id="80" TagName="thor" Count="3" ExcerptPostId="429" WikiPostId="428" />
+  <row Id="81" TagName="medusa" Count="2" ExcerptPostId="370" WikiPostId="369" />
+  <row Id="82" TagName="mesopotamia" Count="9" ExcerptPostId="452" WikiPostId="451" />
+  <row Id="84" TagName="irish" Count="10" ExcerptPostId="535" WikiPostId="534" />
+  <row Id="85" TagName="mythohistory" Count="4" ExcerptPostId="366" WikiPostId="365" />
+  <row Id="86" TagName="demi-gods" Count="2" ExcerptPostId="433" WikiPostId="432" />
+  <row Id="88" TagName="brittany" Count="1" ExcerptPostId="481" WikiPostId="480" />
+  <row Id="89" TagName="anunnaki" Count="5" ExcerptPostId="584" WikiPostId="583" />
+  <row Id="90" TagName="family-tree" Count="1" ExcerptPostId="809" WikiPostId="808" />
+  <row Id="91" TagName="british" Count="3" ExcerptPostId="337" WikiPostId="336" />
+  <row Id="92" TagName="folklore" Count="9" ExcerptPostId="391" WikiPostId="390" />
+  <row Id="93" TagName="fairies" Count="4" ExcerptPostId="331" WikiPostId="330" />
+  <row Id="94" TagName="immortality" Count="2" ExcerptPostId="756" WikiPostId="755" />
+  <row Id="95" TagName="plants" Count="2" />
+  <row Id="100" TagName="numbers" Count="2" ExcerptPostId="817" WikiPostId="816" />
+  <row Id="101" TagName="daedalus" Count="1" ExcerptPostId="402" WikiPostId="401" />
+  <row Id="102" TagName="homer" Count="2" ExcerptPostId="427" WikiPostId="426" />
+  <row Id="103" TagName="popol-vuh" Count="2" ExcerptPostId="263" WikiPostId="262" />
+  <row Id="104" TagName="mabinogion" Count="14" ExcerptPostId="488" WikiPostId="487" />
+  <row Id="110" TagName="labyrinth" Count="2" ExcerptPostId="779" WikiPostId="778" />
+  <row Id="116" TagName="zeus" Count="7" ExcerptPostId="353" WikiPostId="352" />
+  <row Id="117" TagName="dragons" Count="3" ExcerptPostId="582" WikiPostId="581" />
+  <row Id="119" TagName="numerology" Count="3" ExcerptPostId="625" WikiPostId="624" />
+  <row Id="120" TagName="atlantis" Count="2" ExcerptPostId="266" WikiPostId="265" />
+  <row Id="121" TagName="mu" Count="1" ExcerptPostId="268" WikiPostId="267" />
+  <row Id="122" TagName="theology" Count="1" ExcerptPostId="787" WikiPostId="786" />
+  <row Id="126" TagName="maori" Count="1" ExcerptPostId="894" WikiPostId="893" />
+  <row Id="127" TagName="polynesian" Count="1" ExcerptPostId="815" WikiPostId="814" />
+  <row Id="128" TagName="protoplast" Count="1" ExcerptPostId="317" WikiPostId="316" />
+  <row Id="129" TagName="new-zealand" Count="1" ExcerptPostId="789" WikiPostId="788" />
+  <row Id="132" TagName="flood-myth" Count="3" ExcerptPostId="410" WikiPostId="409" />
+  <row Id="136" TagName="abrahamic-religions" Count="3" ExcerptPostId="319" WikiPostId="318" />
+  <row Id="137" TagName="origins" Count="7" ExcerptPostId="396" WikiPostId="395" />
+  <row Id="138" TagName="osiris" Count="2" />
+  <row Id="139" TagName="resurrection" Count="2" ExcerptPostId="549" WikiPostId="548" />
+  <row Id="142" TagName="odyssey" Count="4" ExcerptPostId="439" WikiPostId="438" />
+  <row Id="144" TagName="funerals" Count="1" ExcerptPostId="805" WikiPostId="804" />
+  <row Id="146" TagName="judeo-christian" Count="4" ExcerptPostId="387" WikiPostId="386" />
+  <row Id="147" TagName="angels" Count="1" ExcerptPostId="385" WikiPostId="384" />
+  <row Id="151" TagName="athena" Count="2" ExcerptPostId="576" WikiPostId="575" />
+  <row Id="152" TagName="odin" Count="3" ExcerptPostId="566" WikiPostId="565" />
+  <row Id="153" TagName="mjolnir" Count="2" ExcerptPostId="484" WikiPostId="483" />
+  <row Id="154" TagName="myth-identification" Count="19" ExcerptPostId="541" WikiPostId="540" />
+  <row Id="156" TagName="arctic" Count="1" ExcerptPostId="840" WikiPostId="839" />
+  <row Id="158" TagName="merlin" Count="2" ExcerptPostId="470" WikiPostId="469" />
+  <row Id="159" TagName="hades" Count="2" ExcerptPostId="562" WikiPostId="561" />
+  <row Id="161" TagName="mwindo" Count="1" ExcerptPostId="505" WikiPostId="504" />
+  <row Id="162" TagName="african-folklore" Count="1" ExcerptPostId="803" WikiPostId="802" />
+  <row Id="163" TagName="holy-grail" Count="1" ExcerptPostId="539" WikiPostId="538" />
+  <row Id="164" TagName="magic" Count="2" ExcerptPostId="774" WikiPostId="773" />
+  <row Id="165" TagName="sacrifice" Count="5" ExcerptPostId="522" WikiPostId="521" />
+  <row Id="166" TagName="etymology" Count="4" ExcerptPostId="801" WikiPostId="800" />
+  <row Id="167" TagName="names" Count="3" ExcerptPostId="617" WikiPostId="616" />
+  <row Id="169" TagName="hera" Count="1" ExcerptPostId="593" WikiPostId="592" />
+  <row Id="170" TagName="indigenous-australian" Count="4" ExcerptPostId="551" WikiPostId="550" />
+  <row Id="171" TagName="erinyes" Count="2" ExcerptPostId="571" WikiPostId="570" />
+  <row Id="173" TagName="afterlife" Count="1" ExcerptPostId="590" WikiPostId="589" />
+  <row Id="174" TagName="ulster-cycle" Count="5" ExcerptPostId="707" WikiPostId="706" />
+  <row Id="175" TagName="tain-bo-cuailnge" Count="7" ExcerptPostId="580" WikiPostId="579" />
+  <row Id="177" TagName="vimana" Count="2" ExcerptPostId="1229" WikiPostId="1228" />
+  <row Id="179" TagName="judaism" Count="2" ExcerptPostId="811" WikiPostId="810" />
+  <row Id="180" TagName="ceremonies" Count="1" ExcerptPostId="807" WikiPostId="806" />
+  <row Id="181" TagName="torah" Count="1" ExcerptPostId="819" WikiPostId="818" />
+  <row Id="185" TagName="pastafarianism" Count="1" ExcerptPostId="781" WikiPostId="780" />
+  <row Id="186" TagName="inanna" Count="3" />
+  <row Id="189" TagName="journey-to-the-west" Count="2" ExcerptPostId="831" WikiPostId="830" />
+  <row Id="191" TagName="flamines-minores" Count="1" ExcerptPostId="785" WikiPostId="784" />
+  <row Id="192" TagName="the-native-tales" Count="5" ExcerptPostId="669" WikiPostId="668" />
+  <row Id="195" TagName="first-nations" Count="1" ExcerptPostId="701" WikiPostId="700" />
+  <row Id="196" TagName="halkomelem" Count="1" ExcerptPostId="705" WikiPostId="704" />
+  <row Id="199" TagName="apollo" Count="2" ExcerptPostId="838" WikiPostId="837" />
+  <row Id="200" TagName="vita-merlini" Count="2" ExcerptPostId="754" WikiPostId="753" />
+  <row Id="201" TagName="hawaiian" Count="1" ExcerptPostId="783" WikiPostId="782" />
+  <row Id="202" TagName="navajo" Count="1" ExcerptPostId="813" WikiPostId="812" />
+  <row Id="205" TagName="shahnameh" Count="1" ExcerptPostId="798" WikiPostId="797" />
+  <row Id="206" TagName="persian" Count="2" />
+  <row Id="209" TagName="giants" Count="3" ExcerptPostId="1289" WikiPostId="1288" />
+  <row Id="213" TagName="aztec" Count="2" />
+  <row Id="215" TagName="romulus-and-remus" Count="1" ExcerptPostId="1142" WikiPostId="1141" />
+  <row Id="217" TagName="atreidai" Count="1" ExcerptPostId="908" WikiPostId="907" />
+  <row Id="218" TagName="sophocles" Count="2" />
+  <row Id="219" TagName="tragedy" Count="2" />
+  <row Id="222" TagName="gylfaginning" Count="11" ExcerptPostId="955" WikiPostId="954" />
+  <row Id="226" TagName="olympians" Count="3" />
+  <row Id="227" TagName="titans" Count="4" />
+  <row Id="231" TagName="india" Count="2" />
+  <row Id="232" TagName="dreamtime" Count="2" ExcerptPostId="1129" WikiPostId="1128" />
+  <row Id="233" TagName="wondjina" Count="2" ExcerptPostId="1112" WikiPostId="1111" />
+  <row Id="240" TagName="usa" Count="1" />
+  <row Id="241" TagName="the-golden-bough" Count="1" />
+  <row Id="242" TagName="frazer" Count="1" />
+  <row Id="243" TagName="llyn-y-fan-fach" Count="1" ExcerptPostId="1037" WikiPostId="1036" />
+  <row Id="244" TagName="trojan-war" Count="1" />
+  <row Id="245" TagName="welsh-triads" Count="2" ExcerptPostId="1076" WikiPostId="1075" />
+  <row Id="246" TagName="finnish" Count="1" />
+  <row Id="247" TagName="baal" Count="1" />
+  <row Id="248" TagName="attis" Count="1" />
+  <row Id="249" TagName="tammuz" Count="1" />
+  <row Id="250" TagName="water" Count="1" />
+  <row Id="251" TagName="cosmology" Count="1" />
+  <row Id="252" TagName="rosicrucianism" Count="1" />
+  <row Id="253" TagName="demonology" Count="1" />
+  <row Id="254" TagName="kalevala" Count="2" />
+  <row Id="255" TagName="zoroastrianism" Count="1" />
+  <row Id="256" TagName="bundahishn" Count="1" />
+  <row Id="257" TagName="iran" Count="1" />
+  <row Id="258" TagName="beowulf" Count="1" />
+  <row Id="259" TagName="anglo-saxon" Count="1" />
+  <row Id="260" TagName="source-request" Count="1" />
+  <row Id="261" TagName="gender" Count="1" />
+  <row Id="262" TagName="pomona" Count="1" />
+  <row Id="263" TagName="halloween" Count="1" />
+  <row Id="264" TagName="lebor-gabala-erenn" Count="1" />
+  <row Id="266" TagName="gawain" Count="1" />
+  <row Id="267" TagName="objects" Count="1" />
+  <row Id="269" TagName="epic-cycle" Count="1" />
+  <row Id="270" TagName="islam" Count="1" ExcerptPostId="1247" WikiPostId="1246" />
+  <row Id="272" TagName="primordial-gods" Count="1" ExcerptPostId="1240" WikiPostId="1239" />
+  <row Id="274" TagName="tacitus" Count="1" />
+  <row Id="275" TagName="historia-regum-britanniae" Count="1" ExcerptPostId="1253" WikiPostId="1252" />
+  <row Id="276" TagName="isles-of-the-blest" Count="1" />
+  <row Id="277" TagName="mythography" Count="1" />
+  <row Id="278" TagName="ishtar" Count="1" />
+  <row Id="279" TagName="humbaba" Count="2" />
+  <row Id="280" TagName="baboons" Count="1" />
+</tags>
