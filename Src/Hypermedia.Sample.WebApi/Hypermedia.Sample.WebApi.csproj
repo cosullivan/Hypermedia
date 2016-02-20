@@ -122,6 +122,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Properties\PublishProfiles\HypermediaSampleWebApi - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\HypermediaSampleWebApi.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

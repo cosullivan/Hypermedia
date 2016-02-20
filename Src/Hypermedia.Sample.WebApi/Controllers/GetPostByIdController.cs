@@ -6,18 +6,15 @@ namespace Hypermedia.Sample.WebApi.Controllers
 {
     public class GetPostByIdController : ApiController
     {
-        readonly PostRepository _postRepository;
-        readonly UserRepository _userRepository;
+        readonly IDatabase _database;
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="postRepository">The post repository.</param>
-        /// <param name="userRepository">The user repository.</param>
-        public GetPostByIdController(PostRepository postRepository, UserRepository userRepository)
+        /// <param name="database">The databsae instance.</param>
+        public GetPostByIdController(IDatabase database)
         {
-            _postRepository = postRepository;
-            _userRepository = userRepository;
+            _database = database;
         }
 
         /// <summary>
@@ -28,14 +25,14 @@ namespace Hypermedia.Sample.WebApi.Controllers
         [HttpGet, Route("v1/posts/{id}")]
         public IHttpActionResult Execute(int id)
         {
-            var post = _postRepository.GetById(new[] { id }).FirstOrDefault();
+            var post = _database.Posts.GetById(new[] { id }).FirstOrDefault();
 
             if (post == null)
             {
                 return NotFound();
             }
 
-            post.OwnerUser = _userRepository.GetById(new[] { post.OwnerUserId }).FirstOrDefault();
+            post.OwnerUser = _database.Users.GetById(new[] { post.OwnerUserId }).FirstOrDefault();
             
             return Ok(post);
         }

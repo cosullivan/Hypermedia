@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Hypermedia.Sample.Data
+namespace Hypermedia.Sample.StackOverflow
 {
-    public abstract class ResourceRepository<TResource> where TResource : Resource
+    public abstract class StackOverflowRepository<TResource> where TResource : Resource
     {
         readonly IDictionary<int, TResource> _dictionary;
 
@@ -11,7 +11,7 @@ namespace Hypermedia.Sample.Data
         /// Constructor.
         /// </summary>
         /// <param name="resources">The list of resources available for the repository.</param>
-        protected ResourceRepository(IEnumerable<TResource> resources)
+        protected StackOverflowRepository(IEnumerable<TResource> resources)
         {
             _dictionary = resources.ToDictionary();
         }

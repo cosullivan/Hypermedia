@@ -1,23 +1,19 @@
 ﻿using System.Web.Http;
 using Hypermedia.Sample.Data;
-using Hypermedia.Sample;
 
 namespace Hypermedia.Sample.WebApi.Controllers
 {
     public class GetPostsController : ApiController
     {
-        readonly PostRepository _postRepository;
-        readonly UserRepository _userRepository;
+        readonly IDatabase _database;
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="postRepository">The post repository.</param>
-        /// <param name="userRepository">The user repository.</param>
-        public GetPostsController(PostRepository postRepository, UserRepository userRepository)
+        /// <param name="database">The databsae instance.</param>
+        public GetPostsController(IDatabase database)
         {
-            _postRepository = postRepository;
-            _userRepository = userRepository;
+            _database = database;
         }
 
         /// <summary>
@@ -29,9 +25,9 @@ namespace Hypermedia.Sample.WebApi.Controllers
         [HttpGet, Route("v1/posts")]
         public IHttpActionResult Execute(int skip = 0, int limit = 100)
         {
-            var posts = _postRepository.GetAll(skip, limit);
+            var posts = _database.Posts.GetAll(skip, limit);
 
-            var usersDictionary = _userRepository
+            var usersDictionary = _database.Users
                 .GetById(
                     posts.SelectDistinctList(post => post.OwnerUserId))
                 .ToDictionary();

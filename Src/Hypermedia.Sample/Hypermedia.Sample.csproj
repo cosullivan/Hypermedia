@@ -40,13 +40,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\PostRepository.cs" />
-    <Compile Include="Data\ResourceRepository.cs" />
-    <Compile Include="Data\UserRepository.cs" />
-    <Compile Include="Data\XmlNodeExtensions.cs" />
+    <Compile Include="Data\IDatabase.cs" />
+    <Compile Include="Data\IPostRepository.cs" />
+    <Compile Include="Data\IRepository.cs" />
+    <Compile Include="Data\IUserRepository.cs" />
+    <Compile Include="Extensions\XmlNodeExtensions.cs" />
     <Compile Include="Extensions\ResourceExtensions.cs" />
     <Compile Include="Post.cs" />
     <Compile Include="Resource.cs" />
+    <Compile Include="StackOverflow\StackOverflowPostRepository.cs" />
+    <Compile Include="StackOverflow\StackOverflowRepository.cs" />
+    <Compile Include="StackOverflow\StackOverflowDatabase.cs" />
+    <Compile Include="StackOverflow\StackOverflowUserRepository.cs" />
     <Compile Include="User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -1,28 +1,29 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using Hypermedia.Sample.Data;
 
-namespace Hypermedia.Sample.Data
+namespace Hypermedia.Sample.StackOverflow
 {
-    public class UserRepository : ResourceRepository<User>
+    public sealed class StackOverflowUserRepository : StackOverflowRepository<User>, IUserRepository
     {
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="users">The list of users available for the repository.</param>
-        public UserRepository(IEnumerable<User> users) : base(users) { }
+        /// <param name="users">The list of users for the repository.</param>
+        public StackOverflowUserRepository(IEnumerable<User> users) : base(users) { }
 
         /// <summary>
         /// Returns a user repository from the given XML file.
         /// </summary>
         /// <param name="file">The name of the file that contains the users.</param>
         /// <returns>The user repository populated from the file.</returns>
-        public static UserRepository FromXml(string file)
+        public static StackOverflowUserRepository FromXml(string file)
         {
             var document = new XmlDocument();
             document.Load(file);
 
-            return new UserRepository(FromXml(document));
+            return new StackOverflowUserRepository(FromXml(document));
         }
 
         /// <summary>

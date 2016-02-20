@@ -16,7 +16,9 @@ namespace TestApp
     {
         static void Main(string[] args)
         {
-            var userRepository = UserRepository.FromXml(@"C:\Temp\mythology.stackexchange.com\users.xml");
+            Console.WriteLine(JsonNull.Instance == JsonNull.Instance);
+
+            //var userRepository = UserRepository.FromXml(@"C:\Temp\mythology.stackexchange.com\users.xml");
 
             //var resolver = new Builder()
             //    .With<Post>("posts")

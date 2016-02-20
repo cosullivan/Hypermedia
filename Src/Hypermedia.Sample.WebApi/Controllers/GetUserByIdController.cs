@@ -6,15 +6,15 @@ namespace Hypermedia.Sample.WebApi.Controllers
 {
     public class GetUserByIdController : ApiController
     {
-        readonly UserRepository _userRepository;
+        readonly IDatabase _database;
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="userRepository">The user repository.</param>
-        public GetUserByIdController(UserRepository userRepository)
+        /// <param name="database">The databsae instance.</param>
+        public GetUserByIdController(IDatabase database)
         {
-            _userRepository = userRepository;
+            _database = database;
         }
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace Hypermedia.Sample.WebApi.Controllers
         [HttpGet, Route("v1/users/{id}")]
         public IHttpActionResult Execute(int id)
         {
-            var user = _userRepository.GetById(new [] { id }).FirstOrDefault();
+            var user = _database.Users.GetById(new [] { id }).FirstOrDefault();
 
             if (user == null)
             {

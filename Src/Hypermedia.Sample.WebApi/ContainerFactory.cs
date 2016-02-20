@@ -4,6 +4,7 @@ using System.Web.Hosting;
 using Autofac;
 using Autofac.Integration.WebApi;
 using Hypermedia.Sample.Data;
+using Hypermedia.Sample.StackOverflow;
 
 namespace Hypermedia.Sample.WebApi
 {
@@ -33,12 +34,8 @@ namespace Hypermedia.Sample.WebApi
         {
             var baseFolder = HostingEnvironment.MapPath($"//App_Data//{site}");
 
-            builder.Register(c => UserRepository.FromXml(Path.Combine(baseFolder, "users.xml")))
-                .As<UserRepository>()
-                .SingleInstance();
-
-            builder.Register(c => PostRepository.FromXml(Path.Combine(baseFolder, "posts.xml")))
-                .As<PostRepository>()
+            builder.Register(c => new StackOverflowDatabase(baseFolder))
+                .As<IDatabase>()
                 .SingleInstance();
         }
 

@@ -1,29 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using Hypermedia.Sample.Data;
 
-namespace Hypermedia.Sample.Data
+namespace Hypermedia.Sample.StackOverflow
 {
-    public class PostRepository : ResourceRepository<Post>
+    public class StackOverflowPostRepository : StackOverflowRepository<Post>, IPostRepository
     {
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="posts">The list of posts available for the repository.</param>
-        public PostRepository(IEnumerable<Post> posts) : base(posts) { }
+        public StackOverflowPostRepository(IEnumerable<Post> posts) : base(posts) { }
 
         /// <summary>
         /// Returns a post repository from the given XML file.
         /// </summary>
         /// <param name="file">The name of the file that contains the posts.</param>
         /// <returns>The post repository populated from the file.</returns>
-        public static PostRepository FromXml(string file)
+        public static StackOverflowPostRepository FromXml(string file)
         {
             var document = new XmlDocument();
             document.Load(file);
 
-            return new PostRepository(FromXml(document));
+            return new StackOverflowPostRepository(FromXml(document));
         }
 
         /// <summary>

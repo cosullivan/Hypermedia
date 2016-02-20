@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml;
 
-namespace Hypermedia.Sample.Data
+namespace Hypermedia.Sample
 {
     public static class XmlNodeExtensions
     {

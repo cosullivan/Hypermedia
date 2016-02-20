@@ -5,15 +5,15 @@ namespace Hypermedia.Sample.WebApi.Controllers
 {
     public class GetUsersController : ApiController
     {
-        readonly UserRepository _userRepository;
+        readonly IDatabase _database;
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="userRepository">The user repository.</param>
-        public GetUsersController(UserRepository userRepository)
+        /// <param name="database">The databsae instance.</param>
+        public GetUsersController(IDatabase database)
         {
-            _userRepository = userRepository;
+            _database = database;
         }
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace Hypermedia.Sample.WebApi.Controllers
         [HttpGet, Route("v1/users")]
         public IHttpActionResult Execute(int skip = 0, int limit = 100)
         {
-            return Ok(_userRepository.GetAll(skip, limit));
+            return Ok(_database.Users.GetAll(skip, limit));
         }
     }
 }
