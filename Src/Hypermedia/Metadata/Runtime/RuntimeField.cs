@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace Hypermedia.Metadata.Runtime
 {
+    [DebuggerDisplay("{Name}")]
     internal class RuntimeField : IField
     {
         readonly string _name;

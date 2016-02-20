@@ -30,7 +30,7 @@ namespace Hypermedia.JsonApi.Converters
         /// <returns>The object that represents the CLR version of the given JSON value.</returns>
         public object Deserialize(Type type, JsonValue jsonValue)
         {
-            return ((JsonInteger)jsonValue).Value;
+            return (int)((JsonInteger)jsonValue).Value;
         }
     }
 }

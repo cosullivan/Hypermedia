@@ -30,11 +30,11 @@ namespace Hypermedia.Sample.StackOverflow
         /// Returns all resources up to the supplied limit.
         /// </summary>
         /// <param name="skip">The number of posts to skip.</param>
-        /// <param name="limit">The limit to apply to the posts being returned.</param>
+        /// <param name="take">The limit to apply to the posts being returned.</param>
         /// <returns>The list of resources.</returns>
-        public IReadOnlyList<TResource> GetAll(int skip = 0, int limit = 100)
+        public IReadOnlyList<TResource> GetAll(int skip = 0, int take = 100)
         {
-            return Dictionary.Values.Skip(skip).Take(limit).ToList();
+            return Dictionary.Values.Skip(skip).Take(take).ToList();
         }
 
         /// <summary>

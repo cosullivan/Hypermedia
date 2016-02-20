@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0B2CBD5A-413F-4BCB-824D-580CCD2BCC82}</ProjectGuid>
+    <ProjectGuid>{78E99DDD-2FE3-45A6-89B4-4C755DDEA873}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Hypermedia.JsonApi.WebApi</RootNamespace>
-    <AssemblyName>Hypermedia.JsonApi.WebApi</AssemblyName>
+    <RootNamespace>Hypermedia.Sample.Client</RootNamespace>
+    <AssemblyName>Hypermedia.Sample.Client</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,20 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="JsonLite, Version=1.1.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Json.Lite.1.1.5\lib\Net45\JsonLite.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -52,26 +40,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="JsonApiMediaTypeFormatter.cs" />
-    <Compile Include="JsonApiPatch.cs" />
+    <Compile Include="HypermediaSampleClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="HypermediaSampleClientException.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Hypermedia.JsonApi.Client\Hypermedia.JsonApi.Client.csproj">
+      <Project>{2b0660cd-ff64-47bd-bb96-04f80f845963}</Project>
+      <Name>Hypermedia.JsonApi.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Hypermedia.JsonApi\Hypermedia.JsonApi.csproj">
       <Project>{2ce482c3-8e6b-4df2-ac46-6193dead7259}</Project>
       <Name>Hypermedia.JsonApi</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Hypermedia.WebApi\Hypermedia.WebApi.csproj">
-      <Project>{f641c27c-4047-4c9e-b34a-99121a755a06}</Project>
-      <Name>Hypermedia.WebApi</Name>
+    <ProjectReference Include="..\Hypermedia.Sample\Hypermedia.Sample.csproj">
+      <Project>{138b5d8c-040d-404d-818e-57904fb06a67}</Project>
+      <Name>Hypermedia.Sample</Name>
     </ProjectReference>
     <ProjectReference Include="..\Hypermedia\Hypermedia.csproj">
       <Project>{a1f1f9f5-caf8-48b1-9a4a-ae87ab0f092e}</Project>
       <Name>Hypermedia</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

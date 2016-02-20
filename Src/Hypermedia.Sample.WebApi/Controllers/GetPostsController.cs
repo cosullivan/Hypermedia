@@ -20,12 +20,12 @@ namespace Hypermedia.Sample.WebApi.Controllers
         /// Returns the posts from a given offset to a limit.
         /// </summary>
         /// <param name="skip">The number of items to skip.</param>
-        /// <param name="limit">The limit to the number of items to return.</param>
+        /// <param name="take">The limit to the number of items to return.</param>
         /// <returns>The HTTP action result that represents the posts.</returns>
         [HttpGet, Route("v1/posts")]
-        public IHttpActionResult Execute(int skip = 0, int limit = 100)
+        public IHttpActionResult Execute(int skip = 0, int take = 100)
         {
-            var posts = _database.Posts.GetAll(skip, limit);
+            var posts = _database.Posts.GetAll(skip, take);
 
             var usersDictionary = _database.Users
                 .GetById(

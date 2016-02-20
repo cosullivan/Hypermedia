@@ -623,7 +623,9 @@ namespace Hypermedia.JsonApi
             /// <returns>true if the field should be included, false if not.</returns>
             static bool ShouldSerializeField(IResourceContract resourceContract, IField field)
             {
-                if (resourceContract.Relationships.Any(relationship => relationship.Field == field))
+                // if the field has been linked to a relationship or the field is the actual relationship field itself 
+                // then we dont serialize these as normal fields as they will be output in the relationships node
+                if (resourceContract.Relationships.Any(relationship => relationship.Field == field || relationship.Name == field.Name))
                 {
                     return false;
                 }
