@@ -124,10 +124,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources\CommentResource.cs" />
-    <Compile Include="Resources\PostResource.cs" />
     <Compile Include="Resources\Resource.cs" />
-    <Compile Include="Resources\UserResource.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\PublishProfiles\HypermediaSampleWebApi - Web Deploy.pubxml" />

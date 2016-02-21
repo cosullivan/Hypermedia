@@ -1,4 +1,4 @@
-﻿namespace Hypermedia.Sample.WebApi.Resources
+﻿namespace Hypermedia.Sample.Resources
 {
     public sealed class CommentResource : Comment
     {

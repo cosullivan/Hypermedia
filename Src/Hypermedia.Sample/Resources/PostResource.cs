@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Hypermedia.Sample.WebApi.Resources
+namespace Hypermedia.Sample.Resources
 {
     public sealed class PostResource : Post
     {

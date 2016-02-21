@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Hypermedia.Configuration;
 using Hypermedia.JsonApi.Client;
 using Hypermedia.Metadata;
+using Hypermedia.Sample.Resources;
 
 namespace Hypermedia.Sample.Client
 {
@@ -39,13 +40,25 @@ namespace Hypermedia.Sample.Client
         static IResourceContractResolver CreateResolver()
         {
             return new Builder()
-                .With<User>("users")
-                    .Id(nameof(Entity.Id))
-                .With<Post>("posts")
-                    .Id(nameof(Entity.Id))
-                    .BelongsTo<User>("OwnerUser")
-                        .Via(nameof(Post.OwnerUserId))
+                .With<UserResource>("users")
+                    .Id(nameof(UserResource.Id))
+                    .HasMany<PostResource>("posts")
+                        .Template("/v1/users/{id}/posts", "id", resource => resource.Id)
+                .With<PostResource>("posts")
+                    .Id(nameof(PostResource.Id))
+                    .BelongsTo<UserResource>(nameof(PostResource.OwnerUser))
+                        .Via(nameof(PostResource.OwnerUserId))
                         .Template("/v1/users/{id}", "id", resource => resource.OwnerUserId)
+                    .HasMany<CommentResource>(nameof(PostResource.Comments))
+                        .Template("/v1/posts/{id}/comments", "id", resource => resource.Id)
+                .With<CommentResource>("comments")
+                    .Id(nameof(CommentResource.Id))
+                    .BelongsTo<UserResource>(nameof(CommentResource.User))
+                        .Via(nameof(CommentResource.UserId))
+                        .Template("/v1/users/{id}", "id", resource => resource.UserId)
+                    .BelongsTo<PostResource>(nameof(CommentResource.Post))
+                        .Via(nameof(CommentResource.PostId))
+                        .Template("/v1/posts/{id}", "id", resource => resource.PostId)
                 .Build();
         }
 
@@ -56,12 +69,12 @@ namespace Hypermedia.Sample.Client
         /// <param name="skip">The number of users to skip from the start.</param>
         /// <param name="take">The number of users to return.</param>
         /// <returns>The list of users.</returns>
-        public async Task<IReadOnlyList<User>> GetUsersAsync(int skip = 0, int take = 100, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IReadOnlyList<UserResource>> GetUsersAsync(int skip = 0, int take = 100, CancellationToken cancellationToken = default(CancellationToken))
         {
             var response = await _httpClient.GetAsync($"v1/users?skip={skip}&take={take}", cancellationToken);
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadAsJsonApiManyAsync<User>(_resourceContractResolver);
+            return await response.Content.ReadAsJsonApiManyAsync<UserResource>(_resourceContractResolver);
         }
 
         /// <summary>
@@ -70,12 +83,12 @@ namespace Hypermedia.Sample.Client
         /// <param name="id">The ID of the user to return.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The user with the given resource id.</returns>
-        public async Task<User> GetUserByIdAsync(int id, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<UserResource> GetUserByIdAsync(int id, CancellationToken cancellationToken = default(CancellationToken))
         {
             var response = await _httpClient.GetAsync($"v1/users/{id}", cancellationToken);
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadAsJsonApiAsync<User>(_resourceContractResolver);
+            return await response.Content.ReadAsJsonApiAsync<UserResource>(_resourceContractResolver);
         }
 
         /// <summary>
@@ -85,12 +98,12 @@ namespace Hypermedia.Sample.Client
         /// <param name="skip">The number of posts to skip from the start.</param>
         /// <param name="take">The number of posts to return.</param>
         /// <returns>The list of posts.</returns>
-        public async Task<IReadOnlyList<Post>> GetPostsAsync(int skip = 0, int take = 100, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IReadOnlyList<PostResource>> GetPostsAsync(int skip = 0, int take = 100, CancellationToken cancellationToken = default(CancellationToken))
         {
             var response = await _httpClient.GetAsync($"v1/posts?skip={skip}&take={take}", cancellationToken);
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadAsJsonApiManyAsync<Post>(_resourceContractResolver);
+            return await response.Content.ReadAsJsonApiManyAsync<PostResource>(_resourceContractResolver);
         }
 
         /// <summary>
@@ -99,12 +112,12 @@ namespace Hypermedia.Sample.Client
         /// <param name="id">The ID of the post to return.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The post with the given resource id.</returns>
-        public async Task<Post> GetPostByIdAsync(int id, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<PostResource> GetPostByIdAsync(int id, CancellationToken cancellationToken = default(CancellationToken))
         {
             var response = await _httpClient.GetAsync($"v1/posts/{id}", cancellationToken);
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadAsJsonApiAsync<Post>(_resourceContractResolver);
+            return await response.Content.ReadAsJsonApiAsync<PostResource>(_resourceContractResolver);
         }
 
         /// <summary>

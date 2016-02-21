@@ -791,6 +791,14 @@ namespace Hypermedia.JsonApi
                         continue;
                     }
 
+                    if (relationship.Type == RelationshipType.HasMany)
+                    {
+                        // I am not currently supporting this as its likely that the related property is going to be a
+                        // collection of resource object and not a collection of the resource ids/foreign keys. This
+                        // really needs to be supported by enriching the related field from the included items
+                        continue;
+                    }
+
                     var data = ((JsonObject)member.Value).Members.SingleOrDefault(m => m.Name.Value == "data");
 
                     if (data != null)
@@ -825,6 +833,11 @@ namespace Hypermedia.JsonApi
             /// <param name="entity">The entity to set the value on.</param>
             void DeserializeBelongsTo(IRelationship relationship, JsonObject value, object entity)
             {
+                if (relationship.ViaField == null)
+                {
+                    return;
+                }
+
                 var member = value.Members.SingleOrDefault(m => m.Name.Value == "id");
 
                 if (member == null)
@@ -832,7 +845,7 @@ namespace Hypermedia.JsonApi
                     return;
                 }
 
-                DeserializeField(relationship.Field, member.Value, entity);
+                DeserializeField(relationship.ViaField, member.Value, entity);
             }
 
             /// <summary>

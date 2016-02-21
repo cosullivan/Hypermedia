@@ -1,5 +1,6 @@
 ﻿using System.Web.Http;
 using Hypermedia.Sample.Data;
+using Hypermedia.Sample.Resources;
 using Hypermedia.Sample.WebApi.Resources;
 
 namespace Hypermedia.Sample.WebApi.Controllers
