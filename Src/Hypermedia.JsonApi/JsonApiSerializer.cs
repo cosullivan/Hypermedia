@@ -766,7 +766,7 @@ namespace Hypermedia.JsonApi
             /// <param name="entity">The entity to set the value on.</param>
             void DeserializeField(IField field, JsonValue value, object entity)
             {
-                if (field.Is(FieldOptions.CanDeserialize) == false || value == JsonNull.Instance)
+                if (field.Is(FieldOptions.CanDeserialize) == false || ReferenceEquals(value, JsonNull.Instance))
                 {
                     return;
                 }
@@ -843,7 +843,7 @@ namespace Hypermedia.JsonApi
             /// <returns>The CLR object that the JSON value was deserialized from.</returns>
             object DeserializeValue(Type type, JsonValue jsonValue)
             {
-                if (jsonValue == JsonNull.Instance)
+                if (ReferenceEquals(jsonValue, JsonNull.Instance))
                 {
                     return null;
                 }

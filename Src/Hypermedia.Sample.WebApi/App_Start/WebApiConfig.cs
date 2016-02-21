@@ -46,7 +46,7 @@ namespace Hypermedia.Sample.WebApi
                 .With<Post>("posts")
                     .Id(nameof(Post.Id))
                     .BelongsTo<User>(nameof(Post.OwnerUser))
-                        .Via(nameof(Post.OwnerUserId))
+                        //.Via(nameof(Post.OwnerUserId))
                         .Template("/v1/users/{id}", "id", resource => resource.OwnerUserId)
                 .Build();
         }
