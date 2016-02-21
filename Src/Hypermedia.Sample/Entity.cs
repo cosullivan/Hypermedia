@@ -1,6 +1,6 @@
 ﻿namespace Hypermedia.Sample
 {
-    public abstract class Resource
+    public abstract class Entity
     {
         /// <summary>
         /// Gets or sets the ID of the resource.

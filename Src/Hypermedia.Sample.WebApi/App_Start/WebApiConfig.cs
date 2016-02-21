@@ -3,6 +3,7 @@ using Autofac.Integration.WebApi;
 using Hypermedia.Configuration;
 using Hypermedia.JsonApi.WebApi;
 using Hypermedia.Metadata;
+using Hypermedia.Sample.WebApi.Resources;
 
 namespace Hypermedia.Sample.WebApi
 {
@@ -39,15 +40,25 @@ namespace Hypermedia.Sample.WebApi
         static IResourceContractResolver CreateResolver()
         {
             return new Builder()
-                .With<User>("users")
-                    .Id(nameof(User.Id))
-                    .HasMany<Post>("posts")
+                .With<UserResource>("users")
+                    .Id(nameof(UserResource.Id))
+                    .HasMany<PostResource>("posts")
                         .Template("/v1/users/{id}/posts", "id", resource => resource.Id)
-                .With<Post>("posts")
-                    .Id(nameof(Post.Id))
-                    .BelongsTo<User>(nameof(Post.OwnerUser))
-                        //.Via(nameof(Post.OwnerUserId))
+                .With<PostResource>("posts")
+                    .Id(nameof(PostResource.Id))
+                    .BelongsTo<UserResource>(nameof(PostResource.OwnerUser))
+                        .Via(nameof(PostResource.OwnerUserId))
                         .Template("/v1/users/{id}", "id", resource => resource.OwnerUserId)
+                    .HasMany<CommentResource>(nameof(PostResource.Comments))
+                        .Template("/v1/posts/{id}/comments", "id", resource => resource.Id)
+                .With<CommentResource>("comments")
+                    .Id(nameof(CommentResource.Id))
+                    .BelongsTo<UserResource>(nameof(CommentResource.User))
+                        .Via(nameof(CommentResource.UserId))
+                        .Template("/v1/users/{id}", "id", resource => resource.UserId)
+                    .BelongsTo<PostResource>(nameof(CommentResource.Post))
+                        .Via(nameof(CommentResource.PostId))
+                        .Template("/v1/posts/{id}", "id", resource => resource.PostId)
                 .Build();
         }
     }

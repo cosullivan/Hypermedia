@@ -12,7 +12,7 @@ namespace Hypermedia.Sample
         /// <typeparam name="TResource">The element type of the resource.</typeparam>
         /// <param name="source">The source collection to created the dictionary from.</param>
         /// <returns>The dictionary of resources mapped by their ID.</returns>
-        public static IDictionary<int, TResource> ToDictionary<TResource>(this IEnumerable<TResource> source) where TResource : Resource
+        public static IDictionary<int, TResource> ToDictionary<TResource>(this IEnumerable<TResource> source) where TResource : Entity
         {
             if (source == null)
             {

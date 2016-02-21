@@ -37,11 +37,15 @@ namespace Hypermedia.Configuration
         /// <returns>The runtime relationship proxy class.</returns>
         internal RuntimeRelationship CreateRuntimeRelationship(IReadOnlyList<IField> fields)
         {
-            var field = _field == null 
+            var field = _name == null
+                ? null
+                : fields.SingleOrDefault(f => String.Equals(f.Name, _name, StringComparison.OrdinalIgnoreCase));
+
+            var viaField = _field == null 
                 ? null
                 : fields.SingleOrDefault(f => String.Equals(f.Name, _field, StringComparison.OrdinalIgnoreCase));
 
-            return new RuntimeRelationship(_type, _name, _relatedTo, field, _uriTemplateBuilder.CreateTemplate());
+            return new RuntimeRelationship(_type, _name, _relatedTo, field, viaField, _uriTemplateBuilder.CreateTemplate());
         }
 
         /// <summary>

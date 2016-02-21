@@ -2,7 +2,7 @@
 
 namespace Hypermedia.Sample
 {
-    public class User : Resource
+    public class User : Entity
     {
         /// <summary>
         /// The users display name.

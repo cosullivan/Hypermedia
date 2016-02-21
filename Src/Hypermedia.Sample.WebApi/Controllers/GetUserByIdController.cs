@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Web.Http;
 using Hypermedia.Sample.Data;
+using Hypermedia.Sample.WebApi.Resources;
 
 namespace Hypermedia.Sample.WebApi.Controllers
 {
@@ -25,7 +26,7 @@ namespace Hypermedia.Sample.WebApi.Controllers
         [HttpGet, Route("v1/users/{id}")]
         public IHttpActionResult Execute(int id)
         {
-            var user = _database.Users.GetById(new [] { id }).FirstOrDefault();
+            var user = _database.Users.GetById(new [] { id }).FirstOrDefault().AsResource();
 
             if (user == null)
             {

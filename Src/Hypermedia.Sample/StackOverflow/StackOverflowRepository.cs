@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Hypermedia.Sample.StackOverflow
 {
-    public abstract class StackOverflowRepository<TResource> where TResource : Resource
+    public abstract class StackOverflowRepository<TResource> where TResource : Entity
     {
         readonly IDictionary<int, TResource> _dictionary;
 

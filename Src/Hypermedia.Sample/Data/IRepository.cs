@@ -2,7 +2,7 @@
 
 namespace Hypermedia.Sample.Data
 {
-    public interface IRepository<out TResource> where TResource : Resource
+    public interface IRepository<out TResource> where TResource : Entity
     {
         /// <summary>
         /// Gets the list of resources with that are assigned the given IDs.

@@ -40,9 +40,9 @@ namespace Hypermedia.Sample.Client
         {
             return new Builder()
                 .With<User>("users")
-                    .Id(nameof(Resource.Id))
+                    .Id(nameof(Entity.Id))
                 .With<Post>("posts")
-                    .Id(nameof(Resource.Id))
+                    .Id(nameof(Entity.Id))
                     .BelongsTo<User>("OwnerUser")
                         .Via(nameof(Post.OwnerUserId))
                         .Template("/v1/users/{id}", "id", resource => resource.OwnerUserId)

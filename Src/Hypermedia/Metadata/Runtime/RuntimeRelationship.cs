@@ -7,6 +7,7 @@ namespace Hypermedia.Metadata.Runtime
         readonly RelationshipType _type;
         readonly string _name;
         readonly IField _field;
+        readonly IField _viaField;
         readonly UriTemplate _uriTemplate;
         readonly Type _relatedTo;
 
@@ -16,14 +17,16 @@ namespace Hypermedia.Metadata.Runtime
         /// <param name="type">The relationship type.</param>
         /// <param name="name">The name of the relationship.</param>
         /// <param name="relatedTo">The entity type that the relationship is related to.</param>
-        /// <param name="field">The field that the relationship is mapped to.</param>
+        /// <param name="field">The field that the relationship is linked to.</param>
+        /// <param name="viaField">The field that the relationship is linked via.</param>
         /// <param name="uriTemplate">The URI template that represents the link to the relationship.</param>
-        internal RuntimeRelationship(RelationshipType type, string name, Type relatedTo, IField field, UriTemplate uriTemplate)
+        internal RuntimeRelationship(RelationshipType type, string name, Type relatedTo, IField field, IField viaField, UriTemplate uriTemplate)
         {
             _type = type;
             _name = name;
             _relatedTo = relatedTo;
             _field = field;
+            _viaField = viaField;
             _uriTemplate = uriTemplate;
         }
 
@@ -65,6 +68,14 @@ namespace Hypermedia.Metadata.Runtime
         public IField Field
         {
             get { return _field; }
+        }
+
+        /// <summary>
+        /// Gets the field that the relationship is linked via.
+        /// </summary>
+        public IField ViaField
+        {
+            get { return _viaField; }
         }
     }
 }

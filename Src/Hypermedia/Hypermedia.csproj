@@ -56,7 +56,6 @@
     <Compile Include="Metadata\Runtime\RuntimeResourceContract.cs" />
     <Compile Include="Metadata\Runtime\RuntimeField.cs" />
     <Compile Include="Metadata\Runtime\RuntimeRelationship.cs" />
-    <Compile Include="Metadata\Runtime\RuntimeResourceContractResolver.cs" />
     <Compile Include="Metadata\UriTemplate.cs" />
     <Compile Include="Metadata\UriTemplateParameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

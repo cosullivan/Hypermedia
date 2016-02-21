@@ -31,5 +31,13 @@ namespace Hypermedia.Sample.StackOverflow
         {
             get {  return StackOverflowPostRepository.FromXml(Path.Combine(_folder, "posts.xml")); }
         }
+
+        /// <summary>
+        /// Gets an instance of the comments repository.
+        /// </summary>
+        public ICommentRepository Comments
+        {
+            get { return StackOverflowCommentRepository.FromXml(Path.Combine(_folder, "comments.xml")); }
+        }
     }
 }

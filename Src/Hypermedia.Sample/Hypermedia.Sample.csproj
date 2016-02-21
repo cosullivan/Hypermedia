@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Comment.cs" />
+    <Compile Include="Data\ICommentRepository.cs" />
     <Compile Include="Data\IDatabase.cs" />
     <Compile Include="Data\IPostRepository.cs" />
     <Compile Include="Data\IRepository.cs" />
@@ -47,7 +49,8 @@
     <Compile Include="Extensions\XmlNodeExtensions.cs" />
     <Compile Include="Extensions\ResourceExtensions.cs" />
     <Compile Include="Post.cs" />
-    <Compile Include="Resource.cs" />
+    <Compile Include="Entity.cs" />
+    <Compile Include="StackOverflow\StackOverflowCommentRepository.cs" />
     <Compile Include="StackOverflow\StackOverflowPostRepository.cs" />
     <Compile Include="StackOverflow\StackOverflowRepository.cs" />
     <Compile Include="StackOverflow\StackOverflowDatabase.cs" />

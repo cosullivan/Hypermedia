@@ -1,5 +1,6 @@
 ﻿using System.Web.Http;
 using Hypermedia.Sample.Data;
+using Hypermedia.Sample.WebApi.Resources;
 
 namespace Hypermedia.Sample.WebApi.Controllers
 {
@@ -25,16 +26,17 @@ namespace Hypermedia.Sample.WebApi.Controllers
         [HttpGet, Route("v1/posts")]
         public IHttpActionResult Execute(int skip = 0, int take = 100)
         {
-            var posts = _database.Posts.GetAll(skip, take);
+            var posts = _database.Posts.GetAll(skip, take).AsResource();
 
             var usersDictionary = _database.Users
                 .GetById(
                     posts.SelectDistinctList(post => post.OwnerUserId))
+                .AsResource()
                 .ToDictionary();
 
             foreach (var post in posts)
             {
-                User user;
+                UserResource user;
                 if (usersDictionary.TryGetValue(post.OwnerUserId, out user))
                 {
                     post.OwnerUser = user;

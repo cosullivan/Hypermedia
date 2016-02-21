@@ -347,7 +347,7 @@ namespace Hypermedia.JsonApi
             /// <returns>The value that represents the data node for the relationship.</returns>
             JsonValue SerializeBelongsTo(IRelationship relationship, IResourceContract resourceContract, object entity)
             {
-                var value = relationship.Field.GetValue(entity);
+                var value = relationship.GetValue(entity);
 
                 if (value == null)
                 {
@@ -625,7 +625,7 @@ namespace Hypermedia.JsonApi
             {
                 // if the field has been linked to a relationship or the field is the actual relationship field itself 
                 // then we dont serialize these as normal fields as they will be output in the relationships node
-                if (resourceContract.Relationships.Any(relationship => relationship.Field == field || relationship.Name == field.Name))
+                if (resourceContract.Relationships.Any(relationship => relationship.Field == field || relationship.ViaField == field))
                 {
                     return false;
                 }
@@ -640,7 +640,7 @@ namespace Hypermedia.JsonApi
             /// <returns>true if the relationship can be serialized, false if not.</returns>
             static bool ShouldSerializeRelationship(IRelationship relationship)
             {
-                return relationship.RelatedTo != null && relationship.Field != null;
+                return relationship.RelatedTo != null && (relationship.Field != null || relationship.ViaField != null);
             }
 
             /// <summary>

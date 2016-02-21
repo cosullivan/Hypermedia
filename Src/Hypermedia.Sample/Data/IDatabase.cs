@@ -11,5 +11,10 @@
         /// Gets an instance of the posts repository.
         /// </summary>
         IPostRepository Posts { get; }
+
+        /// <summary>
+        /// Gets an instance of the comments repository.
+        /// </summary>
+        ICommentRepository Comments { get; }
     }
 }

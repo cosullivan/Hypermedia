@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Hypermedia.Sample
 {
-    public sealed class Post : Resource
+    public class Post : Entity
     {
         /// <summary>
         /// The post type.
@@ -43,11 +44,6 @@ namespace Hypermedia.Sample
         /// The ID of the user that owns/created the post.
         /// </summary>
         public int OwnerUserId { get; set; }
-
-        /// <summary>
-        /// The user that owns/created the post.
-        /// </summary>
-        public User OwnerUser { get; set; }
 
         /// <summary>
         /// The date that the post was first created.

@@ -1,5 +1,6 @@
 ﻿using System.Web.Http;
 using Hypermedia.Sample.Data;
+using Hypermedia.Sample.WebApi.Resources;
 
 namespace Hypermedia.Sample.WebApi.Controllers
 {
@@ -25,7 +26,7 @@ namespace Hypermedia.Sample.WebApi.Controllers
         [HttpGet, Route("v1/users")]
         public IHttpActionResult Execute(int skip = 0, int take = 100)
         {
-            return Ok(_database.Users.GetAll(skip, take));
+            return Ok(_database.Users.GetAll(skip, take).AsResource());
         }
     }
 }
