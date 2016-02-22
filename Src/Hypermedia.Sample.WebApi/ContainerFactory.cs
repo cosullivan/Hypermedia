@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Web.Hosting;
+﻿using System.Web.Hosting;
 using Autofac;
 using Autofac.Integration.WebApi;
 using Hypermedia.Sample.Data;

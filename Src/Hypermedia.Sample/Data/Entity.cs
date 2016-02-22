@@ -1,4 +1,4 @@
-﻿namespace Hypermedia.Sample
+﻿namespace Hypermedia.Sample.Data
 {
     public abstract class Entity
     {

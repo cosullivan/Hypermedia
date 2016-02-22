@@ -114,6 +114,7 @@
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="ContainerFactory.cs" />
+    <Compile Include="Controllers\GetCommentsByPostIdController.cs" />
     <Compile Include="Controllers\GetPostByIdController.cs" />
     <Compile Include="Controllers\GetPostByOwnerUserIdController.cs" />
     <Compile Include="Controllers\GetPostsController.cs" />

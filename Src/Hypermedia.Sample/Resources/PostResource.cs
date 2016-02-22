@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Hypermedia.Sample.Data;
 
 namespace Hypermedia.Sample.Resources
 {

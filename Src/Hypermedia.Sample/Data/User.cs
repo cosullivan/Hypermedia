@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Hypermedia.Sample
+namespace Hypermedia.Sample.Data
 {
     public class User : Entity
     {

@@ -69,7 +69,7 @@ namespace Hypermedia.Sample.Client
         /// <param name="skip">The number of users to skip from the start.</param>
         /// <param name="take">The number of users to return.</param>
         /// <returns>The list of users.</returns>
-        public async Task<IReadOnlyList<UserResource>> GetUsersAsync(int skip = 0, int take = 100, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IReadOnlyList<UserResource>> GetUsersAsync(int skip = 0, int take = 10, CancellationToken cancellationToken = default(CancellationToken))
         {
             var response = await _httpClient.GetAsync($"v1/users?skip={skip}&take={take}", cancellationToken);
             response.EnsureSuccessStatusCode();
@@ -98,7 +98,7 @@ namespace Hypermedia.Sample.Client
         /// <param name="skip">The number of posts to skip from the start.</param>
         /// <param name="take">The number of posts to return.</param>
         /// <returns>The list of posts.</returns>
-        public async Task<IReadOnlyList<PostResource>> GetPostsAsync(int skip = 0, int take = 100, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IReadOnlyList<PostResource>> GetPostsAsync(int skip = 0, int take = 10, CancellationToken cancellationToken = default(CancellationToken))
         {
             var response = await _httpClient.GetAsync($"v1/posts?skip={skip}&take={take}", cancellationToken);
             response.EnsureSuccessStatusCode();
@@ -118,6 +118,20 @@ namespace Hypermedia.Sample.Client
             response.EnsureSuccessStatusCode();
 
             return await response.Content.ReadAsJsonApiAsync<PostResource>(_resourceContractResolver);
+        }
+
+        /// <summary>
+        /// Return the comments for the given post ID.
+        /// </summary>
+        /// <param name="postId">The ID of the post to return the comments for.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The comments with the given post id.</returns>
+        public async Task<IReadOnlyList<CommentResource>> GetCommentsByPostIdAsync(int postId, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var response = await _httpClient.GetAsync($"v1/posts/{postId}/comments", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsJsonApiManyAsync<CommentResource>(_resourceContractResolver);
         }
 
         /// <summary>

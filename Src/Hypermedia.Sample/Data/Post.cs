@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 
-namespace Hypermedia.Sample
+namespace Hypermedia.Sample.Data
 {
     public class Post : Entity
     {
@@ -9,6 +8,11 @@ namespace Hypermedia.Sample
         /// The post type.
         /// </summary>
         public int PostTypeId { get; set; }
+
+        /// <summary>
+        /// The title of the post.
+        /// </summary>
+        public string Title { get; set; }
 
         /// <summary>
         /// The body contents for the post.

@@ -40,16 +40,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Comment.cs" />
+    <Compile Include="Data\Comment.cs" />
     <Compile Include="Data\ICommentRepository.cs" />
     <Compile Include="Data\IDatabase.cs" />
     <Compile Include="Data\IPostRepository.cs" />
     <Compile Include="Data\IRepository.cs" />
     <Compile Include="Data\IUserRepository.cs" />
     <Compile Include="Extensions\XmlNodeExtensions.cs" />
-    <Compile Include="Extensions\ResourceExtensions.cs" />
-    <Compile Include="Post.cs" />
-    <Compile Include="Entity.cs" />
+    <Compile Include="Extensions\EntityExtensions.cs" />
+    <Compile Include="Data\Post.cs" />
+    <Compile Include="Data\Entity.cs" />
     <Compile Include="Resources\CommentResource.cs" />
     <Compile Include="Resources\PostResource.cs" />
     <Compile Include="Resources\UserResource.cs" />
@@ -58,7 +58,7 @@
     <Compile Include="StackOverflow\StackOverflowRepository.cs" />
     <Compile Include="StackOverflow\StackOverflowDatabase.cs" />
     <Compile Include="StackOverflow\StackOverflowUserRepository.cs" />
-    <Compile Include="User.cs" />
+    <Compile Include="Data\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

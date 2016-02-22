@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AutoMapper;
+using Hypermedia.Sample.Data;
 using Hypermedia.Sample.Resources;
 
 namespace Hypermedia.Sample.WebApi.Resources

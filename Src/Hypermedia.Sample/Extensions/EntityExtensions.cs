@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Hypermedia.Sample.Data;
 
 namespace Hypermedia.Sample
 {
-    public static class ResourceExtensions
+    public static class EntityExtensions
     {
         /// <summary>
-        /// Returns a dictionary of the resouces mapped by their ID.
+        /// Returns a dictionary of the entities mapped by their ID.
         /// </summary>
-        /// <typeparam name="TResource">The element type of the resource.</typeparam>
+        /// <typeparam name="TEntity">The element type of the entity.</typeparam>
         /// <param name="source">The source collection to created the dictionary from.</param>
-        /// <returns>The dictionary of resources mapped by their ID.</returns>
-        public static IDictionary<int, TResource> ToDictionary<TResource>(this IEnumerable<TResource> source) where TResource : Entity
+        /// <returns>The dictionary of entities mapped by their ID.</returns>
+        public static IDictionary<int, TEntity> ToDictionary<TEntity>(this IEnumerable<TEntity> source) where TEntity : Entity
         {
             if (source == null)
             {

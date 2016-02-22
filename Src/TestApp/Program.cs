@@ -33,8 +33,15 @@ namespace TestApp
                 //    Console.WriteLine(user.DisplayName);
                 //}
 
-                var post = client.GetPostByIdAsync(1).Result;
-                Console.WriteLine(post.OwnerUserId);
+                var post = client.GetPostByIdAsync(38).Result;
+                Console.WriteLine(post.Body);
+
+                foreach (var comment in client.GetCommentsByPostIdAsync(38).Result)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine(comment.UserId);
+                    Console.WriteLine(comment.Text);
+                }
             }
         }
     }

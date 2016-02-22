@@ -47,6 +47,7 @@ namespace Hypermedia.Sample.StackOverflow
             {
                 Id = node.GetInt32("Id"),
                 PostTypeId = node.GetInt32("PostTypeId"),
+                Title = node.GetString("Title"),
                 Body = node.GetString("Body"),
                 OwnerUserId = node.GetInt32("OwnerUserId"),
                 Score = node.GetInt32("Score"),
