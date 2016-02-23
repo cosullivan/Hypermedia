@@ -25,8 +25,10 @@ namespace TestApp
                     b) the relationship and data can be included in the link
                     
             */
-            
-            using (var client = new HypermediaSampleClient("http://hypermedia.cainosullivan.com", null))
+
+            //const string Endpoint = "http://hypermedia.cainosullivan.com";
+            const string Endpoint = "http://localhost:59074/";
+            using (var client = new HypermediaSampleClient(Endpoint, null))
             {
                 //foreach (var user in client.GetUsersAsync().Result)
                 //{
@@ -34,14 +36,15 @@ namespace TestApp
                 //}
 
                 var post = client.GetPostByIdAsync(38).Result;
-                Console.WriteLine(post.Body);
+                Console.WriteLine(post.OwnerUserId);
+                Console.WriteLine(post.OwnerUser);
 
-                foreach (var comment in client.GetCommentsByPostIdAsync(38).Result)
-                {
-                    Console.WriteLine();
-                    Console.WriteLine(comment.UserId);
-                    Console.WriteLine(comment.Text);
-                }
+                //foreach (var comment in client.GetCommentsByPostIdAsync(38).Result)
+                //{
+                //    Console.WriteLine();
+                //    Console.WriteLine(comment.UserId);
+                //    Console.WriteLine(comment.Text);
+                //}
             }
         }
     }

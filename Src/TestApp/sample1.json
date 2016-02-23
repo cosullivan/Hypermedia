@@ -1,16 +1,190 @@
 ﻿{
   "data": {
+    "type": "posts",
+    "id": 38,
     "attributes": {
-      "title": "The time has come"
+      "post-type-id": 1,
+      "title": "Who were the offspring between Zeus and Hera?",
+      "body": "<p>Zeus is well known for fathering offspring with mortal women but what about the offspring between Hera and Zeus?</p>\n",
+      "score": -5,
+      "view-count": 113,
+      "answer-count": 0,
+      "comment-count": 5,
+      "favorite-count": 0,
+      "creation-date": "2015-04-28T09:56:22Z"
     },
     "relationships": {
-      "author": {
+      "owner-user": {
+        "links": { "related": "/v1/users/28" },
         "data": {
-          "type": "authors",
-          "id": "e0523857-5675-43db-8fb7-1a396e3f1f66"
+          "type": "users",
+          "id": 28
+        }
+      },
+      "comments": {
+        "links": { "related": "/v1/posts/38/comments" },
+        "data": [
+          {
+            "type": "comments",
+            "id": 28
+          },
+          {
+            "type": "comments",
+            "id": 29
+          },
+          {
+            "type": "comments",
+            "id": 52
+          },
+          {
+            "type": "comments",
+            "id": 90
+          },
+          {
+            "type": "comments",
+            "id": 104
+          }
+        ]
+      }
+    }
+  },
+  "included": [
+    {
+      "type": "users",
+      "id": 28,
+      "attributes": {
+        "display-name": "Jody",
+        "reputation": 842,
+        "up-votes": 26,
+        "down-votes": 9,
+        "creation-date": "2015-04-28T08:07:49Z"
+      },
+      "relationships": { "posts": { "links": { "related": "/v1/users/28/posts" } } }
+    },
+    {
+      "type": "comments",
+      "id": 28,
+      "attributes": {
+        "score": 0,
+        "creation-date": "2015-04-28T11:08:01Z",
+        "text": "This early in beta please post comments when recommending the closing of a question it can be very beneficial to the development of the site."
+      },
+      "relationships": {
+        "user": {
+          "links": { "related": "/v1/users/61" },
+          "data": {
+            "type": "users",
+            "id": 61
+          }
+        },
+        "post": {
+          "links": { "related": "/v1/posts/38" },
+          "data": {
+            "type": "posts",
+            "id": 38
+          }
         }
       }
     },
-    "type": "posts"
-  }
+    {
+      "type": "comments",
+      "id": 29,
+      "attributes": {
+        "score": 0,
+        "creation-date": "2015-04-28T11:14:56Z",
+        "text": "This completely answered my question."
+      },
+      "relationships": {
+        "user": {
+          "links": { "related": "/v1/users/28" },
+          "data": {
+            "type": "users",
+            "id": 28
+          }
+        },
+        "post": {
+          "links": { "related": "/v1/posts/38" },
+          "data": {
+            "type": "posts",
+            "id": 38
+          }
+        }
+      }
+    },
+    {
+      "type": "comments",
+      "id": 52,
+      "attributes": {
+        "score": 1,
+        "creation-date": "2015-04-28T11:54:42Z",
+        "text": "why did this question get down voted and how do you avoid down votes as this is a legit question?"
+      },
+      "relationships": {
+        "user": {
+          "links": { "related": "/v1/users/28" },
+          "data": {
+            "type": "users",
+            "id": 28
+          }
+        },
+        "post": {
+          "links": { "related": "/v1/posts/38" },
+          "data": {
+            "type": "posts",
+            "id": 38
+          }
+        }
+      }
+    },
+    {
+      "type": "comments",
+      "id": 90,
+      "attributes": {
+        "score": 2,
+        "creation-date": "2015-04-28T13:43:26Z",
+        "text": "I downvoted this question because, quite frankly, it is an incredibly un-interesting question. I would also say that it \"does not show research effort\", which is one of the criteria listed in the hover tooltip for the downvote button."
+      },
+      "relationships": {
+        "user": {
+          "links": { "related": "/v1/users/33" },
+          "data": {
+            "type": "users",
+            "id": 33
+          }
+        },
+        "post": {
+          "links": { "related": "/v1/posts/38" },
+          "data": {
+            "type": "posts",
+            "id": 38
+          }
+        }
+      }
+    },
+    {
+      "type": "comments",
+      "id": 104,
+      "attributes": {
+        "score": 0,
+        "creation-date": "2015-04-28T14:36:03Z",
+        "text": "@senshin, so many questions on SO have answers which can be answered from a bit of research. Eg. how to printline in python. But since it is a legit question, there's is no reason to worry people that the question is not of a high enough 'standard'."
+      },
+      "relationships": {
+        "user": {
+          "links": { "related": "/v1/users/88" },
+          "data": {
+            "type": "users",
+            "id": 88
+          }
+        },
+        "post": {
+          "links": { "related": "/v1/posts/38" },
+          "data": {
+            "type": "posts",
+            "id": 38
+          }
+        }
+      }
+    }
+  ]
 }

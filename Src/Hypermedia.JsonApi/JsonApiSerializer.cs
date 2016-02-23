@@ -944,5 +944,21 @@ namespace Hypermedia.JsonApi
         }
 
         #endregion
+
+        //internal interface IInstanceResolver
+        //{
+        //    /// <summary>
+        //    /// Attempt to resolve the entity with the given entity key.
+        //    /// </summary>
+        //    /// <param name="entityKey">The entity key to resolve the entity for.</param>
+        //    /// <param name="entity">The entity that was resolved for the given entity key.</param>
+        //    /// <returns>true if an entity could be resolved, false if not.</returns>
+        //    bool TryResolve(JsonObject entityKey, out object entity);
+        //}
+
+        //internal class InstanceResolver
+        //{
+            
+        //}
     }
 }
