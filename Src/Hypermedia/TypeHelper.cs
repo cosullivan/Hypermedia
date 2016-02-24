@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -67,6 +68,26 @@ namespace Hypermedia
                     .FirstOrDefault(t => t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(ICollection<>));
 
             return collectionType != null;
+        }
+
+        /// <summary>
+        /// Returns a value indicating whether or no the given type is an IList.
+        /// </summary>
+        /// <param name="type">The type to check for the prescence of IList.</param>
+        /// <returns>true if the given type is an IList, false if not.</returns>
+        public static bool IsList(Type type)
+        {
+            return IsList(type.GetTypeInfo());
+        }
+
+        /// <summary>
+        /// Returns a value indicating whether or no the given type is an IList.
+        /// </summary>
+        /// <param name="type">The type to check for the prescence of IList.</param>
+        /// <returns>true if the given type is an IList, false if not.</returns>
+        public static bool IsList(TypeInfo type)
+        {
+            return type.ImplementedInterfaces.Any(t => t.GetTypeInfo().AsType() == typeof(IList));
         }
 
         /// <summary>

@@ -35,9 +35,21 @@ namespace TestApp
                 //    Console.WriteLine(user.DisplayName);
                 //}
 
-                var post = client.GetPostByIdAsync(38).Result;
-                Console.WriteLine(post.OwnerUserId);
-                Console.WriteLine(post.OwnerUser);
+                foreach (var post in client.GetPostsAsync().Result)
+                {
+                    Console.WriteLine(post);
+                    Console.WriteLine(post.OwnerUser.DisplayName);
+                }
+
+                //var post = client.GetPostByIdAsync(38).Result;
+                //Console.WriteLine(post.OwnerUserId);
+                //Console.WriteLine(post.OwnerUser);
+                //Console.WriteLine(post.Comments);
+
+                //foreach (var comment in post.Comments)
+                //{
+                //    Console.WriteLine(comment.Text);
+                //}
 
                 //foreach (var comment in client.GetCommentsByPostIdAsync(38).Result)
                 //{

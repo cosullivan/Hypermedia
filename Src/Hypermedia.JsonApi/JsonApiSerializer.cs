@@ -895,17 +895,15 @@ namespace Hypermedia.JsonApi
                         continue;
                     }
 
+                    var data = ((JsonObject)member.Value)["data"];
+
                     if (relationship.Type == RelationshipType.HasMany)
                     {
-                        // I am not currently supporting this as its likely that the related property is going to be a
-                        // collection of resource object and not a collection of the resource ids/foreign keys. This
-                        // really needs to be supported by enriching the related field from the included items
+                        DeserializeHasMany(relationship, (JsonArray)data, entity);
                         continue;
                     }
 
-                    var data = (JsonObject)((JsonObject)member.Value)["data"];
-
-                    DeserializeBelongsTo(relationship, data, entity);
+                    DeserializeBelongsTo(relationship, (JsonObject)data, entity);
                 }
             }
 
@@ -947,6 +945,69 @@ namespace Hypermedia.JsonApi
                         relationship.Field.SetValue(entity, related);
                     }
                 }
+            }
+
+            /// <summary>
+            /// Deserialize a HasMany relationship.
+            /// </summary>
+            /// <param name="relationship">The relationship to set on the entity.</param>
+            /// <param name="value">The JSON value to set on the entity.</param>
+            /// <param name="entity">The entity to set the value on.</param>
+            void DeserializeHasMany(IRelationship relationship, JsonArray value, object entity)
+            {
+                if (relationship.Field == null)
+                {
+                    return;
+                }
+
+                var collection = CreateListInstance(relationship.Field.ClrType);
+
+                if (collection == null)
+                {
+                    throw new JsonApiException(
+                        $"Can not deserialize the related collection as an appropriate IList instance could not be created for '{relationship.Field.ClrType}'.");
+                }
+
+                foreach (var jsonObject in value.OfType<JsonObject>())
+                {
+                    object related;
+                    if (TryResolve(jsonObject, out related))
+                    {
+                        collection.Add(related);
+                    }
+                }
+
+                relationship.Field.SetValue(entity, collection);
+            }
+
+            /// <summary>
+            /// Creates an instance of a list to hold the related items.
+            /// </summary>
+            /// <param name="type">The type to create the list for.</param>
+            /// <returns>The list was created.</returns>
+            static IList CreateListInstance(Type type)
+            {
+                return CreateListInstance(type.GetTypeInfo());
+            }
+
+            /// <summary>
+            /// Creates an instance of a list to hold the related items.
+            /// </summary>
+            /// <param name="type">The type to create the list for.</param>
+            /// <returns>The list was created.</returns>
+            static IList CreateListInstance(TypeInfo type)
+            {
+                if (type.IsInterface)
+                {
+                    return null;
+                }
+
+                if (TypeHelper.IsList(type))
+                {
+                    return Activator.CreateInstance(type.AsType()) as IList;
+                }
+
+                return null;
             }
 
             /// <summary>
