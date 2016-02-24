@@ -10,6 +10,11 @@ namespace Hypermedia.JsonApi
         internal static readonly IEqualityComparer<JsonObject> Instance = new JsonApiEntityKeyEqualityComparer();
 
         /// <summary>
+        /// Constructor.
+        /// </summary>
+        JsonApiEntityKeyEqualityComparer() { }
+
+        /// <summary>
         /// Determines whether the specified objects are equal.
         /// </summary>
         /// <param name="x">The first object of type <paramref name="T"/> to compare.</param>
@@ -43,10 +48,7 @@ namespace Hypermedia.JsonApi
         /// <returns>The string key that represents the given JSON object.</returns>
         static string CreateKey(JsonObject jsonObject)
         {
-            var type = jsonObject.Members.Single(m => m.Name.Value == "type");
-            var id = jsonObject.Members.Single(m => m.Name.Value == "id");
-
-            return $"{type.Value.Stringify()}:{id.Value.Stringify()}".ToLower();
+            return $"{jsonObject["type"].Stringify()}:{jsonObject["id"].Stringify()}".ToLower();
         }
     }
 }

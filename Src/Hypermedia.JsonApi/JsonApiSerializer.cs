@@ -110,16 +110,9 @@ namespace Hypermedia.JsonApi
         /// <returns>The list of items that was deserialized.</returns>
         public IEnumerable<object> DeserializeMany(JsonObject jsonObject)
         {
-            var jsonArray = jsonObject["data"] as JsonArray;
+            var deserializer = new Deserializer(jsonObject, _jsonConverterFactory, _resourceContractResolver);
 
-            if (jsonArray == null)
-            {
-                throw new JsonApiException("Can not return a sequence of items as the top level value is only a single entity.");
-            }
-
-            var deserializer = new Deserializer(_jsonConverterFactory, _resourceContractResolver);
-
-            return jsonArray.OfType<JsonObject>().Select(deserializer.DeserializeEntity).ToList();
+            return deserializer.DeserializeMany();
         }
 
         /// <summary>
@@ -129,14 +122,9 @@ namespace Hypermedia.JsonApi
         /// <returns>The instance that was created.</returns>
         public object DeserializeEntity(JsonObject jsonObject)
         {
-            jsonObject = jsonObject["data"] as JsonObject;
+            var deserializer = new Deserializer(jsonObject, _jsonConverterFactory, _resourceContractResolver);
 
-            if (jsonObject == null)
-            {
-                throw new JsonApiException("Can not return a single item as the top level value is an array.");
-            }
-
-            return new Deserializer(_jsonConverterFactory, _resourceContractResolver).DeserializeEntity(jsonObject);
+            return deserializer.DeserializeEntity();
         }
 
         /// <summary>
@@ -147,7 +135,9 @@ namespace Hypermedia.JsonApi
         /// <param name="entity">The entity instance to deserialize the fields into.</param>
         internal void DeserializeEntity(IResourceContract type, JsonObject jsonObject, object entity)
         {
-            new Deserializer(_jsonConverterFactory, new ResourceContractResolver(type)).DeserializeEntity(type, jsonObject, entity);
+            throw new NotImplementedException("How to fake the root document here?");
+
+            //new Deserializer(_jsonConverterFactory, new ResourceContractResolver(type)).DeserializeEntity(type, jsonObject, entity);
         }
 
         #region Serializer
@@ -660,18 +650,57 @@ namespace Hypermedia.JsonApi
 
         class Deserializer
         {
+            readonly JsonObject _rootObject;
             readonly IJsonConverterFactory _jsonConverterFactory;
             readonly IResourceContractResolver _resourceContractResolver;
+            readonly IDictionary<JsonObject, object> _instanceCache = new Dictionary<JsonObject, object>(JsonApiEntityKeyEqualityComparer.Instance);
 
             /// <summary>
             /// Constructor.
             /// </summary>
+            /// <param name="rootObject">The root JSON object that contains both the 'data' and the 'include' nodes.</param>
             /// <param name="jsonConverterFactory">The JSON converter factory.</param>
             /// <param name="resourceContractResolver">The resource contract resolver.</param>
-            internal Deserializer(IJsonConverterFactory jsonConverterFactory, IResourceContractResolver resourceContractResolver)
+            internal Deserializer(
+                JsonObject rootObject,
+                IJsonConverterFactory jsonConverterFactory, 
+                IResourceContractResolver resourceContractResolver)
             {
+                _rootObject = rootObject;
                 _jsonConverterFactory = jsonConverterFactory;
                 _resourceContractResolver = resourceContractResolver;
+            }
+
+            /// <summary>
+            /// Deserialize a collection of items.
+            /// </summary>
+            /// <returns>The list of items that was deserialized.</returns>
+            public IEnumerable<object> DeserializeMany()
+            {
+                var jsonArray = _rootObject["data"] as JsonArray;
+
+                if (jsonArray == null)
+                {
+                    throw new JsonApiException("Can not return a sequence of items as the top level value is only a single entity.");
+                }
+
+                return jsonArray.OfType<JsonObject>().Select(DeserializeEntity);
+            }
+
+            /// <summary>
+            /// Deserialize the root level JSON object into a CLR type.
+            /// </summary>
+            /// <returns>The instance that was created.</returns>
+            internal object DeserializeEntity()
+            {
+                var jsonObject = _rootObject["data"] as JsonObject;
+
+                if (jsonObject == null)
+                {
+                    throw new JsonApiException("Can not return a single item as the top level value is an array.");
+                }
+
+                return DeserializeEntity(jsonObject);
             }
 
             /// <summary>
@@ -679,19 +708,92 @@ namespace Hypermedia.JsonApi
             /// </summary>
             /// <param name="jsonObject">The JSON object to deserialize into a CLR type.</param>
             /// <returns>The instance that was created.</returns>
-            internal object DeserializeEntity(JsonObject jsonObject)
+            object DeserializeEntity(JsonObject jsonObject)
             {
-                var typeAttribute = jsonObject.Members.Single(member => member.Name.Value == "type");
-                
-                IResourceContract resourceContract;
-                if (_resourceContractResolver.TryResolve(((JsonString)typeAttribute.Value).Value, out resourceContract) == false)
+                // first check to see if the object has been resolved by another operation
+                object entity;
+                if (TryResolveFromCache(jsonObject, out entity))
                 {
-                    throw new JsonApiException("Could not find a type for '{0}'.", ((JsonString)typeAttribute.Value).Value);
+                    return entity;
+                }
+
+                var typeAttribute = jsonObject["type"];
+
+                IResourceContract resourceContract;
+                if (_resourceContractResolver.TryResolve(((JsonString)typeAttribute).Value, out resourceContract) == false)
+                {
+                    throw new JsonApiException("Could not find a type for '{0}'.", ((JsonString)typeAttribute).Value);
                 }
 
                 return DeserializeEntity(resourceContract, jsonObject);
             }
 
+            /// <summary>
+            /// Attempt to resolve the entity with the given entity key.
+            /// </summary>
+            /// <param name="key">The entity key to resolve the entity for.</param>
+            /// <param name="entity">The entity that was resolved for the given entity key.</param>
+            /// <returns>true if an entity could be resolved, false if not.</returns>
+            bool TryResolveFromCache(JsonObject key, out object entity)
+            {
+                return _instanceCache.TryGetValue(key, out entity);
+            }
+
+            /// <summary>
+            /// Attempt to resolve the entity with the given entity key.
+            /// </summary>
+            /// <param name="key">The entity key to resolve the entity for.</param>
+            /// <param name="entity">The entity that was resolved for the given entity key.</param>
+            /// <returns>true if an entity could be resolved, false if not.</returns>
+            bool TryResolve(JsonObject key, out object entity)
+            {
+                if (TryResolveFromCache(key, out entity))
+                {
+                    return true;
+                }
+
+                var included = _rootObject["included"] as JsonArray;
+                if (included != null)
+                {
+                    if (TryResolveFromList(key, included.OfType<JsonObject>(), out entity))
+                    {
+                        return true;
+                    }
+                }
+
+                var data = _rootObject["data"] as JsonArray;
+                if (data != null)
+                {
+                    if (TryResolveFromList(key, data.OfType<JsonObject>(), out entity))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            /// <summary>
+            /// Attempt to resolve the entity with the given entity key.
+            /// </summary>
+            /// <param name="key">The entity key to resolve the entity for.</param>
+            /// <param name="jsonObjects">The list of JSON objects to attempt to resolve from.</param>
+            /// <param name="entity">The entity that was resolved for the given entity key.</param>
+            /// <returns>true if an entity could be resolved, false if not.</returns>
+            bool TryResolveFromList(JsonObject key, IEnumerable<JsonObject> jsonObjects, out object entity)
+            {
+                entity = null;
+
+                var jsonObject = jsonObjects.FirstOrDefault(j => JsonApiEntityKeyEqualityComparer.Instance.Equals(key, j));
+
+                if (jsonObject != null)
+                {
+                    entity = DeserializeEntity(jsonObject);
+                }
+
+                return ReferenceEquals(entity, null) == false;
+            }
+            
             /// <summary>
             /// Deserialize an object.
             /// </summary>
@@ -701,6 +803,8 @@ namespace Hypermedia.JsonApi
             object DeserializeEntity(IResourceContract resourceContract, JsonObject jsonObject)
             {
                 var entity = resourceContract.CreateInstance();
+
+                _instanceCache.Add(jsonObject, entity);
 
                 DeserializeEntity(resourceContract, jsonObject, entity);
 
@@ -715,27 +819,27 @@ namespace Hypermedia.JsonApi
             /// <param name="entity">The entity instance to deserialize the fields into.</param>
             internal void DeserializeEntity(IResourceContract resourceContract, JsonObject jsonObject, object entity)
             {
-                var attribute = jsonObject.Members.SingleOrDefault(member => member.Name.Value == "id");
+                var attribute = jsonObject["id"];
 
                 if (attribute != null)
                 {
                     var field = resourceContract.Fields(FieldOptions.Id).SingleOrDefault();
                     if (field != null && field.Is(FieldOptions.CanDeserialize))
                     {
-                        DeserializeField(field, attribute.Value, entity);
+                        DeserializeField(field, attribute, entity);
                     }
                 }
 
-                var attributes = jsonObject.Members.SingleOrDefault(member => member.Name.Value == "attributes");
-                if (attributes?.Value is JsonObject)
+                var attributes = jsonObject["attributes"] as JsonObject;
+                if (attributes != null)
                 {
-                    DeserializeFields(resourceContract.Fields(f => ShouldDeserializeField(resourceContract, f)).ToList(), ((JsonObject)attributes.Value).Members, entity);
+                    DeserializeFields(resourceContract.Fields(f => ShouldDeserializeField(resourceContract, f)).ToList(), attributes.Members, entity);
                 }
 
-                var relationships = jsonObject.Members.SingleOrDefault(member => member.Name.Value == "relationships");
-                if (relationships?.Value is JsonObject)
+                var relationships = jsonObject["relationships"] as JsonObject;
+                if (relationships != null)
                 {
-                    DeserializeRelationships(resourceContract.Relationships, ((JsonObject)relationships.Value).Members, entity);
+                    DeserializeRelationships(resourceContract.Relationships, relationships.Members, entity);
                 }
             }
 
@@ -782,11 +886,11 @@ namespace Hypermedia.JsonApi
             /// <param name="entity">The entity to deserialize the values to.</param>
             void DeserializeRelationships(IReadOnlyList<IRelationship> relationships, IEnumerable<JsonMember> members, object entity)
             {
-                foreach (var member in members)
+                foreach (var member in members.Where(HasDataMember))
                 {
                     var relationship = relationships.SingleOrDefault(r => String.Equals(r.Name, member.Name.Value.Camelize(), StringComparison.OrdinalIgnoreCase));
 
-                    if (relationship == null || !(member.Value is JsonObject))
+                    if (relationship == null)
                     {
                         continue;
                     }
@@ -799,30 +903,22 @@ namespace Hypermedia.JsonApi
                         continue;
                     }
 
-                    var data = ((JsonObject)member.Value).Members.SingleOrDefault(m => m.Name.Value == "data");
+                    var data = (JsonObject)((JsonObject)member.Value)["data"];
 
-                    if (data != null)
-                    {
-                        DeserializeRelationship(relationship, (JsonObject)data.Value, entity);
-                    }
+                    DeserializeBelongsTo(relationship, data, entity);
                 }
             }
 
             /// <summary>
-            /// Deserialize a relationship.
+            /// Returns true if the given member contains a nested object which has a data member.
             /// </summary>
-            /// <param name="relationship">The relationship to set on the entity.</param>
-            /// <param name="value">The JSON value to set on the entity.</param>
-            /// <param name="entity">The entity to set the value on.</param>
-            void DeserializeRelationship(IRelationship relationship, JsonObject value, object entity)
+            /// <param name="jsonMember">The JSON member to test against.</param>
+            /// <returns>true if the given JSON member contains a nested object which contains a data member.</returns>
+            static bool HasDataMember(JsonMember jsonMember)
             {
-                if (relationship.Type == RelationshipType.BelongsTo)
-                {
-                    DeserializeBelongsTo(relationship, value, entity);
-                    return;
-                }
+                var jsonObject = jsonMember.Value as JsonObject;
 
-                throw new NotImplementedException();
+                return jsonObject?["data"] != null;
             }
 
             /// <summary>
@@ -833,19 +929,24 @@ namespace Hypermedia.JsonApi
             /// <param name="entity">The entity to set the value on.</param>
             void DeserializeBelongsTo(IRelationship relationship, JsonObject value, object entity)
             {
-                if (relationship.ViaField == null)
+                if (relationship.ViaField != null)
                 {
-                    return;
+                    var member = value["id"];
+
+                    if (member != null)
+                    {
+                        DeserializeField(relationship.ViaField, member, entity);
+                    }
                 }
 
-                var member = value.Members.SingleOrDefault(m => m.Name.Value == "id");
-
-                if (member == null)
+                if (relationship.Field != null)
                 {
-                    return;
+                    object related;
+                    if (TryResolve(value, out related))
+                    {
+                        relationship.Field.SetValue(entity, related);
+                    }
                 }
-
-                DeserializeField(relationship.ViaField, member.Value, entity);
             }
 
             /// <summary>
@@ -944,21 +1045,5 @@ namespace Hypermedia.JsonApi
         }
 
         #endregion
-
-        //internal interface IInstanceResolver
-        //{
-        //    /// <summary>
-        //    /// Attempt to resolve the entity with the given entity key.
-        //    /// </summary>
-        //    /// <param name="entityKey">The entity key to resolve the entity for.</param>
-        //    /// <param name="entity">The entity that was resolved for the given entity key.</param>
-        //    /// <returns>true if an entity could be resolved, false if not.</returns>
-        //    bool TryResolve(JsonObject entityKey, out object entity);
-        //}
-
-        //internal class InstanceResolver
-        //{
-            
-        //}
     }
 }

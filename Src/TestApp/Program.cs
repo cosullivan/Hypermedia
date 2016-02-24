@@ -26,8 +26,8 @@ namespace TestApp
                     
             */
 
-            //const string Endpoint = "http://hypermedia.cainosullivan.com";
-            const string Endpoint = "http://localhost:59074/";
+            const string Endpoint = "http://hypermedia.cainosullivan.com";
+            //const string Endpoint = "http://localhost:59074/";
             using (var client = new HypermediaSampleClient(Endpoint, null))
             {
                 //foreach (var user in client.GetUsersAsync().Result)
