@@ -33,27 +33,8 @@ namespace Hypermedia.Sample.WebApi.Controllers
             {
                 return NotFound();
             }
-
-            post.OwnerUser = _database.Users.GetById(new[] { post.OwnerUserId }).FirstOrDefault().AsResource();
-
-            post.Comments = _database.Comments.GetByPostId(new [] { post.Id }).AsResource();
-
-            var usersDictionary = _database.Users
-                .GetById(
-                    post.Comments.SelectDistinctList(comment => comment.UserId))
-                .AsResource()
-                .ToDictionary();
-
-            foreach (var comment in post.Comments)
-            {
-                UserResource user;
-                if (usersDictionary.TryGetValue(post.OwnerUserId, out user))
-                {
-                    comment.User = user;
-                }
-            }
             
-            return Ok(post);
+            return Ok(post.Populate(_database));
         }
     }
 }

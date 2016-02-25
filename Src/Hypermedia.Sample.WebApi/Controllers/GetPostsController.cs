@@ -29,22 +29,7 @@ namespace Hypermedia.Sample.WebApi.Controllers
         {
             var posts = _database.Posts.GetAll(skip, take).AsResource();
 
-            var usersDictionary = _database.Users
-                .GetById(
-                    posts.SelectDistinctList(post => post.OwnerUserId))
-                .AsResource()
-                .ToDictionary();
-
-            foreach (var post in posts)
-            {
-                UserResource user;
-                if (usersDictionary.TryGetValue(post.OwnerUserId, out user))
-                {
-                    post.OwnerUser = user;
-                }
-            }
-
-            return Ok(posts);
+            return Ok(posts.Populate(_database));
         }
     }
 }

@@ -987,24 +987,21 @@ namespace Hypermedia.JsonApi
             /// <returns>The list was created.</returns>
             static IList CreateListInstance(Type type)
             {
-                return CreateListInstance(type.GetTypeInfo());
-            }
-
-            /// <summary>
-            /// Creates an instance of a list to hold the related items.
-            /// </summary>
-            /// <param name="type">The type to create the list for.</param>
-            /// <returns>The list was created.</returns>
-            static IList CreateListInstance(TypeInfo type)
-            {
-                if (type.IsInterface)
-                {
-                    return null;
-                }
-
                 if (TypeHelper.IsList(type))
                 {
-                    return Activator.CreateInstance(type.AsType()) as IList;
+                    return Activator.CreateInstance(type) as IList;
+                }
+
+                if (type.GetTypeInfo().IsInterface)
+                {
+                    var definition = type.GetGenericTypeDefinition();
+
+                    if (definition == typeof (IReadOnlyList<>) || definition == typeof (IList<>) || definition == typeof(ICollection<>))
+                    {
+                        type = typeof (List<>).MakeGenericType(TypeHelper.GetUnderlyingType(type));
+
+                        return Activator.CreateInstance(type) as IList;
+                    }
                 }
 
                 return null;

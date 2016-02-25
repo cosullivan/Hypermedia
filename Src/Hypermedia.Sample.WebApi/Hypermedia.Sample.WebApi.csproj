@@ -125,6 +125,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\CommentResourceExtensions.cs" />
+    <Compile Include="Resources\PostResourceExtensions.cs" />
     <Compile Include="Resources\Resource.cs" />
   </ItemGroup>
   <ItemGroup>
