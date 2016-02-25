@@ -33,7 +33,7 @@ namespace Hypermedia.Sample.WebApi.Controllers
             {
                 return NotFound();
             }
-            
+
             return Ok(post.Populate(_database));
         }
     }

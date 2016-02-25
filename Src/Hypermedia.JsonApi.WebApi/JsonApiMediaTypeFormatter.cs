@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
@@ -20,12 +21,45 @@ namespace Hypermedia.JsonApi.WebApi
     {
         const string Name = "jsonapi";
         const string MediaTypeName = "application/vnd.api+json";
+        const string PrettifyParameterName = "$prettify";
+        readonly bool _prettify;
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="resourceContractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
-        public JsonApiMediaTypeFormatter(IResourceContractResolver resourceContractResolver) : base(Name, MediaTypeName, resourceContractResolver) { }
+        public JsonApiMediaTypeFormatter(IResourceContractResolver resourceContractResolver) : this(resourceContractResolver, false) { }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="resourceContractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
+        /// <param name="prettify">Indicates whether the output should formatted in a readable way.</param>
+        public JsonApiMediaTypeFormatter(IResourceContractResolver resourceContractResolver, bool prettify) : base(Name, MediaTypeName, resourceContractResolver)
+        {
+            _prettify = prettify;
+        }
+
+        /// <summary>
+        /// Returns a specialized instance of the <see cref="T:System.Net.Http.Formatting.MediaTypeFormatter"/> that can format a response for the given parameters.
+        /// </summary>
+        /// <param name="type">The type to format.</param>
+        /// <param name="request">The request.</param>
+        /// <param name="mediaType">The media type.</param>
+        /// <returns>Returns <see cref="T:System.Net.Http.Formatting.MediaTypeFormatter"/>.</returns>
+        public override MediaTypeFormatter GetPerRequestFormatterInstance(Type type, HttpRequestMessage request, MediaTypeHeaderValue mediaType)
+        {
+            var parameters = request.RequestUri.ParseQueryString();
+
+            if (parameters[PrettifyParameterName] != null)
+            {
+                var prettify = new[] { "yes", "1", "true" }.Contains(parameters[PrettifyParameterName], StringComparer.OrdinalIgnoreCase);
+
+                return new JsonApiMediaTypeFormatter(ResourceContractResolver, prettify);
+            }
+            
+            return base.GetPerRequestFormatterInstance(type, request, mediaType);
+        }
 
         /// <summary>
         /// Asynchronously deserializes an object of the specified type.
@@ -79,7 +113,7 @@ namespace Hypermedia.JsonApi.WebApi
         {
             using (var writer = new StreamWriter(writeStream, Encoding.ASCII, 1024, leaveOpen: true))
             {
-                writer.WriteLine(SerializeValue(type, value).Stringify());
+                writer.WriteLine(SerializeValue(type, value).Stringify(_prettify));
             }
 
             writeStream.Flush();

@@ -78,7 +78,7 @@ namespace Hypermedia.Sample.WebApi.Resources
 
             foreach (var resource in resources)
             {
-                resource.Comments = lookup[resource.Id].AsResource().ToList();
+                resource.Comments = lookup[resource.Id].ToList();
 
                 foreach (var comment in resource.Comments)
                 {
