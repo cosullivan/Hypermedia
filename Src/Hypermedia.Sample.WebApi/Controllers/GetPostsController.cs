@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Web.Http;
 using Hypermedia.Sample.Data;
 using Hypermedia.Sample.Resources;

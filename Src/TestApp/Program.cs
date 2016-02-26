@@ -8,7 +8,6 @@ namespace TestApp
     {
         static void Main(string[] args)
         {
-            //TODO: JsonLite Pretify option
             //TODO: NuGet packages
 
             const string Endpoint = "http://hypermedia.cainosullivan.com";
@@ -22,7 +21,7 @@ namespace TestApp
 
                 foreach (var post in client.GetPostsAsync(skip:1, take:10).Result)
                 {
-                    Console.WriteLine(post);
+                    Console.WriteLine(post.Title);
                     Console.WriteLine(post.OwnerUser.DisplayName);
 
                     foreach (var comment in post.Comments)

@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>Hypermedia.JsonApi.WebApi</id>
+        <title>Hypermedia.JsonApi.WebApi</title>
+        <version>1.0.1</version>
+        <authors>Cain O'Sullivan</authors>
+        <projectUrl>https://github.com/cosullivan/Hypermedia</projectUrl>
+        <description>A JSONAPI media type formatter for the Web API.</description>
+    </metadata>
+    <files>
+        <file src="bin\Release\Hypermedia.dll" target="lib\Net45" />
+        <file src="bin\Release\Hypermedia.JsonApi.dll" target="lib\Net45" />
+        <file src="bin\Release\Hypermedia.JsonApi.WebApi.dll" target="lib\Net45" />
+        <file src="bin\Release\Hypermedia.WebApi.dll" target="lib\Net45" />
+        <file src="bin\Release\JsonLite.dll" target="lib\Net45" />
+        <file src="bin\Release\Humanizer.dll" target="lib\Net45" />
+    </files>
+</package>

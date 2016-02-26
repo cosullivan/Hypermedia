@@ -1,4 +1,5 @@
 ﻿using System.Web.Http;
+using System.Web.Http.Cors;
 using Autofac.Integration.WebApi;
 using Hypermedia.Configuration;
 using Hypermedia.JsonApi.WebApi;
@@ -18,6 +19,8 @@ namespace Hypermedia.Sample.WebApi
         {
             config.MapHttpAttributeRoutes();
             config.DependencyResolver = new AutofacWebApiDependencyResolver(ContainerFactory.CreateContainer());
+
+            config.EnableCors(new EnableCorsAttribute("*", "*", "*"));
 
             ConfigureFormatters(config);
         }

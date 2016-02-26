@@ -34,17 +34,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <!-- A reference to the entire .NET Framework is automatically included -->
-    <ProjectReference Include="..\Hypermedia.JsonApi\Hypermedia.JsonApi.csproj">
-      <Project>{2ce482c3-8e6b-4df2-ac46-6193dead7259}</Project>
-      <Name>Hypermedia.JsonApi</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Hypermedia\Hypermedia.csproj">
-      <Project>{a1f1f9f5-caf8-48b1-9a4a-ae87ab0f092e}</Project>
-      <Name>Hypermedia</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="HttpContentExtensions.cs" />
     <Compile Include="JsonApiContent.cs" />
     <Compile Include="JsonApiResponse.cs" />
@@ -61,7 +50,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Hypermedia.JsonApi.Client.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Hypermedia.JsonApi\Hypermedia.JsonApi.csproj">
+      <Project>{2ce482c3-8e6b-4df2-ac46-6193dead7259}</Project>
+      <Name>Hypermedia.JsonApi</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Hypermedia\Hypermedia.csproj">
+      <Project>{a1f1f9f5-caf8-48b1-9a4a-ae87ab0f092e}</Project>
+      <Name>Hypermedia</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

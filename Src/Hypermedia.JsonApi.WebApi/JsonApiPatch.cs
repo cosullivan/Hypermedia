@@ -43,7 +43,7 @@ namespace Hypermedia.JsonApi.WebApi
                 IResourceContract resourceContract;
                 if (_resourceContractResolver.TryResolve(((JsonString)typeAttribute.Value).Value, out resourceContract) == false)
                 {
-                    throw new JsonApiException("Could not find a type for '{0}'.", ((JsonString)typeAttribute.Value).Value);
+                    return false;
                 }
 
                 var serializer = new JsonApiSerializer(ResourceContractResolver);

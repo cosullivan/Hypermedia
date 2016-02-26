@@ -135,9 +135,9 @@ namespace Hypermedia.JsonApi
         /// <param name="entity">The entity instance to deserialize the fields into.</param>
         internal void DeserializeEntity(IResourceContract type, JsonObject jsonObject, object entity)
         {
-            throw new NotImplementedException("How to fake the root document here?");
-
-            //new Deserializer(_jsonConverterFactory, new ResourceContractResolver(type)).DeserializeEntity(type, jsonObject, entity);
+            var deserializer = new Deserializer(jsonObject, _jsonConverterFactory, new ResourceContractResolver(type));
+            
+            deserializer.DeserializeEntity(type, jsonObject, entity);
         }
 
         #region Serializer
