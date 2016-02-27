@@ -1,0 +1,14 @@
+<h1>Posts</h1>
+
+<ul>
+    {{#each model as |post|}}
+        <li>
+            <div>
+                {{#link-to 'post' post}}{{post.title}}{{/link-to}}
+            </div>        
+            <div>
+                {{post.ownerUser.displayName}}
+            </div>        
+        </li>
+    {{/each}}
+</ul>

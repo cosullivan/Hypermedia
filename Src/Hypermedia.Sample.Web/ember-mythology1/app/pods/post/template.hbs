@@ -1,0 +1,15 @@
+<h2>{{model.title}}</h2>
+<span>by {{model.ownerUser.displayName}}</span>
+<p>
+    {{model.body}}
+</p>
+<div>
+    <h3>Comments</h3>
+    <ul>
+        {{#each model.comments as |comment|}}
+            <li>
+                {{comment.text}}
+            </li>
+        {{/each}}
+    </ul>
+</div>
