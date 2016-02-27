@@ -3,6 +3,10 @@ A .NET Client and Server foundational Hypermedia library for .NET. Currently, th
 for the [**JSON API**](http://jsonapi.org) format, but the foundation has been designed with extensibility 
 in mind.
 
+The packages are currently available via NuGet
+* https://www.nuget.org/packages/Hypermedia.JsonApi.WebApi
+* https://www.nuget.org/packages/Hypermedia.JsonApi.Client
+
 # Quick Start
 
 Start with some domain/POCO objects. The Hypermedia model sits externally to the domain objects.
