@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using Hypermedia.Sample.Data;
@@ -33,7 +34,10 @@ namespace Hypermedia.Sample.StackOverflow
         /// <returns>The list of posts that were created from the document.</returns>
         static IEnumerable<Post> FromXml(XmlDocument document)
         {
-            return document.SelectNodes("//posts/row").OfType<XmlNode>().Select(FromXml);
+            return document.SelectNodes("//posts/row")
+                .OfType<XmlNode>()
+                .Select(FromXml)
+                .Where(post => String.IsNullOrWhiteSpace(post.Title) == false);
         }
 
         /// <summary>

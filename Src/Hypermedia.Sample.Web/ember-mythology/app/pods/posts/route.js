@@ -1,10 +1,25 @@
 import Ember from 'ember';
 
 export default Ember.Route.extend({
-    model: function() {
-        return this.store.query('post', { 
-            skip: 0, 
-            take: 10 
+    queryParams: {
+        q: {
+            refreshModel: true,
+            replace: true          
+        },
+        skip: {
+            refreshModel: true,
+            replace: true          
+        },    
+        take: {
+            refreshModel: true,
+            replace: true          
+        }   
+    },
+	model: function(params) {
+        return this.store.query('post', {
+            q: params.q,
+            skip: params.skip, 
+            take: params.take 
         });
-    } 
+    }
 });

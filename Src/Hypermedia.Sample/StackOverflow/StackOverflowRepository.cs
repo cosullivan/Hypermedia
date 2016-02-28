@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Hypermedia.Sample.Data;
 
@@ -30,12 +31,13 @@ namespace Hypermedia.Sample.StackOverflow
         /// <summary>
         /// Returns all entities up to the supplied limit.
         /// </summary>
+        /// <param name="predicate">The predicate to apply to the entities to determined if they should be returned.</param>
         /// <param name="skip">The number of entities to skip.</param>
         /// <param name="take">The limit to apply to the entities being returned.</param>
         /// <returns>The list of entities.</returns>
-        public IReadOnlyList<TEntity> GetAll(int skip = 0, int take = 100)
+        public IReadOnlyList<TEntity> GetAll(Predicate<TEntity> predicate, int skip = 0, int take = 100)
         {
-            return Dictionary.Values.Skip(skip).Take(take).ToList();
+            return Dictionary.Values.Where(entity => predicate(entity)).Skip(skip).Take(take).ToList();
         }
 
         /// <summary>

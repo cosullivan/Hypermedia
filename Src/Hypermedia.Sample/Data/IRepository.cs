@@ -16,14 +16,32 @@ namespace Hypermedia.Sample.Data
         /// <summary>
         /// Returns all entities up to the supplied limit.
         /// </summary>
+        /// <param name="predicate">The predicate to apply to the entities to determined if they should be returned.</param>
         /// <param name="skip">The number of entities to skip.</param>
         /// <param name="take">The limit to apply to the entities being returned.</param>
         /// <returns>The list of entities.</returns>
-        IReadOnlyList<TEntity> GetAll(int skip = 0, int take = 100);
+        IReadOnlyList<TEntity> GetAll(Predicate<TEntity> predicate, int skip = 0, int take = 100);
     }
 
     public static class RepositoryExtensions
     {
+        /// <summary>
+        /// Returns all entities up to the supplied limit.
+        /// </summary>
+        /// <param name="repository">The repository to perform the operation on.</param>
+        /// <param name="skip">The number of entities to skip.</param>
+        /// <param name="take">The limit to apply to the entities being returned.</param>
+        /// <returns>The list of entities.</returns>
+        public static IReadOnlyList<TEntity> GetAll<TEntity>(this IRepository<TEntity> repository, int skip = 0, int take = 100) where TEntity : Entity
+        {
+            if (repository == null)
+            {
+                throw new ArgumentNullException(nameof(repository));
+            }
+
+            return repository.GetAll(entity => true, skip, take);
+        }
+
         /// <summary>
         /// Gets an entity by its ID.
         /// </summary>

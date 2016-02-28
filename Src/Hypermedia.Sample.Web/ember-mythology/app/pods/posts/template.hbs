@@ -1,14 +1,22 @@
-<h1>Posts</h1>
-
-<ul>
-    {{#each model as |post|}}
-        <li>
-            <div>
-                {{#link-to 'post' post}}{{post.title}}{{/link-to}}
-            </div>        
-            <div>
-                {{post.ownerUser.displayName}}
-            </div>        
-        </li>
-    {{/each}}
-</ul>
+<div id="posts">
+    <h2>Posts</h2>
+    <form {{action "search" on="submit"}}>
+        {{search-input value=q}}
+    </form>
+    {{#if model.length}}
+        <ul class="posts-list">
+            {{#each model as |post|}}
+                <li>
+                    <div>
+                        {{#link-to 'post' post}}{{post.title}}{{/link-to}}
+                    </div>        
+                    <div>
+                        {{post.ownerUser.displayName}}
+                    </div>        
+                </li>
+            {{/each}}
+        </ul>
+    {{else}}
+        <span>There are no results matching your search criteria.</span>
+    {{/if}}
+</div>
