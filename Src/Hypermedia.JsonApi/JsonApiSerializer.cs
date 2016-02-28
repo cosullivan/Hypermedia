@@ -90,6 +90,7 @@ namespace Hypermedia.JsonApi
 
             var members = new List<JsonMember>
             {
+                new JsonMember("jsonapi", new JsonObject(new JsonMember("version", new JsonString("1.0")))),
                 new JsonMember("data", serializer.Serialize(new[] { entity }).First())
             };
 
