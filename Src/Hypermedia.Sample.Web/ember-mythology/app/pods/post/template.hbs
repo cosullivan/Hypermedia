@@ -1,15 +1,22 @@
-<h2>{{model.title}}</h2>
-<span>by {{model.ownerUser.displayName}}</span>
-<p>
-    {{model.body}}
-</p>
-<div>
-    <h3>Comments</h3>
-    <ul>
-        {{#each model.comments as |comment|}}
-            <li>
-                {{comment.text}}
-            </li>
-        {{/each}}
-    </ul>
-</div>
+<div id="post">
+    <h2>{{model.title}}</h2>
+    <span class="display-name">by {{model.ownerUser.displayName}}</span>
+    <p class="body">
+        {{{model.body}}}
+    </p>
+    {{#if model.comments.length}}
+        <div>
+            <h3>Comments</h3>
+            <ul class="comments-list">
+                {{#each model.comments as |comment|}}
+                    <li>
+                        <div>
+                            <p class="text">{{{comment.text}}}</p>
+                            <span class="display-name">by {{comment.user.displayName}}</span>
+                        </div>
+                    </li>
+                {{/each}}
+            </ul>
+        </div>
+    {{/if}}
+</div>    
