@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Hypermedia.Metadata
 {
     public sealed class UriTemplate
     {
+        public static readonly UriTemplate None = new UriTemplate(String.Empty);
+
         readonly string _format;
         readonly IReadOnlyList<UriTemplateParameter> _parameters;
 
@@ -14,6 +17,11 @@ namespace Hypermedia.Metadata
         /// <param name="parameters">The list of parameters for the template.</param>
         public UriTemplate(string format, params UriTemplateParameter[] parameters)
         {
+            if (format == null)
+            {
+                throw new ArgumentNullException(nameof(format));
+            }
+
             _format = format;
             _parameters = parameters;
         }

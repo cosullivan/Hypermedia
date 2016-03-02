@@ -44,22 +44,17 @@ namespace Hypermedia.Sample.Client
                 .With<UserResource>("users")
                     .Id(nameof(UserResource.Id))
                     .HasMany<PostResource>("posts")
-                        .Template("/v1/users/{id}/posts", "id", resource => resource.Id)
                 .With<PostResource>("posts")
                     .Id(nameof(PostResource.Id))
                     .BelongsTo<UserResource>(nameof(PostResource.OwnerUser))
                         .Via(nameof(PostResource.OwnerUserId))
-                        .Template("/v1/users/{id}", "id", resource => resource.OwnerUserId)
                     .HasMany<CommentResource>(nameof(PostResource.Comments))
-                        .Template("/v1/posts/{id}/comments", "id", resource => resource.Id)
                 .With<CommentResource>("comments")
                     .Id(nameof(CommentResource.Id))
                     .BelongsTo<UserResource>(nameof(CommentResource.User))
                         .Via(nameof(CommentResource.UserId))
-                        .Template("/v1/users/{id}", "id", resource => resource.UserId)
                     .BelongsTo<PostResource>(nameof(CommentResource.Post))
                         .Via(nameof(CommentResource.PostId))
-                        .Template("/v1/posts/{id}", "id", resource => resource.PostId)
                 .Build();
         }
 

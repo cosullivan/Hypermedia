@@ -45,7 +45,11 @@ namespace Hypermedia.Configuration
                 ? null
                 : fields.SingleOrDefault(f => String.Equals(f.Name, _field, StringComparison.OrdinalIgnoreCase));
 
-            return new RuntimeRelationship(_type, _name, _relatedTo, field, viaField, _uriTemplateBuilder.CreateTemplate());
+            var template = _uriTemplateBuilder != null
+                ? _uriTemplateBuilder.CreateTemplate()
+                : UriTemplate.None;
+
+            return new RuntimeRelationship(_type, _name, _relatedTo, field, viaField, template);
         }
 
         /// <summary>

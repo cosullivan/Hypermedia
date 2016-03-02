@@ -8,7 +8,8 @@ namespace TestApp
     {
         static void Main(string[] args)
         {
-            //TODO: NuGet packages
+            //1.Templates should be optional(not required for a client)
+            //    2.Need to serialize Enum's
 
             const string Endpoint = "http://hypermedia.cainosullivan.com";
             //const string Endpoint = "http://localhost:59074/";
@@ -22,15 +23,15 @@ namespace TestApp
                 foreach (var post in client.GetPostsAsync(skip:1, take:10).Result)
                 {
                     Console.WriteLine(post.Title);
-                    Console.WriteLine(post.OwnerUser.DisplayName);
+                    //Console.WriteLine(post.OwnerUser.DisplayName);
 
-                    foreach (var comment in post.Comments)
-                    {
-                        Console.WriteLine("[{0}] {1}", comment.User.DisplayName, comment.Text);
-                    }
+                    //foreach (var comment in post.Comments)
+                    //{
+                    //    Console.WriteLine("[{0}] {1}", comment.User.DisplayName, comment.Text);
+                    //}
 
-                    Console.WriteLine();
-                    Console.WriteLine();
+                    //Console.WriteLine();
+                    //Console.WriteLine();
                 }
 
                 //var post = client.GetPostByIdAsync(38).Result;
