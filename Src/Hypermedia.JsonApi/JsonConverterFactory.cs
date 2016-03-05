@@ -52,6 +52,7 @@ namespace Hypermedia.JsonApi
 
             if (type.GetTypeInfo().IsEnum)
             {
+                // this approach will be refactored when introducing the plain JSON serializer
                 jsonConverter = EnumConverter.Instance;
                 return true;
             }
