@@ -19,7 +19,7 @@ namespace Hypermedia.WebApi
         /// <summary>
         /// Gets the default resource contract resolver that is to be used for the patching.
         /// </summary>
-        IResourceContractResolver ResourceContractResolver { get; }
+        IResourceContractResolver ContractResolver { get; }
     }
 
     public static class PatchExtensions
@@ -42,7 +42,7 @@ namespace Hypermedia.WebApi
 
             if (include == null && ignore == null)
             {
-                return patch.TryPatch(entity, patch.ResourceContractResolver);
+                return patch.TryPatch(entity, patch.ContractResolver);
             }
 
             if (include != null)
@@ -64,7 +64,7 @@ namespace Hypermedia.WebApi
         static bool TryPatchWithInclude<T>(IPatch<T> patch, T entity, IEnumerable<string> includedFields)
         {
             IResourceContract resourceContract;
-            if (patch.ResourceContractResolver.TryResolve(typeof (T), out resourceContract) == false)
+            if (patch.ContractResolver.TryResolve(typeof (T), out resourceContract) == false)
             {
                 return false;
             }
@@ -75,7 +75,7 @@ namespace Hypermedia.WebApi
             return patch.TryPatch(
                 entity, 
                 new ResourceContractResolver(
-                    new RuntimeResourceContract(resourceContract.Name, resourceContract.ClrType, fields, resourceContract.Relationships)));
+                    new RuntimeContract(resourceContract.Name, resourceContract.ClrType, fields, resourceContract.Relationships)));
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace Hypermedia.WebApi
         static bool TryPatchWithIgnore<T>(IPatch<T> patch, T entity, IEnumerable<string> ignoredFields)
         {
             IResourceContract resourceContract;
-            if (patch.ResourceContractResolver.TryResolve(typeof(T), out resourceContract) == false)
+            if (patch.ContractResolver.TryResolve(typeof(T), out resourceContract) == false)
             {
                 return false;
             }
@@ -100,7 +100,7 @@ namespace Hypermedia.WebApi
             return patch.TryPatch(
                 entity,
                 new ResourceContractResolver(
-                    new RuntimeResourceContract(resourceContract.Name, resourceContract.ClrType, fields, resourceContract.Relationships)));
+                    new RuntimeContract(resourceContract.Name, resourceContract.ClrType, fields, resourceContract.Relationships)));
         }
     }
 }

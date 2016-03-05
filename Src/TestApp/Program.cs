@@ -8,8 +8,7 @@ namespace TestApp
     {
         static void Main(string[] args)
         {
-            //1.Templates should be optional(not required for a client)
-            //    2.Need to serialize Enum's
+            //1. Need to serialize Enum's
 
             const string Endpoint = "http://hypermedia.cainosullivan.com";
             //const string Endpoint = "http://localhost:59074/";

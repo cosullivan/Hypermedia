@@ -55,19 +55,19 @@
     <Compile Include="StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="JsonLite, Version=1.1.9.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Json.Lite.1.1.9\lib\Portable-Net45+NetCore45+WP8+WPA81\JsonLite.dll</HintPath>
+    <ProjectReference Include="..\Hypermedia\Hypermedia.csproj">
+      <Project>{a1f1f9f5-caf8-48b1-9a4a-ae87ab0f092e}</Project>
+      <Name>Hypermedia</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="JsonLite, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Json.Lite.1.2.0\lib\Portable-Net45+NetCore45+WP8+WPA81\JsonLite.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Hypermedia\Hypermedia.csproj">
-      <Project>{a1f1f9f5-caf8-48b1-9a4a-ae87ab0f092e}</Project>
-      <Name>Hypermedia</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

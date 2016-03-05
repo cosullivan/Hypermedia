@@ -589,7 +589,7 @@ namespace Hypermedia.JsonApi
                     return SerializeArray(value);
                 }
 
-                var fields = SerializeFields(RuntimeResourceContract.CreateRuntimeType(type), value).Where(IsNotNull).ToList();
+                var fields = SerializeFields(RuntimeContract.CreateRuntimeType(type), value).Where(IsNotNull).ToList();
 
                 return new JsonObject(fields);
             }
@@ -854,7 +854,7 @@ namespace Hypermedia.JsonApi
             {
                 foreach (var member in members)
                 {
-                    var field = fields.SingleOrDefault(f => String.Equals(f.Name, member.Name.Value.Camelize(), StringComparison.OrdinalIgnoreCase));
+                    var field = fields.SingleOrDefault(f => String.Equals(f.Name, member.Name.Camelize(), StringComparison.OrdinalIgnoreCase));
 
                     if (field != null)
                     {
@@ -889,7 +889,7 @@ namespace Hypermedia.JsonApi
             {
                 foreach (var member in members.Where(HasDataMember))
                 {
-                    var relationship = relationships.SingleOrDefault(r => String.Equals(r.Name, member.Name.Value.Camelize(), StringComparison.OrdinalIgnoreCase));
+                    var relationship = relationships.SingleOrDefault(r => String.Equals(r.Name, member.Name.Camelize(), StringComparison.OrdinalIgnoreCase));
 
                     if (relationship == null)
                     {
@@ -1048,7 +1048,7 @@ namespace Hypermedia.JsonApi
             {
                 var entity = Activator.CreateInstance(type);
 
-                DeserializeFields(RuntimeResourceContract.CreateRuntimeFields(type), jsonObject.Members, entity);
+                DeserializeFields(RuntimeContract.CreateRuntimeFields(type), jsonObject.Members, entity);
 
                 return entity;
             }

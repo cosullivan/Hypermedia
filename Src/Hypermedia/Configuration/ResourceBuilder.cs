@@ -9,7 +9,7 @@ namespace Hypermedia.Configuration
     public sealed class ResourceBuilder<T> : IResourceBuilder<T>, IResourceBuilder
     {
         readonly IBuilder _builder;
-        readonly IDictionary<string, FieldBuilder<T>> _fields = new Dictionary<string, FieldBuilder<T>>(StringComparer.OrdinalIgnoreCase);
+        readonly List<FieldBuilder<T>> _fields = new List<FieldBuilder<T>>();
         readonly IDictionary<string, RelationshipBuilder<T>> _relationships = new Dictionary<string, RelationshipBuilder<T>>();
         string _name = typeof(T).Name;
 
@@ -37,7 +37,7 @@ namespace Hypermedia.Configuration
         /// <returns>The entity type.</returns>
         IResourceContract IResourceBuilder.CreateRuntimeContract()
         {
-            var fields = _fields.Values.Select(field => field.CreateRuntimeField()).ToList();
+            var fields = _fields.Select(field => field.CreateRuntimeField()).ToList();
             var relationships = _relationships.Values.Select(relationship => relationship.CreateRuntimeRelationship(fields)).ToList();
 
             return new RuntimeResourceContract<T>(_name, fields, relationships);
@@ -73,15 +73,16 @@ namespace Hypermedia.Configuration
         /// <returns>The field builder build the field.</returns>
         public FieldBuilder<T> Field(string name)
         {
-            FieldBuilder<T> builder;
-            if (_fields.TryGetValue(name, out builder))
-            {
-                return builder;
-            }
-            
-            _fields.Add(name, new FieldBuilder<T>(this, name));
+            var builder = _fields.SingleOrDefault(field => String.Equals(field.Name, name, StringComparison.OrdinalIgnoreCase));
 
-            return _fields[name];
+            if (builder == null)
+            {
+                builder = new FieldBuilder<T>(this, name);
+
+                _fields.Add(builder);
+            }
+
+            return builder;
         }
 
         /// <summary>

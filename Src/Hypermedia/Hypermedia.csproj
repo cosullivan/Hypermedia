@@ -36,6 +36,7 @@
   <ItemGroup>
     <Compile Include="Configuration\Builder.cs" />
     <Compile Include="Configuration\EmptyTypeDiscovery.cs" />
+    <Compile Include="Metadata\Runtime\IResourceInflector.cs" />
     <Compile Include="Configuration\ResourceBuilder.cs" />
     <Compile Include="Configuration\ExpressionHelper.cs" />
     <Compile Include="Configuration\FieldBuilder.cs" />
@@ -53,19 +54,14 @@
     <Compile Include="Metadata\IRelationship.cs" />
     <Compile Include="Metadata\IResourceContractResolver.cs" />
     <Compile Include="Metadata\RelationshipType.cs" />
-    <Compile Include="Metadata\Runtime\RuntimeResourceContract.cs" />
+    <Compile Include="Metadata\Runtime\ResourceInflector.cs" />
+    <Compile Include="Metadata\Runtime\RuntimeContract.cs" />
     <Compile Include="Metadata\Runtime\RuntimeField.cs" />
     <Compile Include="Metadata\Runtime\RuntimeRelationship.cs" />
     <Compile Include="Metadata\UriTemplate.cs" />
     <Compile Include="Metadata\UriTemplateParameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypeHelper.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Humanizer, Version=1.37.7.0, Culture=neutral, PublicKeyToken=979442b78dfc278e, processorArchitecture=MSIL">
-      <HintPath>..\..\..\ReplyAll\Src\packages\Humanizer.1.37.7\lib\portable-win+net40+sl50+wp8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Humanizer.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

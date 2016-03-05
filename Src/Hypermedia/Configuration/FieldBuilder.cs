@@ -8,7 +8,7 @@ namespace Hypermedia.Configuration
     public sealed class FieldBuilder<T> : IResourceBuilder<T>
     {
         readonly IResourceBuilder<T> _builder;
-        readonly string _name;
+        string _name;
         string _property;
         FieldOptions _options = FieldOptions.Default;
 
@@ -104,6 +104,26 @@ namespace Hypermedia.Configuration
             return From(ExpressionHelper.GetMemberNameFromExpression(expression));
         }
 
+
+        /// <summary>
+        /// Renames the field.
+        /// </summary>
+        /// <param name="name">The new name to apply to the field.</param>
+        /// <returns>The field builder to continue building on.</returns>
+        /// <remarks>If the mapping property has not been set, the current name is set
+        /// as the mapping property and then the new name is applied.</remarks>
+        public FieldBuilder<T> Rename(string name)
+        {
+            if (String.IsNullOrWhiteSpace(_property))
+            {
+                _property = _name;
+            }
+
+            _name = name;
+
+            return this;
+        }
+
         /// <summary>
         /// Sets the given options for the field.
         /// </summary>
@@ -160,6 +180,14 @@ namespace Hypermedia.Configuration
         public FieldBuilder<T> WriteOnly()
         {
             return Options(FieldOptions.CanSerialize, false).Options(FieldOptions.CanDeserialize, true);
+        }
+
+        /// <summary>
+        /// Gets the name of the field.
+        /// </summary>
+        internal string Name
+        {
+            get { return _name; }
         }
     }
 }

@@ -50,7 +50,7 @@ namespace Hypermedia.Sample.StackOverflow
             return new Post
             {
                 Id = node.GetInt32("Id"),
-                PostTypeId = node.GetInt32("PostTypeId"),
+                PostType = PostType(node.GetInt32("PostTypeId")),
                 Title = node.GetString("Title"),
                 Body = node.GetString("Body"),
                 OwnerUserId = node.GetInt32("OwnerUserId"),
@@ -60,6 +60,21 @@ namespace Hypermedia.Sample.StackOverflow
                 FavoriteCount = node.GetInt32("FavoriteCount"),
                 CreationDate = node.GetDateTimeOffset("CreationDate")
             };
+        }
+
+        /// <summary>
+        /// Convert the integer value into a post type.
+        /// </summary>
+        /// <param name="value">The value to convert.</param>
+        /// <returns>The post type that the value should represent.</returns>
+        static PostType PostType(int value)
+        {
+            switch (value)
+            {
+                case 1: return Data.PostType.Questions;
+                case 2: return Data.PostType.Answers;
+                default: return Data.PostType.Others;
+            }
         }
 
         /// <summary>

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Hypermedia.Metadata;
+﻿using Hypermedia.Metadata;
 using Hypermedia.WebApi;
 using JsonLite.Ast;
 
@@ -7,17 +6,17 @@ namespace Hypermedia.JsonApi.WebApi
 {
     public sealed class JsonApiPatch<T> : IPatch<T>
     {
-        readonly IResourceContractResolver _resourceContractResolver;
+        readonly IResourceContractResolver _contractResolver;
         readonly JsonObject _jsonValue;
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="resourceContractResolver">The resource contractor resolver.</param>
+        /// <param name="contractResolver">The resource contractor resolver.</param>
         /// <param name="jsonValue">The root document node.</param>
-        public JsonApiPatch(IResourceContractResolver resourceContractResolver, JsonObject jsonValue)
+        public JsonApiPatch(IResourceContractResolver contractResolver, JsonObject jsonValue)
         {
-            _resourceContractResolver = resourceContractResolver;
+            _contractResolver = contractResolver;
             _jsonValue = jsonValue;
         }
 
@@ -33,20 +32,19 @@ namespace Hypermedia.JsonApi.WebApi
             {
                 var jsonObject = _jsonValue["data"] as JsonObject;
 
-                if (jsonObject == null)
+                var typeAttribute = jsonObject?["type"];
+                if (typeAttribute == null)
                 {
                     return false;
                 }
-
-                var typeAttribute = jsonObject.Members.Single(member => member.Name.Value == "type");
 
                 IResourceContract resourceContract;
-                if (_resourceContractResolver.TryResolve(((JsonString)typeAttribute.Value).Value, out resourceContract) == false)
+                if (_contractResolver.TryResolve(((JsonString)typeAttribute).Value, out resourceContract) == false)
                 {
                     return false;
                 }
 
-                var serializer = new JsonApiSerializer(ResourceContractResolver);
+                var serializer = new JsonApiSerializer(ContractResolver);
                 serializer.DeserializeEntity(resourceContract, jsonObject, entity);
 
                 return true;
@@ -60,9 +58,9 @@ namespace Hypermedia.JsonApi.WebApi
         /// <summary>
         /// Gets the resource contract resolver that is to be used for the patching.
         /// </summary>
-        public IResourceContractResolver ResourceContractResolver
+        public IResourceContractResolver ContractResolver
         {
-            get { return _resourceContractResolver; }
+            get { return _contractResolver; }
         }
     }
 }

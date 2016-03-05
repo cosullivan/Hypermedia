@@ -137,5 +137,13 @@ namespace Hypermedia.Configuration
         {
             return Template(format).Parameter(parameter, selector);
         }
+
+        /// <summary>
+        /// Gets the name of relationship.
+        /// </summary>
+        internal string Name
+        {
+            get { return _name; }
+        }
     }
 }

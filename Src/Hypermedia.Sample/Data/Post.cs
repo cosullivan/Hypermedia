@@ -7,7 +7,7 @@ namespace Hypermedia.Sample.Data
         /// <summary>
         /// The post type.
         /// </summary>
-        public int PostTypeId { get; set; }
+        public PostType PostType { get; set; }
 
         /// <summary>
         /// The title of the post.

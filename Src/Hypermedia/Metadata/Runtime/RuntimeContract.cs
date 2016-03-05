@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Humanizer;
 
 namespace Hypermedia.Metadata.Runtime
 {
-    internal class RuntimeResourceContract : IResourceContract
+    public class RuntimeContract : IResourceContract
     {
         readonly string _type;
         readonly Type _clrType;
@@ -16,11 +15,19 @@ namespace Hypermedia.Metadata.Runtime
         /// <summary>
         /// Constructor.
         /// </summary>
+        static RuntimeContract()
+        {
+            Inflector = new ResourceInflector();
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         /// <param name="type">The name of the entity type.</param>
         /// <param name="clrType">The CLR type that the entity type is mapped to.</param>
         /// <param name="fields">The list of fields for the entity.</param>
         /// <param name="relationships">The list of relationships for the entity.</param>
-        internal RuntimeResourceContract(string type, Type clrType, IReadOnlyList<IField> fields, IReadOnlyList<IRelationship> relationships)
+        internal RuntimeContract(string type, Type clrType, IReadOnlyList<IField> fields, IReadOnlyList<IRelationship> relationships)
         {
             _type = type;
             _clrType = clrType;
@@ -35,9 +42,9 @@ namespace Hypermedia.Metadata.Runtime
         /// <returns>The entity type that represents a default configuration of the given entity type.</returns>
         internal static IResourceContract CreateRuntimeType(Type type)
         {
-            var name = type.Name.ToLower().Pluralize();
+            var name = Inflector.Pluralize(type.Name.ToLower());
 
-            return new RuntimeResourceContract(name, type, CreateRuntimeFields(type), new List<RuntimeRelationship>());
+            return new RuntimeContract(name, type, CreateRuntimeFields(type), new List<RuntimeRelationship>());
         }
 
         /// <summary>
@@ -48,7 +55,7 @@ namespace Hypermedia.Metadata.Runtime
         /// <returns>The entity type that represents a default configuration of the given entity type.</returns>
         internal static IResourceContract CreateRuntimeType(Type type, string name)
         {
-            return new RuntimeResourceContract(name, type, CreateRuntimeFields(type), new List<RuntimeRelationship>());
+            return new RuntimeContract(name, type, CreateRuntimeFields(type), new List<RuntimeRelationship>());
         }
 
         /// <summary>
@@ -92,9 +99,14 @@ namespace Hypermedia.Metadata.Runtime
         {
             get { return _relationships; }
         }
+
+        /// <summary>
+        /// Gets or sets the inflector to use when creating contracts at runtime.
+        /// </summary>
+        public static IResourceInflector Inflector { get; set; }
     }
 
-    internal sealed class RuntimeResourceContract<T> : RuntimeResourceContract
+    internal sealed class RuntimeResourceContract<T> : RuntimeContract
     {
         /// <summary>
         /// Constructor.
@@ -110,7 +122,7 @@ namespace Hypermedia.Metadata.Runtime
         /// <returns>The entity type that represents a default configuration of the given entity type.</returns>
         internal static IResourceContract CreateRuntimeType()
         {
-            var name = typeof(T).Name.ToLower().Pluralize();
+            var name = Inflector.Pluralize(typeof(T).Name.ToLower());
 
             return new RuntimeResourceContract<T>(name, CreateRuntimeFields(), new List<RuntimeRelationship>());
         }
