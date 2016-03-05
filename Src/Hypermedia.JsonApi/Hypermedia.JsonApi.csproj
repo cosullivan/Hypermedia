@@ -37,6 +37,7 @@
     <Compile Include="Converters\DateTimeOffsetConverter.cs" />
     <Compile Include="Converters\DecimalConverter.cs" />
     <Compile Include="Converters\DoubleConverter.cs" />
+    <Compile Include="Converters\EnumConverter.cs" />
     <Compile Include="Converters\GuidConverter.cs" />
     <Compile Include="Converters\FloatConverter.cs" />
     <Compile Include="Converters\Int16Converter.cs" />

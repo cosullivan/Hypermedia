@@ -21,7 +21,7 @@ namespace TestApp
 
                 foreach (var post in client.GetPostsAsync(skip:1, take:10).Result)
                 {
-                    Console.WriteLine(post.Title);
+                    Console.WriteLine(post.PostType);
                     //Console.WriteLine(post.OwnerUser.DisplayName);
 
                     //foreach (var comment in post.Comments)

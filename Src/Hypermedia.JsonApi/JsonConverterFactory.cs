@@ -50,6 +50,12 @@ namespace Hypermedia.JsonApi
                 return true;
             }
 
+            if (type.GetTypeInfo().IsEnum)
+            {
+                jsonConverter = EnumConverter.Instance;
+                return true;
+            }
+
             var attribute = type.GetTypeInfo().GetCustomAttribute(typeof(JsonConverterAttribute), false) as JsonConverterAttribute;
 
             if (attribute != null)
