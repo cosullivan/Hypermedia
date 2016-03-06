@@ -169,13 +169,13 @@ namespace Hypermedia.JsonApi
             {
                 foreach (var entity in entities)
                 {
-                    IContract resourceContract;
-                    if (_contractResolver.TryResolve(entity.GetType(), out resourceContract) == false)
+                    IContract contract;
+                    if (_contractResolver.TryResolve(entity.GetType(), out contract) == false)
                     {
                         throw new JsonApiException("Can not serialize an unknown resource type '{0}'.", entity.GetType());
                     }
 
-                    var jsonObject = SerializeEntity(resourceContract, entity);
+                    var jsonObject = SerializeEntity(contract, entity);
 
                     if (HasVisited(jsonObject) == false)
                     {
@@ -273,7 +273,11 @@ namespace Hypermedia.JsonApi
             /// <returns>The list of JSON values which represent the relationships.</returns>
             IReadOnlyList<JsonMember> SerializeRelationships(IEnumerable<IRelationship> relationships, object entity)
             {
-                return relationships.Select(relationship => SerializeRelationship(relationship, entity)).ToList();
+                var members = relationships.Select(relationship => SerializeRelationship(relationship, entity));
+
+                members = members.Where(member => ((JsonObject)member.Value).Members.Count > 0);
+
+                return members.ToList();
             }
 
             /// <summary>
@@ -284,14 +288,17 @@ namespace Hypermedia.JsonApi
             /// <returns>The member that represents the relationship for the given entity.</returns>
             JsonMember SerializeRelationship(IRelationship relationship, object entity)
             {
-                var uri = relationship.UriTemplate.Bind(entity);
+                var members = new List<JsonMember>();
 
-                var members = new List<JsonMember>
+                if (relationship.UriTemplate != null)
                 {
-                    new JsonMember(
-                        "links",
-                        new JsonObject(new JsonMember("related", new JsonString(uri))))
-                };
+                    var uri = relationship.UriTemplate.Bind(entity);
+
+                    members.Add(
+                        new JsonMember(
+                            "links",
+                            new JsonObject(new JsonMember("related", new JsonString(uri)))));
+                }
 
                 if (ShouldSerializeRelationship(relationship))
                 {

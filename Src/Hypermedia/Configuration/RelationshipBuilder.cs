@@ -47,7 +47,7 @@ namespace Hypermedia.Configuration
 
             var template = _uriTemplateBuilder != null
                 ? _uriTemplateBuilder.CreateTemplate()
-                : UriTemplate.None;
+                : null;
 
             return new RuntimeRelationship(_type, _name, _relatedTo, field, viaField, template);
         }

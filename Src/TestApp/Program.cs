@@ -6,6 +6,9 @@ namespace TestApp
 {
     class Program
     {
+        //1. filter nulls from output
+        //2. dont serialize empty links - },"relationships": {"facility": {"links": {"related": ""}
+
         static void Main(string[] args)
         {
             const string Endpoint = "http://hypermedia.cainosullivan.com";

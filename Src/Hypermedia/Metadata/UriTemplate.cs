@@ -5,8 +5,6 @@ namespace Hypermedia.Metadata
 {
     public sealed class UriTemplate
     {
-        public static readonly UriTemplate None = new UriTemplate(String.Empty);
-
         readonly string _format;
         readonly IReadOnlyList<UriTemplateParameter> _parameters;
 
