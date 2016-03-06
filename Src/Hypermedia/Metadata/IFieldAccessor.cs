@@ -1,4 +1,6 @@
-﻿namespace Hypermedia.Metadata
+﻿using System;
+
+namespace Hypermedia.Metadata
 {
     public interface IFieldAccessor
     {
@@ -15,5 +17,10 @@
         /// <param name="instance">The instance to set the value on.</param>
         /// <param name="value">The value to set for the field.</param>
         void SetValue(object instance, object value);
+
+        /// <summary>
+        /// Gets the value type.
+        /// </summary>
+        Type ValueType { get; }
     }
 }

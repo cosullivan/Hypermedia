@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using Hypermedia.Metadata;
+﻿using Hypermedia.Metadata;
 using Hypermedia.Metadata.Runtime;
 
 namespace Hypermedia.Configuration
@@ -11,8 +7,8 @@ namespace Hypermedia.Configuration
     {
         readonly IContractBuilder<T> _builder;
         string _name;
-        string _property;
         FieldOptions _options = FieldOptions.Default;
+        IFieldAccessor _fieldAccessor;
 
         /// <summary>
         /// Constructor.
@@ -40,9 +36,14 @@ namespace Hypermedia.Configuration
         /// <returns>The field.</returns>
         internal RuntimeField<T> CreateRuntimeField()
         {
-            var property = typeof (T).GetRuntimeProperty(_property ?? _name);
+            var accessor = _fieldAccessor;
 
-            return new RuntimeField<T>(_name, property.PropertyType, new RuntimeFieldAccessor(property), _options);
+            if (accessor == null)
+            {
+                accessor = RuntimeFieldAccessor.From<T>(_name);
+            }
+            
+            return new RuntimeField<T>(_name, accessor.ValueType, accessor, _options);
         }
 
         /// <summary>
@@ -87,13 +88,13 @@ namespace Hypermedia.Configuration
         }
 
         /// <summary>
-        /// Sets the property that the field is to be mapped to.
+        /// Sets the field accessor for the given field.
         /// </summary>
-        /// <param name="property">The name of the property that the field is mapped to.</param>
+        /// <param name="accessor">The field accessor for the given field.</param>
         /// <returns>The field builder to continue building on.</returns>
-        public FieldBuilder<T> From(string property)
+        public FieldBuilder<T> Accessor(IFieldAccessor accessor)
         {
-            _property = property;
+            _fieldAccessor = accessor;
 
             return this;
         }
@@ -101,11 +102,13 @@ namespace Hypermedia.Configuration
         /// <summary>
         /// Sets the property that the field is to be mapped to.
         /// </summary>
-        /// <param name="expression">The expression that defines the property that is to be mapped.</param>
+        /// <param name="property">The name of the property that the field is mapped to.</param>
         /// <returns>The field builder to continue building on.</returns>
-        public FieldBuilder<T> From(Expression<Func<T, object>> expression)
+        public FieldBuilder<T> From(string property)
         {
-            return From(ExpressionHelper.GetMemberNameFromExpression(expression));
+            _fieldAccessor = RuntimeFieldAccessor.From<T>(property);
+
+            return this;
         }
 
         /// <summary>
@@ -117,9 +120,9 @@ namespace Hypermedia.Configuration
         /// as the mapping property and then the new name is applied.</remarks>
         public FieldBuilder<T> Rename(string name)
         {
-            if (String.IsNullOrWhiteSpace(_property))
+            if (_fieldAccessor == null)
             {
-                _property = _name;
+                _fieldAccessor = RuntimeFieldAccessor.From<T>(_name);
             }
 
             _name = name;

@@ -8,8 +8,6 @@ namespace TestApp
     {
         static void Main(string[] args)
         {
-            //1. Need to serialize Enum's
-
             const string Endpoint = "http://hypermedia.cainosullivan.com";
             //const string Endpoint = "http://localhost:59074/";
             using (var client = new HypermediaSampleClient(Endpoint, null))

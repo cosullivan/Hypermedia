@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 
 namespace Hypermedia.Metadata.Runtime
 {
@@ -13,6 +14,19 @@ namespace Hypermedia.Metadata.Runtime
         internal RuntimeFieldAccessor(PropertyInfo property)
         {
             _memberInfo = property;
+        }
+
+        /// <summary>
+        /// Returns a field accessor from the given type and field.
+        /// </summary>
+        /// <typeparam name="T">The entity type to return the accessor for.</typeparam>
+        /// <param name="field">The name of the field.</param>
+        /// <returns>The field accessor for the given field name.</returns>
+        internal static IFieldAccessor From<T>(string field)
+        {
+            var property = typeof(T).GetRuntimeProperty(field);
+
+            return new RuntimeFieldAccessor(property);
         }
 
         /// <summary>
@@ -43,6 +57,14 @@ namespace Hypermedia.Metadata.Runtime
             }
 
             _memberInfo.SetValue(instance, value);
+        }
+
+        /// <summary>
+        /// Gets the value type.
+        /// </summary>
+        public Type ValueType
+        {
+            get { return _memberInfo.PropertyType; }
         }
     }
 }

@@ -37,6 +37,7 @@
     <Compile Include="Configuration\Builder.cs" />
     <Compile Include="Configuration\EmptyTypeDiscovery.cs" />
     <Compile Include="Metadata\IFieldAccessor.cs" />
+    <Compile Include="Metadata\Runtime\DelegatingFieldAccessor.cs" />
     <Compile Include="Metadata\Runtime\IResourceInflector.cs" />
     <Compile Include="Configuration\ContractBuilder.cs" />
     <Compile Include="Configuration\ExpressionHelper.cs" />
