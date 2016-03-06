@@ -11,16 +11,16 @@ namespace Hypermedia.JsonApi
 {
     public sealed class JsonApiSerializer
     {
-        readonly IContractResolver _resourceContractResolver;
+        readonly IContractResolver _contractResolver;
         readonly IJsonConverterFactory _jsonConverterFactory = new JsonConverterFactory();
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="resourceContractResolver">The resource contract resolver.</param>
-        public JsonApiSerializer(IContractResolver resourceContractResolver)
+        /// <param name="contractResolver">The resource contract resolver.</param>
+        public JsonApiSerializer(IContractResolver contractResolver)
         {
-            _resourceContractResolver = resourceContractResolver;
+            _contractResolver = contractResolver;
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace Hypermedia.JsonApi
         /// <returns>The JSON object that represents the serialized entity.</returns>
         public JsonObject SerializeMany(IEnumerable entities)
         {
-            var serializer = new Serializer(_jsonConverterFactory, _resourceContractResolver);
+            var serializer = new Serializer(_jsonConverterFactory, _contractResolver);
 
             var members = new List<JsonMember>
             {
@@ -86,7 +86,7 @@ namespace Hypermedia.JsonApi
                 throw new ArgumentNullException(nameof(entity));
             }
 
-            var serializer = new Serializer(_jsonConverterFactory, _resourceContractResolver);
+            var serializer = new Serializer(_jsonConverterFactory, _contractResolver);
 
             var members = new List<JsonMember>
             {
@@ -111,7 +111,7 @@ namespace Hypermedia.JsonApi
         /// <returns>The list of items that was deserialized.</returns>
         public IEnumerable<object> DeserializeMany(JsonObject jsonObject)
         {
-            var deserializer = new Deserializer(jsonObject, _jsonConverterFactory, _resourceContractResolver);
+            var deserializer = new Deserializer(jsonObject, _jsonConverterFactory, _contractResolver);
 
             return deserializer.DeserializeMany();
         }
@@ -123,7 +123,7 @@ namespace Hypermedia.JsonApi
         /// <returns>The instance that was created.</returns>
         public object DeserializeEntity(JsonObject jsonObject)
         {
-            var deserializer = new Deserializer(jsonObject, _jsonConverterFactory, _resourceContractResolver);
+            var deserializer = new Deserializer(jsonObject, _jsonConverterFactory, _contractResolver);
 
             return deserializer.DeserializeEntity();
         }
@@ -146,18 +146,18 @@ namespace Hypermedia.JsonApi
         class Serializer
         {
             readonly IJsonConverterFactory _jsonConverterFactory;
-            readonly IContractResolver _resourceContractResolver;
+            readonly IContractResolver _contractResolver;
             readonly HashSet<JsonObject> _visited = new HashSet<JsonObject>(JsonApiEntityKeyEqualityComparer.Instance);
 
             /// <summary>
             /// Constructor.
             /// </summary>
             /// <param name="jsonConverterFactory">The JSON converter factory.</param>
-            /// <param name="resourceContractResolver">The resource contract resolver.</param>
-            internal Serializer(IJsonConverterFactory jsonConverterFactory, IContractResolver resourceContractResolver)
+            /// <param name="contractResolver">The resource contract resolver.</param>
+            internal Serializer(IJsonConverterFactory jsonConverterFactory, IContractResolver contractResolver)
             {
                 _jsonConverterFactory = jsonConverterFactory;
-                _resourceContractResolver = resourceContractResolver;
+                _contractResolver = contractResolver;
             }
 
             /// <summary>
@@ -170,7 +170,7 @@ namespace Hypermedia.JsonApi
                 foreach (var entity in entities)
                 {
                     IContract resourceContract;
-                    if (_resourceContractResolver.TryResolve(entity.GetType(), out resourceContract) == false)
+                    if (_contractResolver.TryResolve(entity.GetType(), out resourceContract) == false)
                     {
                         throw new JsonApiException("Can not serialize an unknown resource type '{0}'.", entity.GetType());
                     }
@@ -208,20 +208,20 @@ namespace Hypermedia.JsonApi
             /// <summary>
             /// Serialize an entity.
             /// </summary>
-            /// <param name="resourceContract">The resource contract.</param>
+            /// <param name="contract">The resource contract.</param>
             /// <param name="entity">The entity to serialize.</param>
             /// <returns>The JSON object that represents the serialized entity.</returns>
-            JsonObject SerializeEntity(IContract resourceContract, object entity)
+            JsonObject SerializeEntity(IContract contract, object entity)
             {
-                var members = new List<JsonMember>(SerializeResourceKey(resourceContract, entity));
+                var members = new List<JsonMember>(SerializeResourceKey(contract, entity));
 
-                var fields = SerializeFields(resourceContract, entity).Where(IsNotNull).ToList();
+                var fields = SerializeFields(contract, entity).Where(IsNotNull).ToList();
                 if (fields.Any())
                 {
                     members.Add(new JsonMember("attributes", new JsonObject(fields)));
                 }
 
-                var relationships = SerializeRelationships(resourceContract.Relationships, entity);
+                var relationships = SerializeRelationships(contract.Relationships, entity);
                 if (relationships.Any())
                 {
                     members.Add(new JsonMember("relationships", new JsonObject(relationships)));
@@ -233,12 +233,12 @@ namespace Hypermedia.JsonApi
             /// <summary>
             /// Serialize the list of fields.
             /// </summary>
-            /// <param name="resourceContract">The resource contract that defines the fields to serialize.</param>
+            /// <param name="contract">The resource contract that defines the fields to serialize.</param>
             /// <param name="entity">The instance to serialize the fields from.</param>
             /// <returns>The list of JSON values which represent the fields.</returns>
-            IReadOnlyList<JsonMember> SerializeFields(IContract resourceContract, object entity)
+            IReadOnlyList<JsonMember> SerializeFields(IContract contract, object entity)
             {
-                var fields = resourceContract.Fields.Where(f => ShouldSerializeField(resourceContract, f)).ToList();
+                var fields = contract.Fields.Where(f => ShouldSerializeField(contract, f)).ToList();
 
                 return SerializeFields(fields, entity);
             }
@@ -314,8 +314,8 @@ namespace Hypermedia.JsonApi
             /// <returns>The JSON value that represents the actual relationship data, or null if no data link can be created.</returns>
             JsonValue SerializeRelationshipData(IRelationship relationship, object entity)
             {
-                IContract resourceContract;
-                if (_resourceContractResolver.TryResolve(relationship.RelatedTo, out resourceContract) == false)
+                IContract contract;
+                if (_contractResolver.TryResolve(relationship.RelatedTo, out contract) == false)
                 {
                     throw new JsonApiException(
                         "Could not find the related type '{0}' for the relationship '{1}'.", relationship.RelatedTo, relationship.Name);
@@ -323,20 +323,20 @@ namespace Hypermedia.JsonApi
 
                 if (relationship.Type == RelationshipType.BelongsTo)
                 {
-                    return SerializeBelongsTo(relationship, resourceContract, entity);
+                    return SerializeBelongsTo(relationship, contract, entity);
                 }
 
-                return SerializeHasMany(relationship, resourceContract, entity);
+                return SerializeHasMany(relationship, contract, entity);
             }
 
             /// <summary>
             /// Serialize a BelongsTo relationship.
             /// </summary>
             /// <param name="relationship">The relationship to serialize.</param>
-            /// <param name="resourceContract">The resource contract of the related entity.</param>
+            /// <param name="contract">The contract of the related entity.</param>
             /// <param name="entity">The entity instance to serialize the relationship from.</param>
             /// <returns>The value that represents the data node for the relationship.</returns>
-            JsonValue SerializeBelongsTo(IRelationship relationship, IContract resourceContract, object entity)
+            JsonValue SerializeBelongsTo(IRelationship relationship, IContract contract, object entity)
             {
                 var value = relationship.GetValue(entity);
 
@@ -345,17 +345,17 @@ namespace Hypermedia.JsonApi
                     return null;
                 }
 
-                return new JsonObject(SerializeResourceKey(resourceContract, value));
+                return new JsonObject(SerializeResourceKey(contract, value));
             }
 
             /// <summary>
             /// Serialize a HasMany relationship.
             /// </summary>
             /// <param name="relationship">The relationship to serialize.</param>
-            /// <param name="resourceContract">The resource contract of the related entity.</param>
+            /// <param name="contract">The contract of the related entity.</param>
             /// <param name="entity">The entity instance to serialize the relationship from.</param>
             /// <returns>The value that represents the data node for the relationship.</returns>
-            JsonValue SerializeHasMany(IRelationship relationship, IContract resourceContract, object entity)
+            JsonValue SerializeHasMany(IRelationship relationship, IContract contract, object entity)
             {
                 var value = relationship.Field.GetValue(entity);
 
@@ -369,39 +369,39 @@ namespace Hypermedia.JsonApi
                     throw new JsonApiException("Can not serialize a HasMany relationship from type that doesnt support IEnumerable.");
                 }
 
-                return new JsonArray(SerializeHasMany(resourceContract, (IEnumerable)value).ToList());
+                return new JsonArray(SerializeHasMany(contract, (IEnumerable)value).ToList());
             }
 
             /// <summary>
             /// Serialize the collection to entities into a relationship data node.
             /// </summary>
-            /// <param name="resourceContract">The resource contract of the items in the collection.</param>
+            /// <param name="contract">The contract of the items in the collection.</param>
             /// <param name="collection">The collection of items to serialize.</param>
             /// <returns>The list of JSON object which represent the entity keys.</returns>
-            IEnumerable<JsonObject> SerializeHasMany(IContract resourceContract, IEnumerable collection)
+            IEnumerable<JsonObject> SerializeHasMany(IContract contract, IEnumerable collection)
             {
                 foreach (var item in collection)
                 {
-                    yield return new JsonObject(SerializeResourceKey(resourceContract, item));
+                    yield return new JsonObject(SerializeResourceKey(contract, item));
                 }
             }
 
             /// <summary>
             /// Serialize an resource key.
             /// </summary>
-            /// <param name="resourceContract">The resource contract.</param>
+            /// <param name="contract">The contract to serialize the key for.</param>
             /// <param name="value">The value to serialize the key for.</param>
             /// <returns>The JSON object that represents the entity key.</returns>
-            IReadOnlyList<JsonMember> SerializeResourceKey(IContract resourceContract, object value)
+            IReadOnlyList<JsonMember> SerializeResourceKey(IContract contract, object value)
             {
                 var members = new List<JsonMember>
                 {
-                    new JsonMember("type", new JsonString(resourceContract.Name))
+                    new JsonMember("type", new JsonString(contract.Name))
                 };
 
                 if (value != null && TypeHelper.IsReferenceType(value.GetType()))
                 {
-                    var field = resourceContract.Fields(FieldOptions.Id).SingleOrDefault();
+                    var field = contract.Fields(FieldOptions.Id).SingleOrDefault();
 
                     if (field == null)
                     {
@@ -430,13 +430,13 @@ namespace Hypermedia.JsonApi
 
                 foreach (var entity in entities)
                 {
-                    IContract resourceContract;
-                    if (_resourceContractResolver.TryResolve(entity.GetType(), out resourceContract) == false)
+                    IContract contract;
+                    if (_contractResolver.TryResolve(entity.GetType(), out contract) == false)
                     {
                         throw new JsonApiException("Could not find the entity type for the CLR type of '{0}'.", entity.GetType());
                     }
 
-                    included.AddRange(SerializeIncluded(resourceContract.Relationships, entity));
+                    included.AddRange(SerializeIncluded(contract.Relationships, entity));
                 }
 
                 return included;
@@ -445,16 +445,16 @@ namespace Hypermedia.JsonApi
             /// <summary>
             /// Serialize the list of included entities starting from the top level.
             /// </summary>
-            /// <param name="resourceContract">The resource contract for the entities in the collection.</param>
+            /// <param name="contract">The contract for the entities in the collection.</param>
             /// <param name="collection">The collection of entities to serialize the included items from.</param>
             /// <returns>The list of JSON objects that represent the included fields.</returns>
-            IEnumerable<JsonObject> SerializeIncluded(IContract resourceContract, IEnumerable collection)
+            IEnumerable<JsonObject> SerializeIncluded(IContract contract, IEnumerable collection)
             {
                 var included = new List<JsonObject>();
 
                 foreach (var entity in collection)
                 {
-                    included.AddRange(SerializeIncluded(resourceContract, entity));
+                    included.AddRange(SerializeIncluded(contract, entity));
                 }
 
                 return included;
@@ -463,12 +463,12 @@ namespace Hypermedia.JsonApi
             /// <summary>
             /// Serialize the entity as an included type.
             /// </summary>
-            /// <param name="resourceContract">The resource contract.</param>
+            /// <param name="contract">The resource contract.</param>
             /// <param name="entity">The entity to serialize as an included type.</param>
             /// <returns>The list of types to included for the entity.</returns>
-            IEnumerable<JsonObject> SerializeIncluded(IContract resourceContract, object entity)
+            IEnumerable<JsonObject> SerializeIncluded(IContract contract, object entity)
             {
-                var jsonObject = SerializeEntity(resourceContract, entity);
+                var jsonObject = SerializeEntity(contract, entity);
 
                 if (HasVisited(jsonObject))
                 {
@@ -477,7 +477,7 @@ namespace Hypermedia.JsonApi
 
                 Visit(jsonObject);
 
-                return new[] { jsonObject }.Union(SerializeIncluded(resourceContract.Relationships, entity));
+                return new[] { jsonObject }.Union(SerializeIncluded(contract.Relationships, entity));
             }
 
             /// <summary>
@@ -506,8 +506,8 @@ namespace Hypermedia.JsonApi
             /// <returns>The list of types to include for the entity.</returns>
             IEnumerable<JsonObject> SerializeIncluded(IRelationship relationship, object entity)
             {
-                IContract resourceContract;
-                if (_resourceContractResolver.TryResolve(relationship.RelatedTo, out resourceContract) == false)
+                IContract contract;
+                if (_contractResolver.TryResolve(relationship.RelatedTo, out contract) == false)
                 {
                     throw new JsonApiException(
                         "Could not find the related type '{0}' for the relationship '{1}'.", relationship.RelatedTo, relationship.Name);
@@ -515,20 +515,20 @@ namespace Hypermedia.JsonApi
 
                 if (relationship.Type == RelationshipType.HasMany)
                 {
-                    return SerializeIncludedHasMany(relationship, resourceContract, entity);
+                    return SerializeIncludedHasMany(relationship, contract, entity);
                 }
 
-                return SerializeIncludedBelongsTo(relationship, resourceContract, entity);
+                return SerializeIncludedBelongsTo(relationship, contract, entity);
             }
 
             /// <summary>
             /// Serialize the list of included items from the HasMany relationship.
             /// </summary>
             /// <param name="relationship">The relationship that defines the related items.</param>
-            /// <param name="resourceContract">The resource contract of the related items.</param>
+            /// <param name="contract">The contract of the related items.</param>
             /// <param name="entity">The entity to serialize the included items from.</param>
             /// <returns>The list of types to include for the entity.</returns>
-            IEnumerable<JsonObject> SerializeIncludedHasMany(IRelationship relationship, IContract resourceContract, object entity)
+            IEnumerable<JsonObject> SerializeIncludedHasMany(IRelationship relationship, IContract contract, object entity)
             {
                 var collection = relationship.Field.GetValue(entity);
 
@@ -542,17 +542,17 @@ namespace Hypermedia.JsonApi
                     throw new JsonApiException("Can not serialize a HasMany relationship from type that doesnt support IEnumerable.");
                 }
 
-                return SerializeIncluded(resourceContract, (IEnumerable)collection);
+                return SerializeIncluded(contract, (IEnumerable)collection);
             }
 
             /// <summary>
             /// Serialize the list of included items from the BelongsTo relationship.
             /// </summary>
             /// <param name="relationship">The relationship that defines the related items.</param>
-            /// <param name="resourceContract">The resource contract of the related items.</param>
+            /// <param name="contract">The contract of the related items.</param>
             /// <param name="entity">The entity to serialize the included items from.</param>
             /// <returns>The list of types to include for the entity.</returns>
-            IEnumerable<JsonObject> SerializeIncludedBelongsTo(IRelationship relationship, IContract resourceContract, object entity)
+            IEnumerable<JsonObject> SerializeIncludedBelongsTo(IRelationship relationship, IContract contract, object entity)
             {
                 var value = relationship.Field.GetValue(entity);
 
@@ -561,7 +561,7 @@ namespace Hypermedia.JsonApi
                     return new JsonObject[0];
                 }
 
-                return SerializeIncluded(resourceContract, value);
+                return SerializeIncluded(contract, value);
             }
 
             /// <summary>
@@ -609,14 +609,14 @@ namespace Hypermedia.JsonApi
             /// <summary>
             /// Returns a value indicating whether or not the given field should be included when serializing.
             /// </summary>
-            /// <param name="resourceContract">The resource contract that the field belongs to.</param>
+            /// <param name="contract">The contract that the field belongs to.</param>
             /// <param name="field">The field to determine whether or not it should be included.</param>
             /// <returns>true if the field should be included, false if not.</returns>
-            static bool ShouldSerializeField(IContract resourceContract, IField field)
+            static bool ShouldSerializeField(IContract contract, IField field)
             {
                 // if the field has been linked to a relationship or the field is the actual relationship field itself 
                 // then we dont serialize these as normal fields as they will be output in the relationships node
-                if (resourceContract.Relationships.Any(relationship => relationship.Field == field || relationship.ViaField == field))
+                if (contract.Relationships.Any(relationship => relationship.Field == field || relationship.ViaField == field))
                 {
                     return false;
                 }
@@ -653,7 +653,7 @@ namespace Hypermedia.JsonApi
         {
             readonly JsonObject _rootObject;
             readonly IJsonConverterFactory _jsonConverterFactory;
-            readonly IContractResolver _resourceContractResolver;
+            readonly IContractResolver _contractResolver;
             readonly IDictionary<JsonObject, object> _instanceCache = new Dictionary<JsonObject, object>(JsonApiEntityKeyEqualityComparer.Instance);
 
             /// <summary>
@@ -661,15 +661,12 @@ namespace Hypermedia.JsonApi
             /// </summary>
             /// <param name="rootObject">The root JSON object that contains both the 'data' and the 'include' nodes.</param>
             /// <param name="jsonConverterFactory">The JSON converter factory.</param>
-            /// <param name="resourceContractResolver">The resource contract resolver.</param>
-            internal Deserializer(
-                JsonObject rootObject,
-                IJsonConverterFactory jsonConverterFactory, 
-                IContractResolver resourceContractResolver)
+            /// <param name="contractResolver">The resource contract resolver.</param>
+            internal Deserializer(JsonObject rootObject, IJsonConverterFactory jsonConverterFactory, IContractResolver contractResolver)
             {
                 _rootObject = rootObject;
                 _jsonConverterFactory = jsonConverterFactory;
-                _resourceContractResolver = resourceContractResolver;
+                _contractResolver = contractResolver;
             }
 
             /// <summary>
@@ -720,13 +717,13 @@ namespace Hypermedia.JsonApi
 
                 var typeAttribute = jsonObject["type"];
 
-                IContract resourceContract;
-                if (_resourceContractResolver.TryResolve(((JsonString)typeAttribute).Value, out resourceContract) == false)
+                IContract contract;
+                if (_contractResolver.TryResolve(((JsonString)typeAttribute).Value, out contract) == false)
                 {
                     throw new JsonApiException("Could not find a type for '{0}'.", ((JsonString)typeAttribute).Value);
                 }
 
-                return DeserializeEntity(resourceContract, jsonObject);
+                return DeserializeEntity(contract, jsonObject);
             }
 
             /// <summary>
@@ -794,20 +791,20 @@ namespace Hypermedia.JsonApi
 
                 return ReferenceEquals(entity, null) == false;
             }
-            
+
             /// <summary>
             /// Deserialize an object.
             /// </summary>
-            /// <param name="resourceContract">The resource contract of the object to deserialize.</param>
+            /// <param name="contract">The contract of the object to deserialize.</param>
             /// <param name="jsonObject">The JSON object that represents the object to deserialize.</param>
             /// <returns>The instance that was deserialized.</returns>
-            object DeserializeEntity(IContract resourceContract, JsonObject jsonObject)
+            object DeserializeEntity(IContract contract, JsonObject jsonObject)
             {
-                var entity = resourceContract.CreateInstance();
+                var entity = contract.CreateInstance();
 
                 _instanceCache.Add(jsonObject, entity);
 
-                DeserializeEntity(resourceContract, jsonObject, entity);
+                DeserializeEntity(contract, jsonObject, entity);
 
                 return entity;
             }
@@ -815,16 +812,16 @@ namespace Hypermedia.JsonApi
             /// <summary>
             /// Deserialize an object.
             /// </summary>
-            /// <param name="resourceContract">The resource contract type of the object to deserialize.</param>
+            /// <param name="contract">The contract type of the object to deserialize.</param>
             /// <param name="jsonObject">The JSON object that represents the object to deserialize.</param>
             /// <param name="entity">The entity instance to deserialize the fields into.</param>
-            internal void DeserializeEntity(IContract resourceContract, JsonObject jsonObject, object entity)
+            internal void DeserializeEntity(IContract contract, JsonObject jsonObject, object entity)
             {
                 var attribute = jsonObject["id"];
 
                 if (attribute != null)
                 {
-                    var field = resourceContract.Fields(FieldOptions.Id).SingleOrDefault();
+                    var field = contract.Fields(FieldOptions.Id).SingleOrDefault();
                     if (field != null && field.Is(FieldOptions.CanDeserialize))
                     {
                         DeserializeField(field, attribute, entity);
@@ -834,13 +831,13 @@ namespace Hypermedia.JsonApi
                 var attributes = jsonObject["attributes"] as JsonObject;
                 if (attributes != null)
                 {
-                    DeserializeFields(resourceContract.Fields(f => ShouldDeserializeField(resourceContract, f)).ToList(), attributes.Members, entity);
+                    DeserializeFields(contract.Fields(f => ShouldDeserializeField(contract, f)).ToList(), attributes.Members, entity);
                 }
 
                 var relationships = jsonObject["relationships"] as JsonObject;
                 if (relationships != null)
                 {
-                    DeserializeRelationships(resourceContract.Relationships, relationships.Members, entity);
+                    DeserializeRelationships(contract.Relationships, relationships.Members, entity);
                 }
             }
 
@@ -1089,12 +1086,12 @@ namespace Hypermedia.JsonApi
             /// <summary>
             /// Returns a value indicating whether or not the given field should be included when deserializing.
             /// </summary>
-            /// <param name="resourceContract">The resource contract that the field belongs to.</param>
+            /// <param name="contract">The contract that the field belongs to.</param>
             /// <param name="field">The field to determine whether or not it should be included.</param>
             /// <returns>true if the field should be included, false if not.</returns>
-            static bool ShouldDeserializeField(IContract resourceContract, IField field)
+            static bool ShouldDeserializeField(IContract contract, IField field)
             {
-                if (resourceContract.Relationships.Any(relationship => relationship.Field == field))
+                if (contract.Relationships.Any(relationship => relationship.Field == field))
                 {
                     return false;
                 }

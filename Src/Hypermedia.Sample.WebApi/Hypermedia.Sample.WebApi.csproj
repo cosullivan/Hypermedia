@@ -129,6 +129,7 @@
     <Compile Include="Controllers\GetPostsController.cs" />
     <Compile Include="Controllers\GetUserByIdController.cs" />
     <Compile Include="Controllers\GetUsersController.cs" />
+    <Compile Include="Services\ExceptionLogger.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

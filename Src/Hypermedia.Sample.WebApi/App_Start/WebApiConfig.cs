@@ -1,10 +1,14 @@
-﻿using System.Web.Http;
+﻿using System;
+using System.Web.Http;
 using System.Web.Http.Cors;
+using System.Web.Http.ExceptionHandling;
 using Autofac.Integration.WebApi;
 using Hypermedia.Configuration;
 using Hypermedia.JsonApi.WebApi;
 using Hypermedia.Metadata;
 using Hypermedia.Sample.Resources;
+using Hypermedia.Sample.WebApi.Resources;
+using ExceptionLogger = Hypermedia.Sample.WebApi.Services.ExceptionLogger;
 
 namespace Hypermedia.Sample.WebApi
 {
@@ -20,6 +24,8 @@ namespace Hypermedia.Sample.WebApi
             config.DependencyResolver = new AutofacWebApiDependencyResolver(ContainerFactory.CreateContainer());
 
             config.EnableCors(new EnableCorsAttribute("*", "*", "*"));
+
+            config.Services.Add(typeof(IExceptionLogger), new ExceptionLogger());
 
             ConfigureFormatters(config);
         }
@@ -45,12 +51,12 @@ namespace Hypermedia.Sample.WebApi
             return new Builder()
                 .With<UserResource>("users")
                     .Id(nameof(UserResource.Id))
-                    //.Field("DaysSinceCreation")
-                    //    .Using(resource => DateTime.Now.Subtract(resource.CreationDate).TotalDays)
+                    .Calculated("DaysSinceCreation", Resource.CalculateDaysSinceCreation)
                     .HasMany<PostResource>("posts")
                         .Template("/v1/users/{id}/posts", "id", resource => resource.Id)
                 .With<PostResource>("posts")
                     .Id(nameof(PostResource.Id))
+                    .Calculated("DaysSinceCreation", Resource.CalculateDaysSinceCreation)
                     .BelongsTo<UserResource>(nameof(PostResource.OwnerUser))
                         .Via(nameof(PostResource.OwnerUserId))
                         .Template("/v1/users/{id}", "id", resource => resource.OwnerUserId)
@@ -58,6 +64,7 @@ namespace Hypermedia.Sample.WebApi
                         .Template("/v1/posts/{id}/comments", "id", resource => resource.Id)
                 .With<CommentResource>("comments")
                     .Id(nameof(CommentResource.Id))
+                    .Calculated("DaysSinceCreation", Resource.CalculateDaysSinceCreation)
                     .BelongsTo<UserResource>(nameof(CommentResource.User))
                         .Via(nameof(CommentResource.UserId))
                         .Template("/v1/users/{id}", "id", resource => resource.UserId)

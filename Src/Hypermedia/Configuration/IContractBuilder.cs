@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using Hypermedia.Metadata;
 
 namespace Hypermedia.Configuration
@@ -104,6 +105,28 @@ namespace Hypermedia.Configuration
             }
 
             return builder.Field(name).WriteOnly();
+        }
+
+        /// <summary>
+        /// Creates a caclulated field.
+        /// </summary>
+        /// <typeparam name="TEntity">The entity type.</typeparam>
+        /// <typeparam name="TValue">The value type.</typeparam>
+        /// <param name="builder">The builder to perform the operation on.</param>
+        /// <param name="name">The name of the field to create as a calculated field.</param>
+        /// <param name="expression">The expression to return the calculation.</param>
+        /// <returns>The calculated field builder to continue building on.</returns>
+        public static CalculatedFieldBuilder<TEntity, TValue> Calculated<TEntity, TValue>(
+            this IContractBuilder<TEntity> builder, 
+            string name, 
+            Func<TEntity, TValue> expression)
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            return builder.Field(name).Calculated(expression);
         }
     }
 }

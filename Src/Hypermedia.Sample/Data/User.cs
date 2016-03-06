@@ -28,10 +28,5 @@ namespace Hypermedia.Sample.Data
         /// The URL of the users profile image.
         /// </summary>
         public string ProfileImageUrl { get; set; }
-
-        /// <summary>
-        /// The date that the user was first created.
-        /// </summary>
-        public DateTimeOffset CreationDate { get; set; }
     }
 }

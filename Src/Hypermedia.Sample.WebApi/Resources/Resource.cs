@@ -19,6 +19,16 @@ namespace Hypermedia.Sample.WebApi.Resources
         }
 
         /// <summary>
+        /// Calculate the total number of days since creation.
+        /// </summary>
+        /// <param name="entity">The entity to calculate the days since creation for.</param>
+        /// <returns>The number of days since the entity was created.</returns>
+        public static int CalculateDaysSinceCreation(Entity entity)
+        {
+            return (int)DateTimeOffset.Now.Subtract(entity.CreationDate).TotalDays;
+        }
+
+        /// <summary>
         /// Initialize the mappings.
         /// </summary>
         /// <param name="configuration">The configuration to use for initializing the mappings.</param>

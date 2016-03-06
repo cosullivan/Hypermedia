@@ -18,12 +18,7 @@ namespace Hypermedia.Sample.Data
         /// Gets or sets the score for the comment.
         /// </summary>
         public int Score { get; set; }
-
-        /// <summary>
-        /// Gets or sets the time that the comment was created.
-        /// </summary>
-        public DateTimeOffset CreationDate { get; set; }
-
+        
         /// <summary>
         /// Gets or sets the text for the comment.
         /// </summary>

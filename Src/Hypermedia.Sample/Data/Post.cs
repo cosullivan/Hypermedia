@@ -48,10 +48,5 @@ namespace Hypermedia.Sample.Data
         /// The ID of the user that owns/created the post.
         /// </summary>
         public int OwnerUserId { get; set; }
-
-        /// <summary>
-        /// The date that the post was first created.
-        /// </summary>
-        public DateTimeOffset CreationDate { get; set; }
     }
 }
