@@ -14,14 +14,14 @@ namespace Hypermedia.JsonApi.Client
         /// </summary>
         /// <param name="entity">The entity to serialize.</param>
         /// <param name="resourceContractResolver">The resource contract resolver.</param>
-        public JsonApiContent(TEntity entity, IResourceContractResolver resourceContractResolver) : base(SerializeEntity(entity, resourceContractResolver), Encoding.UTF8, MediaTypeName) { }
+        public JsonApiContent(TEntity entity, IContractResolver resourceContractResolver) : base(SerializeEntity(entity, resourceContractResolver), Encoding.UTF8, MediaTypeName) { }
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="entity">The entity to serialize.</param>
         /// <param name="resourceContractResolver">The resource contract resolver.</param>
-        public JsonApiContent(IEnumerable<TEntity> entity, IResourceContractResolver resourceContractResolver) : base(SerializeMany(entity, resourceContractResolver), Encoding.UTF8, MediaTypeName) { }
+        public JsonApiContent(IEnumerable<TEntity> entity, IContractResolver resourceContractResolver) : base(SerializeMany(entity, resourceContractResolver), Encoding.UTF8, MediaTypeName) { }
 
         /// <summary>
         /// Serialize the entity to a content string.
@@ -29,7 +29,7 @@ namespace Hypermedia.JsonApi.Client
         /// <param name="entity">The entity to serialize.</param>
         /// <param name="resourceContractResolver">The resource contract resolver.</param>
         /// <returns>The string that represents the serialized version of the entity.</returns>
-        static string SerializeEntity(TEntity entity, IResourceContractResolver resourceContractResolver)
+        static string SerializeEntity(TEntity entity, IContractResolver resourceContractResolver)
         {
             var serializer = new JsonApiSerializer(resourceContractResolver);
 
@@ -42,7 +42,7 @@ namespace Hypermedia.JsonApi.Client
         /// <param name="entities">The entities to serialize.</param>
         /// <param name="resourceContractResolver">The resource contract resolver.</param>
         /// <returns>The string that represents the serialized version of the entity.</returns>
-        static string SerializeMany(IEnumerable<TEntity> entities, IResourceContractResolver resourceContractResolver)
+        static string SerializeMany(IEnumerable<TEntity> entities, IContractResolver resourceContractResolver)
         {
             var serializer = new JsonApiSerializer(resourceContractResolver);
 

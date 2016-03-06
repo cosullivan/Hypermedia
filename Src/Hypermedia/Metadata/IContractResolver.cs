@@ -2,7 +2,7 @@
 
 namespace Hypermedia.Metadata
 {
-    public interface IResourceContractResolver
+    public interface IContractResolver
     {
         /// <summary>
         /// Attempt to resolve the resource contract from a CLR type.
@@ -21,15 +21,15 @@ namespace Hypermedia.Metadata
         bool TryResolve(string name, out IResourceContract contract);
     }
 
-    public static class ResourceContractResolverExtensions
+    public static class ContractResolverExtensions
     {
         /// <summary>
         /// Returns a value indicating whether or not the given type can be resolved.
         /// </summary>
-        /// <param name="resolver">The resource contract resolver to perform the operation on.</param>
+        /// <param name="resolver">The contract resolver to perform the operation on.</param>
         /// <param name="type">The CLR type to test whether it can be resolved.</param>
         /// <returns>true if the given CLR type can be resolved, false if not.</returns>
-        public static bool CanResolve(this IResourceContractResolver resolver, Type type)
+        public static bool CanResolve(this IContractResolver resolver, Type type)
         {
             if (resolver == null)
             {

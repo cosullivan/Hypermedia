@@ -11,14 +11,14 @@ namespace Hypermedia.JsonApi
 {
     public sealed class JsonApiSerializer
     {
-        readonly IResourceContractResolver _resourceContractResolver;
+        readonly IContractResolver _resourceContractResolver;
         readonly IJsonConverterFactory _jsonConverterFactory = new JsonConverterFactory();
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="resourceContractResolver">The resource contract resolver.</param>
-        public JsonApiSerializer(IResourceContractResolver resourceContractResolver)
+        public JsonApiSerializer(IContractResolver resourceContractResolver)
         {
             _resourceContractResolver = resourceContractResolver;
         }
@@ -136,7 +136,7 @@ namespace Hypermedia.JsonApi
         /// <param name="entity">The entity instance to deserialize the fields into.</param>
         internal void DeserializeEntity(IResourceContract type, JsonObject jsonObject, object entity)
         {
-            var deserializer = new Deserializer(jsonObject, _jsonConverterFactory, new ResourceContractResolver(type));
+            var deserializer = new Deserializer(jsonObject, _jsonConverterFactory, new ContractResolver(type));
             
             deserializer.DeserializeEntity(type, jsonObject, entity);
         }
@@ -146,7 +146,7 @@ namespace Hypermedia.JsonApi
         class Serializer
         {
             readonly IJsonConverterFactory _jsonConverterFactory;
-            readonly IResourceContractResolver _resourceContractResolver;
+            readonly IContractResolver _resourceContractResolver;
             readonly HashSet<JsonObject> _visited = new HashSet<JsonObject>(JsonApiEntityKeyEqualityComparer.Instance);
 
             /// <summary>
@@ -154,7 +154,7 @@ namespace Hypermedia.JsonApi
             /// </summary>
             /// <param name="jsonConverterFactory">The JSON converter factory.</param>
             /// <param name="resourceContractResolver">The resource contract resolver.</param>
-            internal Serializer(IJsonConverterFactory jsonConverterFactory, IResourceContractResolver resourceContractResolver)
+            internal Serializer(IJsonConverterFactory jsonConverterFactory, IContractResolver resourceContractResolver)
             {
                 _jsonConverterFactory = jsonConverterFactory;
                 _resourceContractResolver = resourceContractResolver;
@@ -653,7 +653,7 @@ namespace Hypermedia.JsonApi
         {
             readonly JsonObject _rootObject;
             readonly IJsonConverterFactory _jsonConverterFactory;
-            readonly IResourceContractResolver _resourceContractResolver;
+            readonly IContractResolver _resourceContractResolver;
             readonly IDictionary<JsonObject, object> _instanceCache = new Dictionary<JsonObject, object>(JsonApiEntityKeyEqualityComparer.Instance);
 
             /// <summary>
@@ -665,7 +665,7 @@ namespace Hypermedia.JsonApi
             internal Deserializer(
                 JsonObject rootObject,
                 IJsonConverterFactory jsonConverterFactory, 
-                IResourceContractResolver resourceContractResolver)
+                IContractResolver resourceContractResolver)
             {
                 _rootObject = rootObject;
                 _jsonConverterFactory = jsonConverterFactory;

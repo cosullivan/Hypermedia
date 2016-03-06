@@ -14,12 +14,12 @@ namespace Hypermedia.WebApi
         /// <param name="entity">The entity to apply the patch to.</param>
         /// <param name="resourceContractResolver">The resource contract resolver to use.</param>
         /// <returns>true if the entity could be patched, false if not.</returns>
-        bool TryPatch(T entity, IResourceContractResolver resourceContractResolver);
+        bool TryPatch(T entity, IContractResolver resourceContractResolver);
 
         /// <summary>
         /// Gets the default resource contract resolver that is to be used for the patching.
         /// </summary>
-        IResourceContractResolver ContractResolver { get; }
+        IContractResolver ContractResolver { get; }
     }
 
     public static class PatchExtensions
@@ -74,7 +74,7 @@ namespace Hypermedia.WebApi
 
             return patch.TryPatch(
                 entity, 
-                new ResourceContractResolver(
+                new ContractResolver(
                     new RuntimeContract(resourceContract.Name, resourceContract.ClrType, fields, resourceContract.Relationships)));
         }
 
@@ -99,7 +99,7 @@ namespace Hypermedia.WebApi
 
             return patch.TryPatch(
                 entity,
-                new ResourceContractResolver(
+                new ContractResolver(
                     new RuntimeContract(resourceContract.Name, resourceContract.ClrType, fields, resourceContract.Relationships)));
         }
     }

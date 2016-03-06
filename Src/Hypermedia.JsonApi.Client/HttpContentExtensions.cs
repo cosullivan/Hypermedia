@@ -35,7 +35,7 @@ namespace Hypermedia.JsonApi.Client
         /// <returns>The JSONAPI response element that was read from the stream in the HTTP content.</returns>
         public static Task<TEntity> ReadAsJsonApiAsync<TEntity>(this HttpContent httpContent)
         {
-            var resourceContractResolver = new ResourceContractResolver(RuntimeResourceContract<TEntity>.CreateRuntimeType());
+            var resourceContractResolver = new ContractResolver(RuntimeContract<TEntity>.CreateRuntimeType());
 
             return httpContent.ReadAsJsonApiAsync<TEntity>(resourceContractResolver);
         }
@@ -46,7 +46,7 @@ namespace Hypermedia.JsonApi.Client
         /// <param name="httpContent">The HTTP content to read the JSONAPI response from.</param>
         /// <param name="resourceContractResolver">The resource contract resolver use to resolve types during deserialization.</param>
         /// <returns>The JSONAPI response element that was read from the stream in the HTTP content.</returns>
-        public static async Task<TEntity> ReadAsJsonApiAsync<TEntity>(this HttpContent httpContent, IResourceContractResolver resourceContractResolver)
+        public static async Task<TEntity> ReadAsJsonApiAsync<TEntity>(this HttpContent httpContent, IContractResolver resourceContractResolver)
         {
             if (httpContent == null)
             {
@@ -65,7 +65,7 @@ namespace Hypermedia.JsonApi.Client
         /// <returns>The JSONAPI response element that was read from the stream in the HTTP content.</returns>
         public static Task<List<TEntity>> ReadAsJsonApiManyAsync<TEntity>(this HttpContent httpContent)
         {
-            var resourceContractResolver = new ResourceContractResolver(RuntimeResourceContract<TEntity>.CreateRuntimeType());
+            var resourceContractResolver = new ContractResolver(RuntimeContract<TEntity>.CreateRuntimeType());
 
             return httpContent.ReadAsJsonApiManyAsync<TEntity>(resourceContractResolver);
         }
@@ -76,7 +76,7 @@ namespace Hypermedia.JsonApi.Client
         /// <param name="httpContent">The HTTP content to read the JSONAPI response from.</param>
         /// <param name="resourceContractResolver">The resource contract resolver use to resolve types during deserialization.</param>
         /// <returns>The JSONAPI response element that was read from the stream in the HTTP content.</returns>
-        public static async Task<List<TEntity>> ReadAsJsonApiManyAsync<TEntity>(this HttpContent httpContent, IResourceContractResolver resourceContractResolver)
+        public static async Task<List<TEntity>> ReadAsJsonApiManyAsync<TEntity>(this HttpContent httpContent, IContractResolver resourceContractResolver)
         {
             if (httpContent == null)
             {

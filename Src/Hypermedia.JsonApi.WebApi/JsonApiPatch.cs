@@ -6,7 +6,7 @@ namespace Hypermedia.JsonApi.WebApi
 {
     public sealed class JsonApiPatch<T> : IPatch<T>
     {
-        readonly IResourceContractResolver _contractResolver;
+        readonly IContractResolver _contractResolver;
         readonly JsonObject _jsonValue;
 
         /// <summary>
@@ -14,7 +14,7 @@ namespace Hypermedia.JsonApi.WebApi
         /// </summary>
         /// <param name="contractResolver">The resource contractor resolver.</param>
         /// <param name="jsonValue">The root document node.</param>
-        public JsonApiPatch(IResourceContractResolver contractResolver, JsonObject jsonValue)
+        public JsonApiPatch(IContractResolver contractResolver, JsonObject jsonValue)
         {
             _contractResolver = contractResolver;
             _jsonValue = jsonValue;
@@ -26,7 +26,7 @@ namespace Hypermedia.JsonApi.WebApi
         /// <param name="entity">The entity to apply the patch to.</param>
         /// <param name="resourceContractResolver">The resource contract resolver to use.</param>
         /// <returns>true if the entity could be patched, false if not.</returns>
-        public bool TryPatch(T entity, IResourceContractResolver resourceContractResolver)
+        public bool TryPatch(T entity, IContractResolver resourceContractResolver)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace Hypermedia.JsonApi.WebApi
         /// <summary>
         /// Gets the resource contract resolver that is to be used for the patching.
         /// </summary>
-        public IResourceContractResolver ContractResolver
+        public IContractResolver ContractResolver
         {
             get { return _contractResolver; }
         }

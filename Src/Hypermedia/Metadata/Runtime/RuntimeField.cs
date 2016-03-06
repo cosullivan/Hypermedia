@@ -8,26 +8,37 @@ namespace Hypermedia.Metadata.Runtime
     internal class RuntimeField : IField
     {
         readonly string _name;
+        readonly Type _clrType;
+        readonly IFieldAccessor _accessor;
         readonly FieldOptions _options;
-        readonly PropertyInfo _memberInfo;
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="propertyInfo">The property info that the property is mapped to.</param>
-        internal RuntimeField(PropertyInfo propertyInfo) : this(propertyInfo.Name, propertyInfo, CreateDefaultOptions(propertyInfo)) { }
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="name">The name of the field.</param>
-        /// <param name="memberInfo">The member info that the property is mapped to.</param>
+        /// <param name="clrType">The CLR type for the field.</param>
+        /// <param name="accessor">The field accessor.</param>
         /// <param name="options">The field options.</param>
-        internal RuntimeField(string name, PropertyInfo memberInfo, FieldOptions options)
+        internal RuntimeField(string name, Type clrType, IFieldAccessor accessor, FieldOptions options)
         {
             _name = name;
+            _clrType = clrType;
+            _accessor = accessor;
             _options = options;
-            _memberInfo = memberInfo;
+        }
+
+        /// <summary>
+        /// Creates a runtime field from a property info.
+        /// </summary>
+        /// <param name="propertyInfo">The property info to create the runtime field for.</param>
+        /// <returns>The runtime field that wraps the given property info.</returns>
+        internal static RuntimeField CreateRuntimeField(PropertyInfo propertyInfo)
+        {
+            return new RuntimeField(
+                propertyInfo.Name, 
+                propertyInfo.PropertyType, 
+                new RuntimeFieldAccessor(propertyInfo), 
+                CreateDefaultOptions(propertyInfo));
         }
 
         /// <summary>
@@ -35,7 +46,7 @@ namespace Hypermedia.Metadata.Runtime
         /// </summary>
         /// <param name="propertyInfo">The property info to create the default options for.</param>
         /// <returns>The field options for the given property info.</returns>
-        static FieldOptions CreateDefaultOptions(PropertyInfo propertyInfo)
+        internal static FieldOptions CreateDefaultOptions(PropertyInfo propertyInfo)
         {
             var options = FieldOptions.None;
 
@@ -45,36 +56,6 @@ namespace Hypermedia.Metadata.Runtime
             }
 
             return options;
-        }
-
-        /// <summary>
-        /// Gets the actual value of the field.
-        /// </summary>
-        /// <param name="instance">The instance to return the value from.</param>
-        /// <returns>The value of the field from the instance.</returns>
-        public object GetValue(object instance)
-        {
-            if (_memberInfo.CanRead == false)
-            {
-                return null;
-            }
-
-            return _memberInfo.GetValue(instance);
-        }
-
-        /// <summary>
-        /// Sets the value for the field.
-        /// </summary>
-        /// <param name="instance">The instance to set the value on.</param>
-        /// <param name="value">The value to set for the field.</param>
-        public void SetValue(object instance, object value)
-        {
-            if (_memberInfo.CanWrite == false)
-            {
-                return;
-            }
-
-            _memberInfo.SetValue(instance, value);
         }
 
         /// <summary>
@@ -90,7 +71,15 @@ namespace Hypermedia.Metadata.Runtime
         /// </summary>
         public Type ClrType
         {
-            get { return _memberInfo.PropertyType; }
+            get { return _clrType; }
+        }
+
+        /// <summary>
+        /// Gets the field accessor.
+        /// </summary>
+        public IFieldAccessor Accessor
+        {
+            get { return _accessor; }
         }
 
         /// <summary>
@@ -107,16 +96,24 @@ namespace Hypermedia.Metadata.Runtime
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="propertyInfo">The property info that the property is mapped to.</param>
-        internal RuntimeField(PropertyInfo propertyInfo) : base(propertyInfo) { }
+        /// <param name="name">The name of the field.</param>
+        /// <param name="clrType">The CLR type for the field.</param>
+        /// <param name="accessor">The field accessor.</param>
+        /// <param name="options">The field options.</param>
+        internal RuntimeField(string name, Type clrType, IFieldAccessor accessor, FieldOptions options) : base(name, clrType, accessor, options) { }
 
         /// <summary>
-        /// Constructor.
+        /// Creates a runtime field from a property info.
         /// </summary>
-        /// <param name="name">The name of the field.</param>
-        /// <param name="propertyOrField">The name of the property (or field) that the field is mapped to.</param>
-        /// <param name="options">The field options.</param>
-        internal RuntimeField(string name, string propertyOrField, FieldOptions options) : 
-            base(name, typeof(T).GetRuntimeProperty(propertyOrField), options) { }
+        /// <param name="propertyInfo">The property info to create the runtime field for.</param>
+        /// <returns>The runtime field that wraps the given property info.</returns>
+        internal new static RuntimeField<T> CreateRuntimeField(PropertyInfo propertyInfo)
+        {
+            return new RuntimeField<T>(
+                propertyInfo.Name,
+                propertyInfo.PropertyType,
+                new RuntimeFieldAccessor(propertyInfo),
+                CreateDefaultOptions(propertyInfo));
+        }
     }
 }

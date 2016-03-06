@@ -34,7 +34,7 @@ namespace Hypermedia.Configuration
         /// Build a resource contract resolver with the known types.
         /// </summary>
         /// <returns>The resource contract resolver that is aware of the types that were configured through the builder.</returns>
-        public IResourceContractResolver Build()
+        public IContractResolver Build()
         {
             return _builder.Build();
         }

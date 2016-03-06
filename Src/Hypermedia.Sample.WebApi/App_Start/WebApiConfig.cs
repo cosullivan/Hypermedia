@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using System;
+using System.Web.Http;
 using System.Web.Http.Cors;
 using Autofac.Integration.WebApi;
 using Hypermedia.Configuration;
@@ -41,11 +42,13 @@ namespace Hypermedia.Sample.WebApi
         /// Creates an instance of the resource contract resolver for the configured model.
         /// </summary>
         /// <returns>The resource contract resolver for the configured model.</returns>
-        static IResourceContractResolver CreateResolver()
+        static IContractResolver CreateResolver()
         {
             return new Builder()
                 .With<UserResource>("users")
                     .Id(nameof(UserResource.Id))
+                    //.Field("DaysSinceCreation")
+                    //    .Using(resource => DateTime.Now.Subtract(resource.CreationDate).TotalDays)
                     .HasMany<PostResource>("posts")
                         .Template("/v1/users/{id}/posts", "id", resource => resource.Id)
                 .With<PostResource>("posts")

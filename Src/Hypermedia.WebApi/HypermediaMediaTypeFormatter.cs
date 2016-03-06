@@ -9,7 +9,7 @@ namespace Hypermedia.WebApi
 {
     public abstract class HypermediaMediaTypeFormatter : MediaTypeFormatter
     {
-        readonly IResourceContractResolver _resourceContractResolver;
+        readonly IContractResolver _resourceContractResolver;
 
         /// <summary>
         /// Constructor.
@@ -17,7 +17,7 @@ namespace Hypermedia.WebApi
         /// <param name="name">The friendly name of the format.</param>
         /// <param name="mediaTypeName">The correct media type name for content negotiation.</param>
         /// <param name="resourceContractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
-        protected HypermediaMediaTypeFormatter(string name, string mediaTypeName, IResourceContractResolver resourceContractResolver)
+        protected HypermediaMediaTypeFormatter(string name, string mediaTypeName, IContractResolver resourceContractResolver)
         {
             _resourceContractResolver = resourceContractResolver;
             
@@ -71,7 +71,7 @@ namespace Hypermedia.WebApi
         /// <summary>
         /// Gets an instance of the resource contract resolver used to resolve the types at runtime.
         /// </summary>
-        public IResourceContractResolver ResourceContractResolver
+        public IContractResolver ResourceContractResolver
         {
             get { return _resourceContractResolver; }
         }

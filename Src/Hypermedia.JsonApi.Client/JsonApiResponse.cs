@@ -26,7 +26,7 @@ namespace Hypermedia.JsonApi.Client
         /// <returns>The list of JSON API entities.</returns>
         public TEntity Get<TEntity>()
         {
-            var resourceContractResolver = new ResourceContractResolver(RuntimeResourceContract<TEntity>.CreateRuntimeType());
+            var resourceContractResolver = new ContractResolver(RuntimeContract<TEntity>.CreateRuntimeType());
 
             return Get<TEntity>(resourceContractResolver);
         }
@@ -35,11 +35,11 @@ namespace Hypermedia.JsonApi.Client
         /// Gets a single entity.
         /// </summary>
         /// <typeparam name="TEntity">The element type.</typeparam>
-        /// <param name="resourceContractResolver">The resource contract resolver.</param>
+        /// <param name="contractResolver">The contract resolver.</param>
         /// <returns>The list of JSON API entities.</returns>
-        public TEntity Get<TEntity>(IResourceContractResolver resourceContractResolver)
+        public TEntity Get<TEntity>(IContractResolver contractResolver)
         {
-            var serializer = new JsonApiSerializer(resourceContractResolver);
+            var serializer = new JsonApiSerializer(contractResolver);
 
             return (TEntity)serializer.DeserializeEntity(_jsonObject);
         }
@@ -51,20 +51,20 @@ namespace Hypermedia.JsonApi.Client
         /// <returns>The list of JSON API entities.</returns>
         public IEnumerable<TEntity> GetMany<TEntity>()
         {
-            var resourceContractResolver = new ResourceContractResolver(RuntimeResourceContract<TEntity>.CreateRuntimeType());
+            var contractResolver = new ContractResolver(RuntimeContract<TEntity>.CreateRuntimeType());
 
-            return GetMany<TEntity>(resourceContractResolver);
+            return GetMany<TEntity>(contractResolver);
         }
 
         /// <summary>
         /// Gets a list of entities.
         /// </summary>
         /// <typeparam name="TEntity">The element type.</typeparam>
-        /// <param name="resourceContractResolver">The resource contract resolver.</param>
+        /// <param name="contractResolver">The contract resolver.</param>
         /// <returns>The list of JSON API entities.</returns>
-        public IEnumerable<TEntity> GetMany<TEntity>(IResourceContractResolver resourceContractResolver)
+        public IEnumerable<TEntity> GetMany<TEntity>(IContractResolver contractResolver)
         {
-            var serializer = new JsonApiSerializer(resourceContractResolver);
+            var serializer = new JsonApiSerializer(contractResolver);
 
             return serializer.DeserializeMany(_jsonObject).OfType<TEntity>().ToList();
         }

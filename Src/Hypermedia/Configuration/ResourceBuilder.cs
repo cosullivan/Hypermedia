@@ -26,7 +26,7 @@ namespace Hypermedia.Configuration
         /// Build a resource contract resolver with the known types.
         /// </summary>
         /// <returns>The resource contract resolver that is aware of the types that were configured through the builder.</returns>
-        public IResourceContractResolver Build()
+        public IContractResolver Build()
         {
             return _builder.Build();
         }
@@ -40,7 +40,7 @@ namespace Hypermedia.Configuration
             var fields = _fields.Select(field => field.CreateRuntimeField()).ToList();
             var relationships = _relationships.Values.Select(relationship => relationship.CreateRuntimeRelationship(fields)).ToList();
 
-            return new RuntimeResourceContract<T>(_name, fields, relationships);
+            return new RuntimeContract<T>(_name, fields, relationships);
         }
 
         /// <summary>

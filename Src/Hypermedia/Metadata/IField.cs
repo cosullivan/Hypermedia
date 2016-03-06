@@ -15,22 +15,45 @@ namespace Hypermedia.Metadata
         Type ClrType { get; }
 
         /// <summary>
-        /// Gets the actual value of the field.
+        /// Gets the field accessor.
         /// </summary>
-        /// <param name="instance">The instance to return the value from.</param>
-        /// <returns>The value of the field from the instance.</returns>
-        object GetValue(object instance);
-
-        /// <summary>
-        /// Sets the value for the field.
-        /// </summary>
-        /// <param name="instance">The instance to set the value on.</param>
-        /// <param name="value">The value to set for the field.</param>
-        void SetValue(object instance, object value);
+        IFieldAccessor Accessor { get; }
     }
 
     public static class FieldExtensions
     {
+        /// <summary>
+        /// Gets the actual value of the field.
+        /// </summary>
+        /// <param name="field">The field to test the options against.</param>
+        /// <param name="instance">The instance to return the value from.</param>
+        /// <returns>The value of the field from the instance.</returns>
+        public static object GetValue(this IField field, object instance)
+        {
+            if (field == null)
+            {
+                throw new ArgumentNullException(nameof(field));
+            }
+
+            return field.Accessor.GetValue(instance);
+        }
+
+        /// <summary>
+        /// Sets the value for the field.
+        /// </summary>
+        /// <param name="field">The field to test the options against.</param>
+        /// <param name="instance">The instance to set the value on.</param>
+        /// <param name="value">The value to set for the field.</param>
+        public static void SetValue(this IField field, object instance, object value)
+        {
+            if (field == null)
+            {
+                throw new ArgumentNullException(nameof(field));
+            }
+
+            field.Accessor.SetValue(instance, value);
+        }
+
         /// <summary>
         /// Returns a value indicating whether or not the field adheres to the list of specified options.
         /// </summary>

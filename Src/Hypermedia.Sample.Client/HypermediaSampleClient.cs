@@ -17,7 +17,7 @@ namespace Hypermedia.Sample.Client
         const string MediaTypeName = "application/vnd.api+json";
 
         readonly HttpClient _httpClient;
-        readonly IResourceContractResolver _resourceContractResolver;
+        readonly IContractResolver _resourceContractResolver;
 
         /// <summary>
         /// Constructor.
@@ -38,7 +38,7 @@ namespace Hypermedia.Sample.Client
         /// Returns the resource contract resolver for the known types.
         /// </summary>
         /// <returns>The resource contract resolver to use when serializing the types.</returns>
-        static IResourceContractResolver CreateResolver()
+        static IContractResolver CreateResolver()
         {
             return new Builder()
                 .With<UserResource>("users")

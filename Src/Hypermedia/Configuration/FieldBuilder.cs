@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using Hypermedia.Metadata;
 using Hypermedia.Metadata.Runtime;
 
@@ -27,7 +29,7 @@ namespace Hypermedia.Configuration
         /// Build a resource contract resolver with the known types.
         /// </summary>
         /// <returns>The resource contract resolver that is aware of the types that were configured through the builder.</returns>
-        public IResourceContractResolver Build()
+        public IContractResolver Build()
         {
             return _builder.Build();
         }
@@ -38,7 +40,9 @@ namespace Hypermedia.Configuration
         /// <returns>The field.</returns>
         internal RuntimeField<T> CreateRuntimeField()
         {
-            return new RuntimeField<T>(_name, _property ?? _name, _options);
+            var property = typeof (T).GetRuntimeProperty(_property ?? _name);
+
+            return new RuntimeField<T>(_name, property.PropertyType, new RuntimeFieldAccessor(property), _options);
         }
 
         /// <summary>
@@ -103,7 +107,6 @@ namespace Hypermedia.Configuration
         {
             return From(ExpressionHelper.GetMemberNameFromExpression(expression));
         }
-
 
         /// <summary>
         /// Renames the field.

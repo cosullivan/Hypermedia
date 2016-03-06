@@ -28,14 +28,14 @@ namespace Hypermedia.JsonApi.WebApi
         /// Constructor.
         /// </summary>
         /// <param name="resourceContractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
-        public JsonApiMediaTypeFormatter(IResourceContractResolver resourceContractResolver) : this(resourceContractResolver, false) { }
+        public JsonApiMediaTypeFormatter(IContractResolver resourceContractResolver) : this(resourceContractResolver, false) { }
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="resourceContractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
         /// <param name="prettify">Indicates whether the output should formatted in a readable way.</param>
-        public JsonApiMediaTypeFormatter(IResourceContractResolver resourceContractResolver, bool prettify) : base(Name, MediaTypeName, resourceContractResolver)
+        public JsonApiMediaTypeFormatter(IContractResolver resourceContractResolver, bool prettify) : base(Name, MediaTypeName, resourceContractResolver)
         {
             _prettify = prettify;
         }
@@ -83,7 +83,7 @@ namespace Hypermedia.JsonApi.WebApi
             {
                 var patch = typeof(JsonApiPatch<>).MakeGenericType(type.GenericTypeArguments[0]);
 
-                var constructor = patch.GetConstructor(new[] { typeof(IResourceContractResolver), typeof (JsonObject) });
+                var constructor = patch.GetConstructor(new[] { typeof(IContractResolver), typeof (JsonObject) });
                 Debug.Assert(constructor != null);
 
                 return Task.FromResult(constructor.Invoke(new object[] { ResourceContractResolver, jsonAst }));

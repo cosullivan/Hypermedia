@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Hypermedia.Metadata
 {
-    public sealed class ResourceContractResolver : IResourceContractResolver
+    public sealed class ContractResolver : IContractResolver
     {
         readonly IReadOnlyList<IResourceContract> _contracts;
 
@@ -12,7 +12,7 @@ namespace Hypermedia.Metadata
         /// Constructor.
         /// </summary>
         /// <param name="contracts">The list of contracts available to the resolver.</param>
-        public ResourceContractResolver(IEnumerable<IResourceContract> contracts)
+        public ContractResolver(IEnumerable<IResourceContract> contracts)
         {
             _contracts = contracts.ToList();
         }
@@ -21,7 +21,7 @@ namespace Hypermedia.Metadata
         /// Constructor.
         /// </summary>
         /// <param name="contract">The contract available to the resolver.</param>
-        public ResourceContractResolver(IResourceContract contract) : this(new [] { contract }) { }
+        public ContractResolver(IResourceContract contract) : this(new [] { contract }) { }
 
         /// <summary>
         /// Attempt to resolve the resource contract from a CLR type.

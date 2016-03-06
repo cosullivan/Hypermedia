@@ -10,7 +10,7 @@ namespace Hypermedia.Configuration
         /// Build a resource contract resolver with the known types.
         /// </summary>
         /// <returns>The resource contract resolver that is aware of the types that were configured through the builder.</returns>
-        IResourceContractResolver Build();
+        IContractResolver Build();
 
         /// <summary>
         /// Returns a Resource Builder for a resource type.
