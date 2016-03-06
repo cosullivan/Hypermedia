@@ -7,7 +7,7 @@ namespace Hypermedia.Configuration
 {
     public sealed class Builder : IBuilder
     {
-        readonly List<IResourceBuilder> _builders = new List<IResourceBuilder>();
+        readonly List<IContractBuilder> _builders = new List<IContractBuilder>();
 
         /// <summary>
         /// Build a resource contract resolver with the known types.
@@ -24,7 +24,7 @@ namespace Hypermedia.Configuration
         /// <typeparam name="TEntity">The type of the resource to return the builder for.</typeparam>
         /// <param name="discovery">The type discovery mechanism.</param>
         /// <returns>The resource builder to configure.</returns>
-        public ResourceBuilder<TEntity> With<TEntity>(ITypeDiscovery discovery)
+        public ContractBuilder<TEntity> With<TEntity>(ITypeDiscovery discovery)
         {
             if (discovery == null)
             {

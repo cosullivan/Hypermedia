@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Hypermedia.Metadata.Runtime
 {
-    public class RuntimeContract : IResourceContract
+    public class RuntimeContract : IContract
     {
         readonly string _type;
         readonly Type _clrType;
@@ -40,7 +40,7 @@ namespace Hypermedia.Metadata.Runtime
         /// </summary>
         /// <param name="type">The CLR type that the entity is mapped to.</param>
         /// <returns>The entity type that represents a default configuration of the given entity type.</returns>
-        internal static IResourceContract CreateRuntimeType(Type type)
+        internal static IContract CreateRuntimeType(Type type)
         {
             var name = Inflector.Pluralize(type.Name.ToLower());
 
@@ -53,7 +53,7 @@ namespace Hypermedia.Metadata.Runtime
         /// <param name="type">The CLR type that the entity is mapped to.</param>
         /// <param name="name">The name of the runtime type.</param>
         /// <returns>The entity type that represents a default configuration of the given entity type.</returns>
-        internal static IResourceContract CreateRuntimeType(Type type, string name)
+        internal static IContract CreateRuntimeType(Type type, string name)
         {
             return new RuntimeContract(name, type, CreateRuntimeFields(type), new List<RuntimeRelationship>());
         }
@@ -120,7 +120,7 @@ namespace Hypermedia.Metadata.Runtime
         /// Create a default runtime type from the given entity.
         /// </summary>
         /// <returns>The entity type that represents a default configuration of the given entity type.</returns>
-        internal static IResourceContract CreateRuntimeType()
+        internal static IContract CreateRuntimeType()
         {
             var name = Inflector.Pluralize(typeof(T).Name.ToLower());
 
@@ -132,7 +132,7 @@ namespace Hypermedia.Metadata.Runtime
         /// </summary>
         /// <param name="name">The name of the runtime type.</param>
         /// <returns>The entity type that represents a default configuration of the given entity type.</returns>
-        internal static IResourceContract CreateRuntimeType(string name)
+        internal static IContract CreateRuntimeType(string name)
         {
             return new RuntimeContract<T>(name, CreateRuntimeFields(), new List<RuntimeRelationship>());
         }

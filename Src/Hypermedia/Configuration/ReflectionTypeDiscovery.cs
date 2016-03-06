@@ -10,9 +10,9 @@ namespace Hypermedia.Configuration
         /// <typeparam name="TEntity">The entity type.</typeparam>
         /// <param name="parent">The parent builder to add to.</param>
         /// <returns>An entity builder to continue builder.</returns>
-        public ResourceBuilder<TEntity> Discover<TEntity>(IBuilder parent)
+        public ContractBuilder<TEntity> Discover<TEntity>(IBuilder parent)
         {
-            var builder = new ResourceBuilder<TEntity>(parent);
+            var builder = new ContractBuilder<TEntity>(parent);
 
             Discover(builder, typeof (TEntity).GetTypeInfo());
 
@@ -25,7 +25,7 @@ namespace Hypermedia.Configuration
         /// <typeparam name="TEntity">The entity type.</typeparam>
         /// <param name="builder">The parent builder to add to.</param>
         /// <param name="type">The type to discover the properties from.</param>
-        static void Discover<TEntity>(ResourceBuilder<TEntity> builder, TypeInfo type)
+        static void Discover<TEntity>(ContractBuilder<TEntity> builder, TypeInfo type)
         {
             foreach (var property in type.DeclaredProperties)
             {

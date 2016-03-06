@@ -6,7 +6,7 @@ using Hypermedia.Metadata.Runtime;
 
 namespace Hypermedia.Configuration
 {
-    public sealed class ResourceBuilder<T> : IResourceBuilder<T>, IResourceBuilder
+    public sealed class ContractBuilder<T> : IContractBuilder<T>, IContractBuilder
     {
         readonly IBuilder _builder;
         readonly List<FieldBuilder<T>> _fields = new List<FieldBuilder<T>>();
@@ -17,7 +17,7 @@ namespace Hypermedia.Configuration
         /// Constructor.
         /// </summary>
         /// <param name="builder">The parent builder.</param>
-        internal ResourceBuilder(IBuilder builder)
+        internal ContractBuilder(IBuilder builder)
         {
             _builder = builder;
         }
@@ -35,7 +35,7 @@ namespace Hypermedia.Configuration
         /// Build the entity type.
         /// </summary>
         /// <returns>The entity type.</returns>
-        IResourceContract IResourceBuilder.CreateRuntimeContract()
+        IContract IContractBuilder.CreateRuntimeContract()
         {
             var fields = _fields.Select(field => field.CreateRuntimeField()).ToList();
             var relationships = _relationships.Values.Select(relationship => relationship.CreateRuntimeRelationship(fields)).ToList();
@@ -49,7 +49,7 @@ namespace Hypermedia.Configuration
         /// <typeparam name="TEntity">The type of the resource to return the builder for.</typeparam>
         /// <param name="discovery">The type discovery mechanism.</param>
         /// <returns>The resource builder to configure.</returns>
-        public ResourceBuilder<TEntity> With<TEntity>(ITypeDiscovery discovery)
+        public ContractBuilder<TEntity> With<TEntity>(ITypeDiscovery discovery)
         {
             return _builder.With<TEntity>(discovery);
         }
@@ -59,7 +59,7 @@ namespace Hypermedia.Configuration
         /// </summary>
         /// <param name="name">The name of the type.</param>
         /// <returns>The metadata builder to configure.</returns>
-        public ResourceBuilder<T> Name(string name)
+        public ContractBuilder<T> Name(string name)
         {
             _name = name;
 

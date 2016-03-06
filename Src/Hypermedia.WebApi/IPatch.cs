@@ -63,7 +63,7 @@ namespace Hypermedia.WebApi
         /// <returns>true if the entity could be patched, false if not.</returns>
         static bool TryPatchWithInclude<T>(IPatch<T> patch, T entity, IEnumerable<string> includedFields)
         {
-            IResourceContract resourceContract;
+            IContract resourceContract;
             if (patch.ContractResolver.TryResolve(typeof (T), out resourceContract) == false)
             {
                 return false;
@@ -88,7 +88,7 @@ namespace Hypermedia.WebApi
         /// <returns>true if the entity could be patched, false if not.</returns>
         static bool TryPatchWithIgnore<T>(IPatch<T> patch, T entity, IEnumerable<string> ignoredFields)
         {
-            IResourceContract resourceContract;
+            IContract resourceContract;
             if (patch.ContractResolver.TryResolve(typeof(T), out resourceContract) == false)
             {
                 return false;

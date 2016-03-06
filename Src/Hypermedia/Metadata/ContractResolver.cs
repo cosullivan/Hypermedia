@@ -6,13 +6,13 @@ namespace Hypermedia.Metadata
 {
     public sealed class ContractResolver : IContractResolver
     {
-        readonly IReadOnlyList<IResourceContract> _contracts;
+        readonly IReadOnlyList<IContract> _contracts;
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="contracts">The list of contracts available to the resolver.</param>
-        public ContractResolver(IEnumerable<IResourceContract> contracts)
+        public ContractResolver(IEnumerable<IContract> contracts)
         {
             _contracts = contracts.ToList();
         }
@@ -21,7 +21,7 @@ namespace Hypermedia.Metadata
         /// Constructor.
         /// </summary>
         /// <param name="contract">The contract available to the resolver.</param>
-        public ContractResolver(IResourceContract contract) : this(new [] { contract }) { }
+        public ContractResolver(IContract contract) : this(new [] { contract }) { }
 
         /// <summary>
         /// Attempt to resolve the resource contract from a CLR type.
@@ -29,7 +29,7 @@ namespace Hypermedia.Metadata
         /// <param name="type">The CLR type of the resource contract to resolve.</param>
         /// <param name="contract">The resource contract that was associated with the given CLR type.</param>
         /// <returns>true if the resource contract could be resolved, false if not.</returns>
-        public bool TryResolve(Type type, out IResourceContract contract)
+        public bool TryResolve(Type type, out IContract contract)
         {
             contract = _contracts.SingleOrDefault(t => t.ClrType == type);
 
@@ -42,7 +42,7 @@ namespace Hypermedia.Metadata
         /// <param name="name">The resource type name of the resource contract to resolve.</param>
         /// <param name="contract">The resource contract that was associated with the given resource type name.</param>
         /// <returns>true if the resource contract could be resolved, false if not.</returns>
-        public bool TryResolve(string name, out IResourceContract contract)
+        public bool TryResolve(string name, out IContract contract)
         {
             contract = _contracts.SingleOrDefault(t => String.Equals(t.Name, name, StringComparison.OrdinalIgnoreCase));
 

@@ -38,7 +38,7 @@ namespace Hypermedia.JsonApi.WebApi
                     return false;
                 }
 
-                IResourceContract resourceContract;
+                IContract resourceContract;
                 if (_contractResolver.TryResolve(((JsonString)typeAttribute).Value, out resourceContract) == false)
                 {
                     return false;

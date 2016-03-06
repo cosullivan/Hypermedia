@@ -6,9 +6,9 @@ using Hypermedia.Metadata.Runtime;
 
 namespace Hypermedia.Configuration
 {
-    public sealed class RelationshipBuilder<T> : IResourceBuilder<T>
+    public sealed class RelationshipBuilder<T> : IContractBuilder<T>
     {
-        readonly IResourceBuilder<T> _builder;
+        readonly IContractBuilder<T> _builder;
         readonly string _name;
         readonly Type _relatedTo;
         readonly RelationshipType _type;
@@ -22,7 +22,7 @@ namespace Hypermedia.Configuration
         /// <param name="name">The name of the relationship.</param>
         /// <param name="relatedTo">The type of the model that this relationship is related to.</param>
         /// <param name="type">The relationship type.</param>
-        internal RelationshipBuilder(IResourceBuilder<T> builder, string name, Type relatedTo, RelationshipType type)
+        internal RelationshipBuilder(IContractBuilder<T> builder, string name, Type relatedTo, RelationshipType type)
         {
             _builder = builder;
             _name = name;
@@ -67,7 +67,7 @@ namespace Hypermedia.Configuration
         /// <typeparam name="TEntity">The type of the resource to return the builder for.</typeparam>
         /// <param name="discovery">The type discovery mechanism.</param>
         /// <returns>The resource builder to configure.</returns>
-        public ResourceBuilder<TEntity> With<TEntity>(ITypeDiscovery discovery)
+        public ContractBuilder<TEntity> With<TEntity>(ITypeDiscovery discovery)
         {
             return _builder.With<TEntity>(discovery);
         }

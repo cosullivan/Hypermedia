@@ -8,6 +8,6 @@
         /// <typeparam name="TEntity">The entity type.</typeparam>
         /// <param name="parent">The parent builder to add to.</param>
         /// <returns>An entity builder to continue builder.</returns>
-        ResourceBuilder<TEntity> Discover<TEntity>(IBuilder parent);
+        ContractBuilder<TEntity> Discover<TEntity>(IBuilder parent);
     }
 }

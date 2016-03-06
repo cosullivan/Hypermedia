@@ -3,16 +3,16 @@ using Hypermedia.Metadata;
 
 namespace Hypermedia.Configuration
 {
-    public interface IResourceBuilder
+    public interface IContractBuilder
     {
         /// <summary>
         /// Build the resource contract.
         /// </summary>
         /// <returns>The resource ontract.</returns>
-        IResourceContract CreateRuntimeContract();
+        IContract CreateRuntimeContract();
     }
 
-    public interface IResourceBuilder<T> : IBuilder
+    public interface IContractBuilder<T> : IBuilder
     {
         /// <summary>
         /// Returns a field.
@@ -36,7 +36,7 @@ namespace Hypermedia.Configuration
         RelationshipBuilder<T> HasMany<TOther>(string name);
     }
 
-    public static class ResourceBuilderExtensions
+    public static class ContractBuilderExtensions
     {
         /// <summary>
         /// Sets the given field as being the primary ID field.
@@ -45,7 +45,7 @@ namespace Hypermedia.Configuration
         /// <param name="builder">The builder to perform the operation on.</param>
         /// <param name="name">The name of the field to set as the primary ID field.</param>
         /// <returns>The field builder to continue building on.</returns>
-        public static FieldBuilder<TEntity> Id<TEntity>(this IResourceBuilder<TEntity> builder, string name)
+        public static FieldBuilder<TEntity> Id<TEntity>(this IContractBuilder<TEntity> builder, string name)
         {
             if (builder == null)
             {
@@ -62,7 +62,7 @@ namespace Hypermedia.Configuration
         /// <param name="builder">The builder to perform the operation on.</param>
         /// <param name="name">The name of the field to ignore.</param>
         /// <returns>The field builder to continue building on.</returns>
-        public static FieldBuilder<TEntity> Ignore<TEntity>(this IResourceBuilder<TEntity> builder, string name)
+        public static FieldBuilder<TEntity> Ignore<TEntity>(this IContractBuilder<TEntity> builder, string name)
         {
             if (builder == null)
             {
@@ -79,7 +79,7 @@ namespace Hypermedia.Configuration
         /// <param name="builder">The builder to perform the operation on.</param>
         /// <param name="name">The name of the field to set as read only.</param>
         /// <returns>The field builder to continue building on.</returns>
-        public static FieldBuilder<TEntity> ReadOnly<TEntity>(this IResourceBuilder<TEntity> builder, string name)
+        public static FieldBuilder<TEntity> ReadOnly<TEntity>(this IContractBuilder<TEntity> builder, string name)
         {
             if (builder == null)
             {
@@ -96,7 +96,7 @@ namespace Hypermedia.Configuration
         /// <param name="builder">The builder to perform the operation on.</param>
         /// <param name="name">The name of the field to set as write-only.</param>
         /// <returns>The field builder to continue building on.</returns>
-        public static FieldBuilder<TEntity> WriteOnly<TEntity>(this IResourceBuilder<TEntity> builder, string name)
+        public static FieldBuilder<TEntity> WriteOnly<TEntity>(this IContractBuilder<TEntity> builder, string name)
         {
             if (builder == null)
             {

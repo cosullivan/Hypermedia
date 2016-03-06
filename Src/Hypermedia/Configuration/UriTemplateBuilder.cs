@@ -4,9 +4,9 @@ using Hypermedia.Metadata;
 
 namespace Hypermedia.Configuration
 {
-    public class UriTemplateBuilder<T> : IResourceBuilder<T>
+    public class UriTemplateBuilder<T> : IContractBuilder<T>
     {
-        readonly IResourceBuilder<T> _builder;
+        readonly IContractBuilder<T> _builder;
         readonly string _format;
         readonly List<UriTemplateParameter> _parameters = new List<UriTemplateParameter>();
 
@@ -15,7 +15,7 @@ namespace Hypermedia.Configuration
         /// </summary>
         /// <param name="builder">The parent builder.</param>
         /// <param name="format">The URI template format.</param>
-        internal UriTemplateBuilder(IResourceBuilder<T> builder, string format)
+        internal UriTemplateBuilder(IContractBuilder<T> builder, string format)
         {
             _builder = builder;
             _format = format;
@@ -45,7 +45,7 @@ namespace Hypermedia.Configuration
         /// <typeparam name="TEntity">The type of the resource to return the builder for.</typeparam>
         /// <param name="discovery">The type discovery mechanism.</param>
         /// <returns>The resource builder to configure.</returns>
-        public ResourceBuilder<TEntity> With<TEntity>(ITypeDiscovery discovery)
+        public ContractBuilder<TEntity> With<TEntity>(ITypeDiscovery discovery)
         {
             return _builder.With<TEntity>(discovery);
         }

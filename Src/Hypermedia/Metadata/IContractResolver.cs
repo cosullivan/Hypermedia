@@ -10,7 +10,7 @@ namespace Hypermedia.Metadata
         /// <param name="type">The CLR type of the resource contract to resolve.</param>
         /// <param name="contract">The resource contract that was associated with the given CLR type.</param>
         /// <returns>true if the resource contract could be resolved, false if not.</returns>
-        bool TryResolve(Type type, out IResourceContract contract);
+        bool TryResolve(Type type, out IContract contract);
 
         /// <summary>
         /// Attempt to resolve the resource contract from a resource type name.
@@ -18,7 +18,7 @@ namespace Hypermedia.Metadata
         /// <param name="name">The resource type name of the resource contract to resolve.</param>
         /// <param name="contract">The resource contract that was associated with the given resource type name.</param>
         /// <returns>true if the resource contract could be resolved, false if not.</returns>
-        bool TryResolve(string name, out IResourceContract contract);
+        bool TryResolve(string name, out IContract contract);
     }
 
     public static class ContractResolverExtensions
@@ -36,7 +36,7 @@ namespace Hypermedia.Metadata
                 throw new ArgumentNullException(nameof(resolver));
             }
 
-            IResourceContract resourceContract;
+            IContract resourceContract;
             return resolver.TryResolve(type, out resourceContract);
         }
     }

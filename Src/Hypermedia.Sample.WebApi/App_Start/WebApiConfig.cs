@@ -1,12 +1,10 @@
-﻿using System;
-using System.Web.Http;
+﻿using System.Web.Http;
 using System.Web.Http.Cors;
 using Autofac.Integration.WebApi;
 using Hypermedia.Configuration;
 using Hypermedia.JsonApi.WebApi;
 using Hypermedia.Metadata;
 using Hypermedia.Sample.Resources;
-using Hypermedia.Sample.WebApi.Resources;
 
 namespace Hypermedia.Sample.WebApi
 {

@@ -7,9 +7,9 @@ using Hypermedia.Metadata.Runtime;
 
 namespace Hypermedia.Configuration
 {
-    public sealed class FieldBuilder<T> : IResourceBuilder<T>
+    public sealed class FieldBuilder<T> : IContractBuilder<T>
     {
-        readonly IResourceBuilder<T> _builder;
+        readonly IContractBuilder<T> _builder;
         string _name;
         string _property;
         FieldOptions _options = FieldOptions.Default;
@@ -19,7 +19,7 @@ namespace Hypermedia.Configuration
         /// </summary>
         /// <param name="builder">The parent builder.</param>
         /// <param name="name">The name of the field.</param>
-        internal FieldBuilder(IResourceBuilder<T> builder, string name)
+        internal FieldBuilder(IContractBuilder<T> builder, string name)
         {
             _builder = builder;
             _name = name;
@@ -51,7 +51,7 @@ namespace Hypermedia.Configuration
         /// <typeparam name="TEntity">The type of the resource to return the builder for.</typeparam>
         /// <param name="discovery">The type discovery mechanism.</param>
         /// <returns>The resource builder to configure.</returns>
-        public ResourceBuilder<TEntity> With<TEntity>(ITypeDiscovery discovery)
+        public ContractBuilder<TEntity> With<TEntity>(ITypeDiscovery discovery)
         {
             return _builder.With<TEntity>(discovery);
         }
