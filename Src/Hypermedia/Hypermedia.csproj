@@ -37,6 +37,18 @@
     <Compile Include="Configuration\Builder.cs" />
     <Compile Include="Configuration\CalculatedFieldBuilder.cs" />
     <Compile Include="Configuration\EmptyTypeDiscovery.cs" />
+    <Compile Include="Json\EnumConverter.cs" />
+    <Compile Include="Json\EnumerableConverter.cs" />
+    <Compile Include="Json\IJsonConverter.cs" />
+    <Compile Include="Json\IJsonConverterFactory.cs" />
+    <Compile Include="Json\IJsonSerializer.cs" />
+    <Compile Include="Json\JsonException.cs" />
+    <Compile Include="Json\JsonConverterFactory.cs" />
+    <Compile Include="Json\JsonConverterAttribute.cs" />
+    <Compile Include="Json\JsonSerializer.cs" />
+    <Compile Include="Json\ComplexConverter.cs" />
+    <Compile Include="Json\NullableConverter.cs" />
+    <Compile Include="Json\PrimitiveConverter.cs" />
     <Compile Include="Metadata\IFieldAccessor.cs" />
     <Compile Include="Metadata\Runtime\DelegatingFieldAccessor.cs" />
     <Compile Include="Metadata\Runtime\IResourceInflector.cs" />
@@ -69,6 +81,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="JsonLite, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Json.Lite.1.2.0\lib\Portable-Net45+NetCore45+WP8+WPA81\JsonLite.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

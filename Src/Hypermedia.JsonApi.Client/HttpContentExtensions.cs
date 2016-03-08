@@ -23,7 +23,7 @@ namespace Hypermedia.JsonApi.Client
                 throw new ArgumentNullException(nameof(httpContent));
             }
 
-            var jsonAst = Json.CreateAst(await httpContent.ReadAsStringAsync());
+            var jsonAst = JsonLite.Json.CreateAst(await httpContent.ReadAsStringAsync());
 
             return new JsonApiResponse(jsonAst);
         }

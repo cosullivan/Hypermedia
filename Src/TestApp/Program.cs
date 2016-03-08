@@ -1,56 +1,46 @@
 ﻿using System;
+using System.Collections.Generic;
+using Hypermedia.Json;
 using Hypermedia.Sample.Client;
+using JsonLite;
 using JsonLite.Ast;
 
 namespace TestApp
 {
     class Program
     {
-        //1. filter nulls from output
-        //2. dont serialize empty links - },"relationships": {"facility": {"links": {"related": ""}
-
         static void Main(string[] args)
         {
-            const string Endpoint = "http://hypermedia.cainosullivan.com";
-            //const string Endpoint = "http://localhost:59074/";
-            using (var client = new HypermediaSampleClient(Endpoint, null))
-            {
-                //foreach (var user in client.GetUsersAsync().Result)
-                //{
-                //    Console.WriteLine(user.DisplayName);
-                //}
+            var serializer = new JsonSerializer();
+            var json = serializer.SerializeValue(new object[] { 1, 2, 3, 4, 5, new { A = 1, B = new { C = "A", D = 234.45 } } });
+            
+            Console.WriteLine(json.Stringify());
 
-                foreach (var post in client.GetPostsAsync(skip:1, take:10).Result)
-                {
-                    Console.WriteLine(post.PostType);
-                    //Console.WriteLine(post.OwnerUser.DisplayName);
+            var array = serializer.DeserializeValue(typeof (List<object>), Json.CreateAst(json.Stringify()));
 
-                    //foreach (var comment in post.Comments)
-                    //{
-                    //    Console.WriteLine("[{0}] {1}", comment.User.DisplayName, comment.Text);
-                    //}
+            //const string Endpoint = "http://hypermedia.cainosullivan.com";
+            ////const string Endpoint = "http://localhost:59074/";
+            //using (var client = new HypermediaSampleClient(Endpoint, null))
+            //{
+            //    //foreach (var user in client.GetUsersAsync().Result)
+            //    //{
+            //    //    Console.WriteLine(user.DisplayName);
+            //    //}
 
-                    //Console.WriteLine();
-                    //Console.WriteLine();
-                }
+            //    foreach (var post in client.GetPostsAsync(skip:1, take:10).Result)
+            //    {
+            //        Console.WriteLine(post.PostType);
+            //        //Console.WriteLine(post.OwnerUser.DisplayName);
 
-                //var post = client.GetPostByIdAsync(38).Result;
-                //Console.WriteLine(post.OwnerUserId);
-                //Console.WriteLine(post.OwnerUser);
-                //Console.WriteLine(post.Comments);
+            //        //foreach (var comment in post.Comments)
+            //        //{
+            //        //    Console.WriteLine("[{0}] {1}", comment.User.DisplayName, comment.Text);
+            //        //}
 
-                //foreach (var comment in post.Comments)
-                //{
-                //    Console.WriteLine(comment.Text);
-                //}
-
-                //foreach (var comment in client.GetCommentsByPostIdAsync(38).Result)
-                //{
-                //    Console.WriteLine();
-                //    Console.WriteLine(comment.UserId);
-                //    Console.WriteLine(comment.Text);
-                //}
-            }
+            //        //Console.WriteLine();
+            //        //Console.WriteLine();
+            //    }
+            //}
         }
     }
 }

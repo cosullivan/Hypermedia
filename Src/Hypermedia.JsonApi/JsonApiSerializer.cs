@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Hypermedia.Json;
 using Hypermedia.Metadata;
 using Hypermedia.Metadata.Runtime;
 using JsonLite.Ast;
@@ -12,7 +13,7 @@ namespace Hypermedia.JsonApi
     public sealed class JsonApiSerializer
     {
         readonly IContractResolver _contractResolver;
-        readonly IJsonConverterFactory _jsonConverterFactory = new JsonConverterFactory();
+        readonly IJsonSerializer _jsonSerializer = new JsonSerializer();
 
         /// <summary>
         /// Constructor.
@@ -41,7 +42,7 @@ namespace Hypermedia.JsonApi
         /// <returns>The JSON object that represents the serialized entity.</returns>
         public JsonObject SerializeMany(IEnumerable entities)
         {
-            var serializer = new Serializer(_jsonConverterFactory, _contractResolver);
+            var serializer = new Serializer(_jsonSerializer, _contractResolver);
 
             var members = new List<JsonMember>
             {
@@ -86,7 +87,7 @@ namespace Hypermedia.JsonApi
                 throw new ArgumentNullException(nameof(entity));
             }
 
-            var serializer = new Serializer(_jsonConverterFactory, _contractResolver);
+            var serializer = new Serializer(_jsonSerializer, _contractResolver);
 
             var members = new List<JsonMember>
             {
@@ -111,7 +112,7 @@ namespace Hypermedia.JsonApi
         /// <returns>The list of items that was deserialized.</returns>
         public IEnumerable<object> DeserializeMany(JsonObject jsonObject)
         {
-            var deserializer = new Deserializer(jsonObject, _jsonConverterFactory, _contractResolver);
+            var deserializer = new Deserializer(jsonObject, _jsonSerializer, _contractResolver);
 
             return deserializer.DeserializeMany();
         }
@@ -123,7 +124,7 @@ namespace Hypermedia.JsonApi
         /// <returns>The instance that was created.</returns>
         public object DeserializeEntity(JsonObject jsonObject)
         {
-            var deserializer = new Deserializer(jsonObject, _jsonConverterFactory, _contractResolver);
+            var deserializer = new Deserializer(jsonObject, _jsonSerializer, _contractResolver);
 
             return deserializer.DeserializeEntity();
         }
@@ -136,7 +137,7 @@ namespace Hypermedia.JsonApi
         /// <param name="entity">The entity instance to deserialize the fields into.</param>
         internal void DeserializeEntity(IContract type, JsonObject jsonObject, object entity)
         {
-            var deserializer = new Deserializer(jsonObject, _jsonConverterFactory, new ContractResolver(type));
+            var deserializer = new Deserializer(jsonObject, _jsonSerializer, new ContractResolver(type));
             
             deserializer.DeserializeEntity(type, jsonObject, entity);
         }
@@ -145,18 +146,18 @@ namespace Hypermedia.JsonApi
 
         class Serializer
         {
-            readonly IJsonConverterFactory _jsonConverterFactory;
             readonly IContractResolver _contractResolver;
             readonly HashSet<JsonObject> _visited = new HashSet<JsonObject>(JsonApiEntityKeyEqualityComparer.Instance);
+            readonly IJsonSerializer _jsonSerializer;
 
             /// <summary>
             /// Constructor.
             /// </summary>
-            /// <param name="jsonConverterFactory">The JSON converter factory.</param>
+            /// <param name="jsonSerializer">The JSON serializer.</param>
             /// <param name="contractResolver">The resource contract resolver.</param>
-            internal Serializer(IJsonConverterFactory jsonConverterFactory, IContractResolver contractResolver)
+            internal Serializer(IJsonSerializer jsonSerializer, IContractResolver contractResolver)
             {
-                _jsonConverterFactory = jsonConverterFactory;
+                _jsonSerializer = jsonSerializer;
                 _contractResolver = contractResolver;
             }
 
@@ -262,7 +263,7 @@ namespace Hypermedia.JsonApi
             /// <returns>The JSON member which represents the given field on the entity.</returns>
             JsonMember SerializeField(IField field, object entity)
             {
-                return new JsonMember(field.Name.LowerFirstCharacter().Dasherize(), SerializeValue(field.GetValue(entity)));
+                return new JsonMember(field.Name.LowerFirstCharacter().Dasherize(), _jsonSerializer.SerializeValue(field.GetValue(entity)));
             }
 
             /// <summary>
@@ -420,7 +421,7 @@ namespace Hypermedia.JsonApi
 
                 if (value != null)
                 {
-                    members.Add(new JsonMember("id", SerializeValue(value)));
+                    members.Add(new JsonMember("id", _jsonSerializer.SerializeValue(value)));
                 }
 
                 return members;
@@ -572,48 +573,6 @@ namespace Hypermedia.JsonApi
             }
 
             /// <summary>
-            /// Serialize an inline object.
-            /// </summary>
-            /// <param name="value">The value to serialization inline.</param>
-            /// <returns>The JSON value which represents the inline serialization of the value.</returns>
-            JsonValue SerializeValue(object value)
-            {
-                if (ReferenceEquals(value, null))
-                {
-                    return JsonNull.Instance;
-                }
-
-                var type = value.GetType();
-
-                IJsonConverter jsonConverter;
-                if (_jsonConverterFactory.TryCreateInstance(type, out jsonConverter))
-                {
-                    return jsonConverter.Serialize(value);
-                }
-
-                if (type.GetTypeInfo().ImplementedInterfaces.Contains(typeof(IEnumerable)))
-                {
-                    return SerializeArray(value);
-                }
-
-                var fields = SerializeFields(RuntimeContract.CreateRuntimeType(type), value).Where(IsNotNull).ToList();
-
-                return new JsonObject(fields);
-            }
-
-            /// <summary>
-            /// Serialize the value as an array.
-            /// </summary>
-            /// <param name="value">The value to serialize.</param>
-            /// <returns>The JSON array which represents the value.</returns>
-            JsonArray SerializeArray(object value)
-            {
-                var collection = ((IEnumerable)value).Cast<object>();
-
-                return new JsonArray(collection.Select(SerializeValue).ToList());
-            }
-
-            /// <summary>
             /// Returns a value indicating whether or not the given field should be included when serializing.
             /// </summary>
             /// <param name="contract">The contract that the field belongs to.</param>
@@ -659,7 +618,7 @@ namespace Hypermedia.JsonApi
         class Deserializer
         {
             readonly JsonObject _rootObject;
-            readonly IJsonConverterFactory _jsonConverterFactory;
+            readonly IJsonSerializer _jsonSerializer;
             readonly IContractResolver _contractResolver;
             readonly IDictionary<JsonObject, object> _instanceCache = new Dictionary<JsonObject, object>(JsonApiEntityKeyEqualityComparer.Instance);
 
@@ -667,12 +626,12 @@ namespace Hypermedia.JsonApi
             /// Constructor.
             /// </summary>
             /// <param name="rootObject">The root JSON object that contains both the 'data' and the 'include' nodes.</param>
-            /// <param name="jsonConverterFactory">The JSON converter factory.</param>
+            /// <param name="jsonSerializer">The JSON serializer.</param>
             /// <param name="contractResolver">The resource contract resolver.</param>
-            internal Deserializer(JsonObject rootObject, IJsonConverterFactory jsonConverterFactory, IContractResolver contractResolver)
+            internal Deserializer(JsonObject rootObject, IJsonSerializer jsonSerializer, IContractResolver contractResolver)
             {
                 _rootObject = rootObject;
-                _jsonConverterFactory = jsonConverterFactory;
+                _jsonSerializer = jsonSerializer;
                 _contractResolver = contractResolver;
             }
 
@@ -880,7 +839,7 @@ namespace Hypermedia.JsonApi
                     return;
                 }
 
-                field.SetValue(entity, DeserializeValue(field.ClrType, value));
+                field.SetValue(entity, _jsonSerializer.DeserializeValue(field.ClrType, value));
             }
 
             /// <summary>
@@ -1012,83 +971,85 @@ namespace Hypermedia.JsonApi
                 return null;
             }
 
-            /// <summary>
-            /// Deserialize the given JSON value according to the specified CLR type.
-            /// </summary>
-            /// <param name="type">The CLR type to deserialize the JSON value to.</param>
-            /// <param name="jsonValue">The JSON value to deserialize.</param>
-            /// <returns>The CLR object that the JSON value was deserialized from.</returns>
-            object DeserializeValue(Type type, JsonValue jsonValue)
-            {
-                if (ReferenceEquals(jsonValue, JsonNull.Instance))
-                {
-                    return null;
-                }
+            ///// <summary>
+            ///// Deserialize the given JSON value according to the specified CLR type.
+            ///// </summary>
+            ///// <param name="type">The CLR type to deserialize the JSON value to.</param>
+            ///// <param name="jsonValue">The JSON value to deserialize.</param>
+            ///// <returns>The CLR object that the JSON value was deserialized from.</returns>
+            //object DeserializeValue(Type type, JsonValue jsonValue)
+            //{
+            //    //if (ReferenceEquals(jsonValue, JsonNull.Instance))
+            //    //{
+            //    //    return null;
+            //    //}
 
-                // unwrap the nullable types
-                type = Nullable.GetUnderlyingType(type) ?? type;
+            //    //// unwrap the nullable types
+            //    //type = Nullable.GetUnderlyingType(type) ?? type;
 
-                IJsonConverter jsonConverter;
-                if (_jsonConverterFactory.TryCreateInstance(type, out jsonConverter))
-                {
-                    return jsonConverter.Deserialize(type, jsonValue);
-                }
+            //    //IJsonConverterOld jsonConverter;
+            //    //if (_jsonConverterFactory.TryCreateInstance(type, out jsonConverter))
+            //    //{
+            //    //    return jsonConverter.Deserialize(type, jsonValue);
+            //    //}
 
-                if (type.GetTypeInfo().ImplementedInterfaces.Contains(typeof(IEnumerable)))
-                {
-                    return DeserializeArray(type, (JsonArray)jsonValue);
-                }
+            //    //if (type.GetTypeInfo().ImplementedInterfaces.Contains(typeof(IEnumerable)))
+            //    //{
+            //    //    return DeserializeArray(type, (JsonArray)jsonValue);
+            //    //}
 
-                return DeserializeObject(type, (JsonObject)jsonValue);
-            }
+            //    //return DeserializeObject(type, (JsonObject)jsonValue);
 
-            /// <summary>
-            /// Deserialize a JSON object.
-            /// </summary>
-            /// <param name="type">The type of the object to deserialize to.</param>
-            /// <param name="jsonObject">The JSON object to deserialize from.</param>
-            /// <returns>The CLR object that represents the JSON object.</returns>
-            object DeserializeObject(Type type, JsonObject jsonObject)
-            {
-                var entity = Activator.CreateInstance(type);
+            //    return new JsonSerializer().DeserializeValue(type, jsonValue);
+            //}
 
-                DeserializeFields(RuntimeContract.CreateRuntimeFields(type), jsonObject.Members, entity);
+            ///// <summary>
+            ///// Deserialize a JSON object.
+            ///// </summary>
+            ///// <param name="type">The type of the object to deserialize to.</param>
+            ///// <param name="jsonObject">The JSON object to deserialize from.</param>
+            ///// <returns>The CLR object that represents the JSON object.</returns>
+            //object DeserializeObject(Type type, JsonObject jsonObject)
+            //{
+            //    var entity = Activator.CreateInstance(type);
 
-                return entity;
-            }
+            //    DeserializeFields(RuntimeContract.CreateRuntimeFields(type), jsonObject.Members, entity);
 
-            /// <summary>
-            /// Deserialize a JSON array.
-            /// </summary>
-            /// <param name="type">The type of the collection to deserialize to.</param>
-            /// <param name="jsonArray">The JSON array to deserialize from.</param>
-            /// <returns>The collection that represents the JSON array.</returns>
-            ICollection DeserializeArray(Type type, JsonArray jsonArray)
-            {
-                Type collectionType;
-                if (TypeHelper.TryGetCollectionType(type, out collectionType) == false)
-                {
-                    throw new JsonApiException("Can not deserialize a JSON array to a type that doesnt support ICollection<T>.");
-                }
+            //    return entity;
+            //}
 
-                var method = collectionType
-                    .GetTypeInfo()
-                        .DeclaredMethods
-                            .FirstOrDefault(m => m.DeclaringType == collectionType && m.Name == "Add");
+            ///// <summary>
+            ///// Deserialize a JSON array.
+            ///// </summary>
+            ///// <param name="type">The type of the collection to deserialize to.</param>
+            ///// <param name="jsonArray">The JSON array to deserialize from.</param>
+            ///// <returns>The collection that represents the JSON array.</returns>
+            //ICollection DeserializeArray(Type type, JsonArray jsonArray)
+            //{
+            //    Type collectionType;
+            //    if (TypeHelper.TryGetCollectionType(type, out collectionType) == false)
+            //    {
+            //        throw new JsonApiException("Can not deserialize a JSON array to a type that doesnt support ICollection<T>.");
+            //    }
 
-                var elementType = collectionType.GenericTypeArguments[0];
+            //    var method = collectionType
+            //        .GetTypeInfo()
+            //            .DeclaredMethods
+            //                .FirstOrDefault(m => m.DeclaringType == collectionType && m.Name == "Add");
 
-                var collection = Activator.CreateInstance(type) as ICollection;
+            //    var elementType = collectionType.GenericTypeArguments[0];
 
-                foreach (var jsonValue in jsonArray)
-                {
-                    var value = DeserializeValue(elementType, jsonValue);
+            //    var collection = Activator.CreateInstance(type) as ICollection;
 
-                    method.Invoke(collection, new[] { value });
-                }
+            //    foreach (var jsonValue in jsonArray)
+            //    {
+            //        var value = DeserializeValue(elementType, jsonValue);
 
-                return collection;
-            }
+            //        method.Invoke(collection, new[] { value });
+            //    }
+
+            //    return collection;
+            //}
 
             /// <summary>
             /// Returns a value indicating whether or not the given field should be included when deserializing.

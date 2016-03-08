@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Hypermedia.JsonApi
+namespace Hypermedia.Json
 {
     public sealed class JsonConverterAttribute : Attribute
     {

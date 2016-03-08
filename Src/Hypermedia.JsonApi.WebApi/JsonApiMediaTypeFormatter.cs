@@ -72,7 +72,7 @@ namespace Hypermedia.JsonApi.WebApi
         /// <returns>A <see cref="T:System.Threading.Tasks.Task"/> whose result will be an object of the given type.</returns>
         public override Task<object> ReadFromStreamAsync(Type type, Stream readStream, HttpContent content, IFormatterLogger formatterLogger)
         {
-            var jsonAst = Json.CreateAst(readStream) as JsonObject;
+            var jsonAst = JsonLite.Json.CreateAst(readStream) as JsonObject;
 
             if (jsonAst == null)
             {
