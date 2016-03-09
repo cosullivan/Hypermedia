@@ -5,7 +5,6 @@ using System.Linq;
 using System.Reflection;
 using Hypermedia.Json;
 using Hypermedia.Metadata;
-using Hypermedia.Metadata.Runtime;
 using JsonLite.Ast;
 
 namespace Hypermedia.JsonApi
@@ -970,86 +969,6 @@ namespace Hypermedia.JsonApi
 
                 return null;
             }
-
-            ///// <summary>
-            ///// Deserialize the given JSON value according to the specified CLR type.
-            ///// </summary>
-            ///// <param name="type">The CLR type to deserialize the JSON value to.</param>
-            ///// <param name="jsonValue">The JSON value to deserialize.</param>
-            ///// <returns>The CLR object that the JSON value was deserialized from.</returns>
-            //object DeserializeValue(Type type, JsonValue jsonValue)
-            //{
-            //    //if (ReferenceEquals(jsonValue, JsonNull.Instance))
-            //    //{
-            //    //    return null;
-            //    //}
-
-            //    //// unwrap the nullable types
-            //    //type = Nullable.GetUnderlyingType(type) ?? type;
-
-            //    //IJsonConverterOld jsonConverter;
-            //    //if (_jsonConverterFactory.TryCreateInstance(type, out jsonConverter))
-            //    //{
-            //    //    return jsonConverter.Deserialize(type, jsonValue);
-            //    //}
-
-            //    //if (type.GetTypeInfo().ImplementedInterfaces.Contains(typeof(IEnumerable)))
-            //    //{
-            //    //    return DeserializeArray(type, (JsonArray)jsonValue);
-            //    //}
-
-            //    //return DeserializeObject(type, (JsonObject)jsonValue);
-
-            //    return new JsonSerializer().DeserializeValue(type, jsonValue);
-            //}
-
-            ///// <summary>
-            ///// Deserialize a JSON object.
-            ///// </summary>
-            ///// <param name="type">The type of the object to deserialize to.</param>
-            ///// <param name="jsonObject">The JSON object to deserialize from.</param>
-            ///// <returns>The CLR object that represents the JSON object.</returns>
-            //object DeserializeObject(Type type, JsonObject jsonObject)
-            //{
-            //    var entity = Activator.CreateInstance(type);
-
-            //    DeserializeFields(RuntimeContract.CreateRuntimeFields(type), jsonObject.Members, entity);
-
-            //    return entity;
-            //}
-
-            ///// <summary>
-            ///// Deserialize a JSON array.
-            ///// </summary>
-            ///// <param name="type">The type of the collection to deserialize to.</param>
-            ///// <param name="jsonArray">The JSON array to deserialize from.</param>
-            ///// <returns>The collection that represents the JSON array.</returns>
-            //ICollection DeserializeArray(Type type, JsonArray jsonArray)
-            //{
-            //    Type collectionType;
-            //    if (TypeHelper.TryGetCollectionType(type, out collectionType) == false)
-            //    {
-            //        throw new JsonApiException("Can not deserialize a JSON array to a type that doesnt support ICollection<T>.");
-            //    }
-
-            //    var method = collectionType
-            //        .GetTypeInfo()
-            //            .DeclaredMethods
-            //                .FirstOrDefault(m => m.DeclaringType == collectionType && m.Name == "Add");
-
-            //    var elementType = collectionType.GenericTypeArguments[0];
-
-            //    var collection = Activator.CreateInstance(type) as ICollection;
-
-            //    foreach (var jsonValue in jsonArray)
-            //    {
-            //        var value = DeserializeValue(elementType, jsonValue);
-
-            //        method.Invoke(collection, new[] { value });
-            //    }
-
-            //    return collection;
-            //}
 
             /// <summary>
             /// Returns a value indicating whether or not the given field should be included when deserializing.

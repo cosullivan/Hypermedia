@@ -37,8 +37,8 @@
     <Compile Include="Configuration\Builder.cs" />
     <Compile Include="Configuration\CalculatedFieldBuilder.cs" />
     <Compile Include="Configuration\EmptyTypeDiscovery.cs" />
-    <Compile Include="Json\EnumConverter.cs" />
-    <Compile Include="Json\EnumerableConverter.cs" />
+    <Compile Include="Json\Converters\EnumConverter.cs" />
+    <Compile Include="Json\Converters\EnumerableConverter.cs" />
     <Compile Include="Json\IJsonConverter.cs" />
     <Compile Include="Json\IJsonConverterFactory.cs" />
     <Compile Include="Json\IJsonSerializer.cs" />
@@ -46,9 +46,9 @@
     <Compile Include="Json\JsonConverterFactory.cs" />
     <Compile Include="Json\JsonConverterAttribute.cs" />
     <Compile Include="Json\JsonSerializer.cs" />
-    <Compile Include="Json\ComplexConverter.cs" />
-    <Compile Include="Json\NullableConverter.cs" />
-    <Compile Include="Json\PrimitiveConverter.cs" />
+    <Compile Include="Json\Converters\ComplexConverter.cs" />
+    <Compile Include="Json\Converters\NullableConverter.cs" />
+    <Compile Include="Json\Converters\PrimitiveConverter.cs" />
     <Compile Include="Metadata\IFieldAccessor.cs" />
     <Compile Include="Metadata\Runtime\DelegatingFieldAccessor.cs" />
     <Compile Include="Metadata\Runtime\IResourceInflector.cs" />

@@ -2,11 +2,11 @@
 using System.Reflection;
 using JsonLite.Ast;
 
-namespace Hypermedia.Json
+namespace Hypermedia.Json.Converters
 {
-    internal sealed class NullableConverter : IJsonConverter
+    internal sealed class EnumConverter : IJsonConverter
     {
-        internal static readonly IJsonConverter Instance = new NullableConverter();
+        internal static readonly IJsonConverter Instance = new EnumConverter();
 
         /// <summary>
         /// Serialize the value.
@@ -17,7 +17,7 @@ namespace Hypermedia.Json
         /// <returns>The JSON value that represents the given CLR value.</returns>
         public JsonValue SerializeValue(IJsonSerializer serializer, Type type, object value)
         {
-            return serializer.SerializeValue(value);
+            return new JsonString(value.ToString());
         }
 
         /// <summary>
@@ -29,9 +29,9 @@ namespace Hypermedia.Json
         /// <returns>The object that represents the CLR version of the given JSON value.</returns>
         public object DeserializeValue(IJsonSerializer serializer, Type type, JsonValue jsonValue)
         {
-            type = Nullable.GetUnderlyingType(type) ?? type;
+            var text = ((JsonString)jsonValue).Value;
 
-            return serializer.DeserializeValue(type, jsonValue);
+            return Enum.Parse(type, text, true);
         }
 
         /// <summary>
@@ -41,9 +41,7 @@ namespace Hypermedia.Json
         /// <returns>true if the type can be converted by this converter, false if not.</returns>
         public bool CanConvert(Type type)
         {
-            var info = type.GetTypeInfo();
-
-            return info.IsGenericType && info.GetGenericTypeDefinition() == typeof (Nullable<>);
+            return type.GetTypeInfo().IsEnum;
         }
     }
 }

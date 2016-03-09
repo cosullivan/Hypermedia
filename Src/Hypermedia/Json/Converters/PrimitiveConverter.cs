@@ -2,7 +2,7 @@
 using System.Reflection;
 using JsonLite.Ast;
 
-namespace Hypermedia.Json
+namespace Hypermedia.Json.Converters
 {
     internal class PrimitiveConverter : IJsonConverter
     {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using JsonLite.Ast;
 
-namespace Hypermedia.Json
+namespace Hypermedia.Json.Converters
 {
     internal sealed class EnumerableConverter : IJsonConverter
     {

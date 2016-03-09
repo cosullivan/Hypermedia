@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using JsonLite.Ast;
 
-namespace Hypermedia.Json
+namespace Hypermedia.Json.Converters
 {
     internal sealed class ComplexConverter : IJsonConverter
     {
@@ -56,11 +56,16 @@ namespace Hypermedia.Json
         /// <param name="type">The type of the object to deserialize to.</param>
         /// <param name="jsonObject">The JSON object to deserialize from.</param>
         /// <returns>The CLR object that represents the JSON object.</returns>
-        object DeserializeObject(IJsonSerializer serializer, Type type, JsonObject jsonObject)
+        static object DeserializeObject(IJsonSerializer serializer, Type type, JsonObject jsonObject)
         {
             var entity = Activator.CreateInstance(type);
 
-            //DeserializeFields(RuntimeContract.CreateRuntimeFields(type), jsonObject.Members, entity);
+            foreach (var member in jsonObject.Members)
+            {
+                var property = type.GetRuntimeProperty(member.Name);
+
+                property?.SetValue(entity, serializer.DeserializeValue(property.PropertyType, member.Value));
+            }
 
             return entity;
         }
