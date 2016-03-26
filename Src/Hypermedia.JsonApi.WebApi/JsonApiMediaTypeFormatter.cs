@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -12,7 +11,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Hypermedia.Metadata;
 using Hypermedia.WebApi;
-using JsonLite;
 using JsonLite.Ast;
 
 namespace Hypermedia.JsonApi.WebApi
@@ -27,15 +25,15 @@ namespace Hypermedia.JsonApi.WebApi
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="resourceContractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
-        public JsonApiMediaTypeFormatter(IContractResolver resourceContractResolver) : this(resourceContractResolver, false) { }
+        /// <param name="contractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
+        public JsonApiMediaTypeFormatter(IContractResolver contractResolver) : this(contractResolver, false) { }
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="resourceContractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
+        /// <param name="contractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
         /// <param name="prettify">Indicates whether the output should formatted in a readable way.</param>
-        public JsonApiMediaTypeFormatter(IContractResolver resourceContractResolver, bool prettify) : base(Name, MediaTypeName, resourceContractResolver)
+        public JsonApiMediaTypeFormatter(IContractResolver contractResolver, bool prettify) : base(Name, MediaTypeName, contractResolver)
         {
             _prettify = prettify;
         }
@@ -55,7 +53,7 @@ namespace Hypermedia.JsonApi.WebApi
             {
                 var prettify = new[] { "yes", "1", "true" }.Contains(parameters[PrettifyParameterName], StringComparer.OrdinalIgnoreCase);
 
-                return new JsonApiMediaTypeFormatter(ResourceContractResolver, prettify);
+                return new JsonApiMediaTypeFormatter(ContractResolver, prettify);
             }
             
             return base.GetPerRequestFormatterInstance(type, request, mediaType);
@@ -86,10 +84,10 @@ namespace Hypermedia.JsonApi.WebApi
                 var constructor = patch.GetConstructor(new[] { typeof(IContractResolver), typeof (JsonObject) });
                 Debug.Assert(constructor != null);
 
-                return Task.FromResult(constructor.Invoke(new object[] { ResourceContractResolver, jsonAst }));
+                return Task.FromResult(constructor.Invoke(new object[] { ContractResolver, jsonAst }));
             }
 
-            var serializer = new JsonApiSerializer(ResourceContractResolver);
+            var serializer = new JsonApiSerializer(ContractResolver);
 
             if (TypeHelper.IsEnumerable(type))
             {
@@ -129,7 +127,7 @@ namespace Hypermedia.JsonApi.WebApi
         /// <returns>The JSON object that represents the serialized value.</returns>
         JsonObject SerializeValue(Type type, object value)
         {
-            var serializer = new JsonApiSerializer(ResourceContractResolver);
+            var serializer = new JsonApiSerializer(ContractResolver);
 
             if (TypeHelper.IsEnumerable(type))
             {

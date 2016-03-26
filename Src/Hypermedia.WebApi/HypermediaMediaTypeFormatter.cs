@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using Hypermedia.Metadata;
@@ -9,17 +7,17 @@ namespace Hypermedia.WebApi
 {
     public abstract class HypermediaMediaTypeFormatter : MediaTypeFormatter
     {
-        readonly IContractResolver _resourceContractResolver;
+        readonly IContractResolver _contractResolver;
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="name">The friendly name of the format.</param>
         /// <param name="mediaTypeName">The correct media type name for content negotiation.</param>
-        /// <param name="resourceContractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
-        protected HypermediaMediaTypeFormatter(string name, string mediaTypeName, IContractResolver resourceContractResolver)
+        /// <param name="contractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
+        protected HypermediaMediaTypeFormatter(string name, string mediaTypeName, IContractResolver contractResolver)
         {
-            _resourceContractResolver = resourceContractResolver;
+            _contractResolver = contractResolver;
             
             SupportedMediaTypes.Clear();
             SupportedMediaTypes.Insert(0, new MediaTypeHeaderValue(mediaTypeName));
@@ -65,15 +63,15 @@ namespace Hypermedia.WebApi
                 throw new ArgumentNullException(nameof(type));
             }
 
-            return _resourceContractResolver.CanResolve(TypeHelper.GetUnderlyingType(type));
+            return _contractResolver.CanResolve(TypeHelper.GetUnderlyingType(type));
         }
 
         /// <summary>
         /// Gets an instance of the resource contract resolver used to resolve the types at runtime.
         /// </summary>
-        public IContractResolver ResourceContractResolver
+        public IContractResolver ContractResolver
         {
-            get { return _resourceContractResolver; }
+            get { return _contractResolver; }
         }
     }
 }

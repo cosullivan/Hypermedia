@@ -48,7 +48,12 @@ namespace Hypermedia.JsonApi
         /// <returns>The string key that represents the given JSON object.</returns>
         static string CreateKey(JsonObject jsonObject)
         {
-            return $"{jsonObject["type"].Stringify()}:{jsonObject["id"].Stringify()}".ToLower();
+            if (jsonObject["id"] != null)
+            {
+                return $"{jsonObject["type"].Stringify()}:{jsonObject["id"].Stringify()}".ToLower();
+            }
+
+            return jsonObject["type"].Stringify();
         }
     }
 }
