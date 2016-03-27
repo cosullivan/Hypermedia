@@ -7,8 +7,6 @@ namespace Hypermedia.WebApi
 {
     public abstract class HypermediaMediaTypeFormatter : MediaTypeFormatter
     {
-        readonly IContractResolver _contractResolver;
-
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -17,7 +15,7 @@ namespace Hypermedia.WebApi
         /// <param name="contractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
         protected HypermediaMediaTypeFormatter(string name, string mediaTypeName, IContractResolver contractResolver)
         {
-            _contractResolver = contractResolver;
+            ContractResolver = contractResolver;
             
             SupportedMediaTypes.Clear();
             SupportedMediaTypes.Insert(0, new MediaTypeHeaderValue(mediaTypeName));
@@ -63,15 +61,12 @@ namespace Hypermedia.WebApi
                 throw new ArgumentNullException(nameof(type));
             }
 
-            return _contractResolver.CanResolve(TypeHelper.GetUnderlyingType(type));
+            return ContractResolver.CanResolve(TypeHelper.GetUnderlyingType(type));
         }
 
         /// <summary>
         /// Gets an instance of the resource contract resolver used to resolve the types at runtime.
         /// </summary>
-        public IContractResolver ContractResolver
-        {
-            get { return _contractResolver; }
-        }
+        public IContractResolver ContractResolver { get; }
     }
 }

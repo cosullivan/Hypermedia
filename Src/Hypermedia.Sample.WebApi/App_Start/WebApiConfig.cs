@@ -9,6 +9,7 @@ using Hypermedia.Metadata;
 using Hypermedia.Sample.Resources;
 using Hypermedia.Sample.WebApi.Resources;
 using Hypermedia.WebApi;
+using Hypermedia.WebApi.Json;
 using ExceptionLogger = Hypermedia.Sample.WebApi.Services.ExceptionLogger;
 
 namespace Hypermedia.Sample.WebApi

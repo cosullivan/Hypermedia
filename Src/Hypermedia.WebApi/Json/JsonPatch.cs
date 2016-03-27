@@ -1,19 +1,19 @@
-﻿using Hypermedia.Metadata;
-using Hypermedia.WebApi;
+﻿using Hypermedia.Json;
+using Hypermedia.Metadata;
 using JsonLite.Ast;
 
-namespace Hypermedia.JsonApi.WebApi
+namespace Hypermedia.WebApi.Json
 {
-    public sealed class JsonApiPatch<T> : IPatch<T>
+    public sealed class JsonPatch<T> : IPatch<T>
     {
-        readonly JsonObject _jsonValue;
+        readonly JsonValue _jsonValue;
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="contractResolver">The resource contractor resolver.</param>
+        /// <param name="contractResolver">The contractor resolver.</param>
         /// <param name="jsonValue">The root document node.</param>
-        public JsonApiPatch(IContractResolver contractResolver, JsonObject jsonValue)
+        public JsonPatch(IContractResolver contractResolver, JsonValue jsonValue)
         {
             _jsonValue = jsonValue;
             ContractResolver = contractResolver;
@@ -29,22 +29,16 @@ namespace Hypermedia.JsonApi.WebApi
         {
             try
             {
-                var jsonObject = _jsonValue["data"] as JsonObject;
-
-                var typeAttribute = jsonObject?["type"];
-                if (typeAttribute == null)
-                {
-                    return false;
-                }
-
                 IContract contract;
-                if (contractResolver.TryResolve(((JsonString)typeAttribute).Value, out contract) == false)
+                if (contractResolver.TryResolve(typeof(T), out contract) == false)
                 {
                     return false;
                 }
 
-                var serializer = new JsonApiSerializer(contractResolver);
-                serializer.DeserializeEntity(contract, jsonObject, entity);
+                var serializer = new JsonSerializer(new JsonConverterFactory(new ContractConverter(ContractResolver)));
+
+                var converter = new ContractConverter(contractResolver);
+                converter.DeserializeObject(serializer, (JsonObject)_jsonValue, contract, entity);
 
                 return true;
             }

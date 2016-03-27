@@ -55,7 +55,7 @@ namespace Hypermedia.Json
         class Serializer : IJsonSerializer
         {
             readonly IJsonConverterFactory _jsonConverterFactory;
-            readonly HashSet<object> _visited = new HashSet<object>();
+            readonly Stack<object> _visited = new Stack<object>();
 
             /// <summary>
             /// Constructor.
@@ -73,38 +73,21 @@ namespace Hypermedia.Json
             /// <returns>The JSON value which represents the inline serialization of the value.</returns>
             public JsonValue SerializeValue(object value)
             {
-                // TODO: what is the best way to treat an already serialized entity? should it be scoped more to a parent instance
-                
-                if (ReferenceEquals(value, null) || HasVisited(value))
+                if (ReferenceEquals(value, null) || _visited.Contains(value))
                 {
                     return JsonNull.Instance;
                 }
 
-                Visit(value);
+                _visited.Push(value);
 
                 var type = value.GetType();
                 var converter = _jsonConverterFactory.CreateInstance(type);
 
-                return converter.SerializeValue(this, type, value);
-            }
+                var jsonValue = converter.SerializeValue(this, type, value);
 
-            /// <summary>
-            /// Returns a value indicating whether the instance has been visited.
-            /// </summary>
-            /// <param name="instance">The instance to determined whether it has been visitied.</param>
-            /// <returns>true if the entity has been visitied, false if not.</returns>
-            bool HasVisited(object instance)
-            {
-                return _visited.Contains(instance);
-            }
+                _visited.Pop();
 
-            /// <summary>
-            /// Marks the entity as having being visited.
-            /// </summary>
-            /// <param name="instance">The instance that has been visited.</param>
-            void Visit(object instance)
-            {
-                _visited.Add(instance);
+                return jsonValue;
             }
 
             /// <summary>

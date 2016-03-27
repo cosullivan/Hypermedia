@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Net.Http.Formatting;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 using Hypermedia.Metadata;
 using Hypermedia.WebApi;
@@ -15,108 +9,74 @@ using JsonLite.Ast;
 
 namespace Hypermedia.JsonApi.WebApi
 {
-    public class JsonApiMediaTypeFormatter : HypermediaMediaTypeFormatter
+    public class JsonApiMediaTypeFormatter : Hypermedia.WebApi.Json.JsonMediaTypeFormatter
     {
         const string Name = "jsonapi";
         const string MediaTypeName = "application/vnd.api+json";
-        const string PrettifyParameterName = "$prettify";
-        readonly bool _prettify;
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="contractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
-        public JsonApiMediaTypeFormatter(IContractResolver contractResolver) : this(contractResolver, false) { }
+        public JsonApiMediaTypeFormatter(IContractResolver contractResolver) : base(Name, MediaTypeName, contractResolver, false) { }
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="contractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
-        /// <param name="prettify">Indicates whether the output should formatted in a readable way.</param>
-        public JsonApiMediaTypeFormatter(IContractResolver contractResolver, bool prettify) : base(Name, MediaTypeName, contractResolver)
-        {
-            _prettify = prettify;
-        }
+        /// <param name="prettify">A value which indicates whether the output should be prettified.</param>
+        JsonApiMediaTypeFormatter(IContractResolver contractResolver, bool prettify) : base(Name, MediaTypeName, contractResolver, prettify) { }
 
         /// <summary>
-        /// Returns a specialized instance of the <see cref="T:System.Net.Http.Formatting.MediaTypeFormatter"/> that can format a response for the given parameters.
+        /// Creates a per request formatter instance.
         /// </summary>
-        /// <param name="type">The type to format.</param>
-        /// <param name="request">The request.</param>
-        /// <param name="mediaType">The media type.</param>
-        /// <returns>Returns <see cref="T:System.Net.Http.Formatting.MediaTypeFormatter"/>.</returns>
-        public override MediaTypeFormatter GetPerRequestFormatterInstance(Type type, HttpRequestMessage request, MediaTypeHeaderValue mediaType)
+        /// <param name="contractResolver">The contract resolver to create the request with.</param>
+        /// <param name="prettify">A value which indicates whether the output should be prettified.</param>
+        /// <returns>The formatter instance to use specifically for the scope of a request.</returns>
+        protected override MediaTypeFormatter CreatePerRequestInstance(IContractResolver contractResolver, bool prettify)
         {
-            var parameters = request.RequestUri.ParseQueryString();
-
-            if (parameters[PrettifyParameterName] != null)
-            {
-                var prettify = new[] { "yes", "1", "true" }.Contains(parameters[PrettifyParameterName], StringComparer.OrdinalIgnoreCase);
-
-                return new JsonApiMediaTypeFormatter(ContractResolver, prettify);
-            }
-            
-            return base.GetPerRequestFormatterInstance(type, request, mediaType);
+            return new JsonApiMediaTypeFormatter(ContractResolver, prettify);
         }
 
         /// <summary>
-        /// Asynchronously deserializes an object of the specified type.
+        /// Creates an instance of the patch object for the media type.
+        /// </summary>
+        /// <param name="type">The type of the inner instance that is being patched.</param>
+        /// <param name="contractResolver">The contract resolver.</param>
+        /// <param name="jsonValue">The JSON value that represents the patch values.</param>
+        /// <returns>The instance of the patch.</returns>
+        protected override IPatch CreatePatch(Type type, IContractResolver contractResolver, JsonValue jsonValue)
+        {
+            var patch = typeof(JsonApiPatch<>).MakeGenericType(type.GenericTypeArguments[0]);
+
+            var constructor = patch.GetConstructor(new[] { typeof(IContractResolver), typeof(JsonObject) });
+            Debug.Assert(constructor != null);
+
+            return (IPatch)constructor.Invoke(new object[] { ContractResolver, jsonValue });
+        }
+
+        /// <summary>
+        /// Deserialize an object.
         /// </summary>
         /// <param name="type">The type of the object to deserialize.</param>
-        /// <param name="readStream">The <see cref="T:System.IO.Stream"/> to read.</param>
-        /// <param name="content">The <see cref="T:System.Net.Http.HttpContent"/>, if available. It may be null.</param>
-        /// <param name="formatterLogger">The <see cref="T:System.Net.Http.Formatting.IFormatterLogger"/> to log events to.</param>
-        /// <exception cref="T:System.NotSupportedException">Derived types need to support reading.</exception>
-        /// <returns>A <see cref="T:System.Threading.Tasks.Task"/> whose result will be an object of the given type.</returns>
-        public override Task<object> ReadFromStreamAsync(Type type, Stream readStream, HttpContent content, IFormatterLogger formatterLogger)
+        /// <param name="jsonValue">The JSON value that represents the object to deserialize.</param>
+        protected override object DeserializeValue(Type type, JsonValue jsonValue)
         {
-            var jsonAst = JsonLite.Json.CreateAst(readStream) as JsonObject;
+            var jsonObject = jsonValue as JsonObject;
 
-            if (jsonAst == null)
+            if (jsonObject == null)
             {
-                throw new JsonApiException("Can to serialize the JSON into a JSON object required for the JSONAPI specification.");   
-            }
-
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IPatch<>))
-            {
-                var patch = typeof(JsonApiPatch<>).MakeGenericType(type.GenericTypeArguments[0]);
-
-                var constructor = patch.GetConstructor(new[] { typeof(IContractResolver), typeof(JsonObject) });
-                Debug.Assert(constructor != null);
-
-                return Task.FromResult(constructor.Invoke(new object[] { ContractResolver, jsonAst }));
+                throw new HypermediaWebApiException("The top level JSON value must be an Object.");
             }
 
             var serializer = new JsonApiSerializer(ContractResolver);
 
             if (TypeHelper.IsEnumerable(type))
             {
-                return Task.FromResult((object)serializer.DeserializeMany(jsonAst));
+                return Task.FromResult((object)serializer.DeserializeMany(jsonObject));
             }
 
-            return Task.FromResult(serializer.DeserializeEntity(jsonAst));
-        }
-
-        /// <summary>
-        /// Asynchronously writes an object of the specified type.
-        /// </summary>
-        /// <returns>A <see cref="T:System.Threading.Tasks.Task"/> that will perform the write.</returns>
-        /// <param name="type">The type of the object to write.</param>
-        /// <param name="value">The object value to write. It may be null.</param>
-        /// <param name="writeStream">The <see cref="T:System.IO.Stream"/> to which to write.</param>
-        /// <param name="content">The <see cref="T:System.Net.Http.HttpContent"/> if available. It may be null.</param>
-        /// <param name="transportContext">The <see cref="T:System.Net.TransportContext"/> if available. It may be null.</param>
-        /// <exception cref="T:System.NotSupportedException">Derived types need to support writing.</exception>
-        public override Task WriteToStreamAsync(Type type, object value, Stream writeStream, HttpContent content, TransportContext transportContext)
-        {
-            using (var writer = new StreamWriter(writeStream, Encoding.ASCII, 1024, leaveOpen: true))
-            {
-                writer.WriteLine(SerializeValue(type, value).Stringify(_prettify));
-            }
-
-            writeStream.Flush();
-
-            return Task.FromResult(0);
+            return Task.FromResult(serializer.DeserializeEntity(jsonObject));
         }
 
         /// <summary>
@@ -125,7 +85,7 @@ namespace Hypermedia.JsonApi.WebApi
         /// <param name="type">The type to serialize from.</param>
         /// <param name="value">The value to serialize.</param>
         /// <returns>The JSON object that represents the serialized value.</returns>
-        JsonObject SerializeValue(Type type, object value)
+        protected override JsonValue SerializeValue(Type type, object value)
         {
             var serializer = new JsonApiSerializer(ContractResolver);
 

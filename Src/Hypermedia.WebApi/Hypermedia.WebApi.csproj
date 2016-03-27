@@ -54,9 +54,10 @@
   <ItemGroup>
     <Compile Include="HypermediaMediaTypeFormatter.cs" />
     <Compile Include="IPatch.cs" />
-    <Compile Include="IContentSerializer.cs" />
     <Compile Include="HypermediaWebApiException.cs" />
-    <Compile Include="JsonMediaTypeFormatter.cs" />
+    <Compile Include="Json\ContractConverter.cs" />
+    <Compile Include="Json\JsonPatch.cs" />
+    <Compile Include="Json\JsonMediaTypeFormatter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -68,6 +69,7 @@
       <Name>Hypermedia</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

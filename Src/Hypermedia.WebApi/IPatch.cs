@@ -6,20 +6,23 @@ using Hypermedia.Metadata.Runtime;
 
 namespace Hypermedia.WebApi
 {
-    public interface IPatch<in T>
+    public interface IPatch
+    {
+        /// <summary>
+        /// Gets the default resource contract resolver that is to be used for the patching.
+        /// </summary>
+        IContractResolver ContractResolver { get; }
+    }
+
+    public interface IPatch<in T> : IPatch
     {
         /// <summary>
         /// Attempt to patch the given entity.
         /// </summary>
         /// <param name="entity">The entity to apply the patch to.</param>
-        /// <param name="resourceContractResolver">The resource contract resolver to use.</param>
+        /// <param name="contractResolver">The contract resolver to use.</param>
         /// <returns>true if the entity could be patched, false if not.</returns>
-        bool TryPatch(T entity, IContractResolver resourceContractResolver);
-
-        /// <summary>
-        /// Gets the default resource contract resolver that is to be used for the patching.
-        /// </summary>
-        IContractResolver ContractResolver { get; }
+        bool TryPatch(T entity, IContractResolver contractResolver);
     }
 
     public static class PatchExtensions

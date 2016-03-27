@@ -24,8 +24,11 @@ namespace Hypermedia.Sample.WebApi.Controllers
         /// </summary>
         /// <returns>The HTTP action result that represents the result of the action.</returns>
         [HttpOptions, HttpPost, Route("v1/comments")]
-        public IHttpActionResult Execute(CommentResource comment)
+        public IHttpActionResult Execute(IPatch<Comment> comment)
         {
+            var c = new Comment();
+            var x = comment.TryPatch(c);
+
             //var post = _database.Posts.GetById(postId).AsResource();
 
             //if (post == null)
