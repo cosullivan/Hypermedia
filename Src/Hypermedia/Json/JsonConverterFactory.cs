@@ -8,7 +8,7 @@ using Hypermedia.Json.Converters;
 
 namespace Hypermedia.Json
 {
-    internal sealed class JsonConverterFactory : IJsonConverterFactory
+    public sealed class JsonConverterFactory : IJsonConverterFactory
     {
         static readonly IReadOnlyList<IJsonConverter> KnownConverters = new[]
         {
@@ -19,8 +19,23 @@ namespace Hypermedia.Json
             ComplexConverter.Instance
         };
 
+        readonly IReadOnlyList<IJsonConverter> _converters;
         readonly IDictionary<Type, IJsonConverter> _resolvedConverters = new Dictionary<Type, IJsonConverter>();
         readonly ReaderWriterLockSlim _resolvedConvertersLock = new ReaderWriterLockSlim();
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public JsonConverterFactory() : this(new IJsonConverter[0]) { }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="converters">The list of available converters.</param>
+        public JsonConverterFactory(params IJsonConverter[] converters)
+        {
+            _converters = converters.Union(KnownConverters).ToList();
+        }
 
         /// <summary>
         /// Create an instance of the JSON converter for the given type.
@@ -67,7 +82,7 @@ namespace Hypermedia.Json
         /// </summary>
         /// <param name="type">The type to discover the converter from.</param>
         /// <returns>The JSON converter for the given type.</returns>
-        static IJsonConverter DiscoverConverter(Type type)
+        IJsonConverter DiscoverConverter(Type type)
         {
             var attribute = type.GetTypeInfo().GetCustomAttribute(typeof(JsonConverterAttribute), false) as JsonConverterAttribute;
 
@@ -83,7 +98,7 @@ namespace Hypermedia.Json
                 return converter;
             }
 
-            return KnownConverters.First(converter => converter.CanConvert(type));
+            return _converters.First(converter => converter.CanConvert(type));
         }
     }
 }

@@ -81,7 +81,7 @@ namespace Hypermedia.JsonApi.WebApi
             {
                 var patch = typeof(JsonApiPatch<>).MakeGenericType(type.GenericTypeArguments[0]);
 
-                var constructor = patch.GetConstructor(new[] { typeof(IContractResolver), typeof (JsonObject) });
+                var constructor = patch.GetConstructor(new[] { typeof(IContractResolver), typeof(JsonObject) });
                 Debug.Assert(constructor != null);
 
                 return Task.FromResult(constructor.Invoke(new object[] { ContractResolver, jsonAst }));

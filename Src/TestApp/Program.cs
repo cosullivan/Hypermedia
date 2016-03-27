@@ -12,14 +12,13 @@ namespace TestApp
     {
         static void Main(string[] args)
         {
-            Hypermedia.Plain
-            //var posts = new[] { new Post() };
+            var posts = new[] { new Post() };
 
-            //var serializer = new JsonSerializer();
+            var serializer = new JsonSerializer();
             ////var json = serializer.SerializeValue(new object[] { 1, 2, 3, 4, 5, new { A = 1, B = new { C = "A", D = 234.45 } } });
-            //var json = serializer.SerializeValue(posts);
+            var json = serializer.SerializeValue(posts);
 
-            //Console.WriteLine(json.Stringify());
+            Console.WriteLine(json.Stringify());
 
             //var array = serializer.DeserializeValue(typeof (List<Post>), Json.CreateAst(json.Stringify()));
 
