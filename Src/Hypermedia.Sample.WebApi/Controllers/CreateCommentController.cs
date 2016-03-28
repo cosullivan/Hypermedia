@@ -19,33 +19,33 @@ namespace Hypermedia.Sample.WebApi.Controllers
             _database = database;
         }
 
+        ///// <summary>
+        ///// Creates a comment.
+        ///// </summary>
+        ///// <returns>The HTTP action result that represents the result of the action.</returns>
+        //[HttpOptions, HttpPost, Route("v1/comments")]
+        //public IHttpActionResult Execute(IPatch<Comment> comment)
+        //{
+        //    var c = new Comment();
+        //    var x = comment.TryPatch(c);
+
+        //    throw new NotImplementedException();
+        //}
+
         /// <summary>
         /// Creates a comment.
         /// </summary>
         /// <returns>The HTTP action result that represents the result of the action.</returns>
         [HttpOptions, HttpPost, Route("v1/comments")]
-        public IHttpActionResult Execute(IPatch<Comment> comment)
+        public IHttpActionResult Execute(Comment2 comment)
         {
-            var c = new Comment();
-            var x = comment.TryPatch(c);
-
-            //var post = _database.Posts.GetById(postId).AsResource();
-
-            //if (post == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //var comments = _database.Comments.GetByPostId(new[] { post.Id }).AsResource();
-
-            //foreach (var comment in comments)
-            //{
-            //    comment.Post = post;
-            //}
-
-            //return Ok(comments);
-
             throw new NotImplementedException();
         }
+    }
+
+    public class Comment2
+    {
+        public int Id { get; set; }
+        public string Text { get; set; }
     }
 }

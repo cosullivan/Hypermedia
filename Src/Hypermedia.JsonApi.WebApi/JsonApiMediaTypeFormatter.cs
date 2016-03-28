@@ -96,5 +96,15 @@ namespace Hypermedia.JsonApi.WebApi
 
             return serializer.SerializeEntity(value);
         }
+
+        /// <summary>
+        /// Returns a value indicating whether or not the dictionary has a metadata mapping for the given type.
+        /// </summary>
+        /// <param name="type">The element type to test for a mapping.</param>
+        /// <returns>true if the given type has a mapping, false if not.</returns>
+        protected override bool CanReadOrWrite(Type type)
+        {
+            return ContractResolver.CanResolve(TypeHelper.GetUnderlyingType(type));
+        }
     }
 }

@@ -54,7 +54,7 @@ namespace Hypermedia.WebApi
         /// </summary>
         /// <param name="type">The element type to test for a mapping.</param>
         /// <returns>true if the given type has a mapping, false if not.</returns>
-        bool CanReadOrWrite(Type type)
+        protected virtual bool CanReadOrWrite(Type type)
         {
             if (type == null)
             {
