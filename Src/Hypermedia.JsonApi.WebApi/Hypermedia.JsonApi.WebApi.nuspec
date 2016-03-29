@@ -3,7 +3,7 @@
     <metadata>
         <id>Hypermedia.JsonApi.WebApi</id>
         <title>Hypermedia.JsonApi.WebApi</title>
-        <version>1.0.9</version>
+        <version>1.0.10</version>
         <authors>Cain O'Sullivan</authors>
         <projectUrl>https://github.com/cosullivan/Hypermedia</projectUrl>
         <description>A JSONAPI media type formatter for the Web API.</description>

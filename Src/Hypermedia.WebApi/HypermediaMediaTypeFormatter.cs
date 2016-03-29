@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
+using System.Web.Http;
 using Hypermedia.Metadata;
 
 namespace Hypermedia.WebApi
@@ -46,7 +47,7 @@ namespace Hypermedia.WebApi
         /// <returns>true if the <see cref="T:System.Net.Http.Formatting.MediaTypeFormatter"/> can serialize the type; otherwise, false.</returns>
         public override bool CanWriteType(Type type)
         {
-            return CanReadOrWrite(type);
+            return type == typeof(HttpError) || CanReadOrWrite(type);
         }
 
         /// <summary>

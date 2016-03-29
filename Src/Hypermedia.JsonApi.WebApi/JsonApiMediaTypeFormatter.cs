@@ -73,10 +73,10 @@ namespace Hypermedia.JsonApi.WebApi
 
             if (TypeHelper.IsEnumerable(type))
             {
-                return Task.FromResult((object)serializer.DeserializeMany(jsonObject));
+                return serializer.DeserializeMany(jsonObject);
             }
 
-            return Task.FromResult(serializer.DeserializeEntity(jsonObject));
+            return serializer.DeserializeEntity(jsonObject);
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using Hypermedia.Json;
 using Hypermedia.Sample.Client;
@@ -49,10 +50,13 @@ namespace TestApp
             //}
             using (var client = new HttpClient { BaseAddress = new Uri(Endpoint) })
             {
-                var json = "{ \"Id\": 1, \"Text\": \"Hello World\", \"Score\": 123 }";
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.api+json"));
+
+                //var json = "{ \"Id\": 1, \"Text\": \"Hello World\", \"Score\": 123 }";
+                var json = "{ \"data\": { \"type\": \"comments\", \"attributes\": { \"Text\": \"Hello World\", \"Score\": 123 } } }";
                 Json.CreateAst(json);
 
-                var response = client.PostAsync("v1/comments", new StringContent(json, Encoding.UTF8, "application/json")).Result;
+                var response = client.PostAsync("v1/comments", new StringContent(json, Encoding.UTF8, "application/vnd.api+json")).Result;
                 Console.WriteLine(response.StatusCode);
             }
         }
