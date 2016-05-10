@@ -93,6 +93,22 @@ namespace Hypermedia.Metadata
         }
 
         /// <summary>
+        /// Returns all relationships that match the predicate.
+        /// </summary>
+        /// <param name="contract">The contract to return the relationships from.</param>
+        /// <param name="predicate">The predicate to apply to the relationships to determine if they should be returned.</param>
+        /// <returns>The list of relationships that match the predicate.</returns>
+        public static IEnumerable<IRelationship> Relationships(this IContract contract, Func<IRelationship, bool> predicate)
+        {
+            if (contract == null)
+            {
+                throw new ArgumentNullException(nameof(contract));
+            }
+
+            return contract.Relationships.Where(predicate).ToList();
+        }
+
+        /// <summary>
         /// Gets the ID for the entity.
         /// </summary>
         /// <param name="contract">The contract to perform the operation on.</param>

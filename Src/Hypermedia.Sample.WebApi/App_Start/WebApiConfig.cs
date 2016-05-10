@@ -1,5 +1,4 @@
-﻿using System;
-using System.Web.Http;
+﻿using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.ExceptionHandling;
 using Autofac.Integration.WebApi;
@@ -8,7 +7,6 @@ using Hypermedia.JsonApi.WebApi;
 using Hypermedia.Metadata;
 using Hypermedia.Sample.Resources;
 using Hypermedia.Sample.WebApi.Resources;
-using Hypermedia.WebApi;
 using Hypermedia.WebApi.Json;
 using ExceptionLogger = Hypermedia.Sample.WebApi.Services.ExceptionLogger;
 

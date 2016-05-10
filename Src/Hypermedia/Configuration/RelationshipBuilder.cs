@@ -115,6 +115,34 @@ namespace Hypermedia.Configuration
         }
 
         /// <summary>
+        /// Defines the relationship as being readonly.
+        /// </summary>
+        /// <returns>The relationship builder to continue building on.</returns>
+        public RelationshipBuilder<T> ReadOnly()
+        {
+            if (_name != null)
+            {
+                _builder.Field(_name).ReadOnly();
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the relationship as being write-only.
+        /// </summary>
+        /// <returns>The relationship builder to continue building on.</returns>
+        public RelationshipBuilder<T> WriteOnly()
+        {
+            if (_name != null)
+            {
+                _builder.Field(_name).WriteOnly();
+            }
+
+            return this;
+        }
+
+        /// <summary>
         /// Returns a template builder for the relationship.
         /// </summary>
         /// <param name="format">The format of the template.</param>

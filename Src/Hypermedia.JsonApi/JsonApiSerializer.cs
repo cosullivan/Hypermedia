@@ -238,7 +238,7 @@ namespace Hypermedia.JsonApi
             /// <returns>The list of JSON values which represent the fields.</returns>
             IReadOnlyList<JsonMember> SerializeFields(IContract contract, object entity)
             {
-                var fields = contract.Fields.Where(f => ShouldSerializeField(contract, f)).ToList();
+                var fields = contract.Fields.Where(f => ShouldSerialize(contract, f)).ToList();
 
                 return SerializeFields(fields, entity);
             }
@@ -300,7 +300,7 @@ namespace Hypermedia.JsonApi
                             new JsonObject(new JsonMember("related", new JsonString(uri)))));
                 }
 
-                if (ShouldSerializeRelationship(relationship))
+                if (ShouldSerialize(relationship))
                 {
                     var data = SerializeRelationshipData(relationship, entity);
 
@@ -497,7 +497,7 @@ namespace Hypermedia.JsonApi
             {
                 var included = new List<JsonObject>();
 
-                foreach (var relationship in relationships.Where(ShouldSerializeRelationship))
+                foreach (var relationship in relationships.Where(ShouldSerialize))
                 {
                     included.AddRange(SerializeIncluded(relationship, entity));
                 }
@@ -577,7 +577,7 @@ namespace Hypermedia.JsonApi
             /// <param name="contract">The contract that the field belongs to.</param>
             /// <param name="field">The field to determine whether or not it should be included.</param>
             /// <returns>true if the field should be included, false if not.</returns>
-            static bool ShouldSerializeField(IContract contract, IField field)
+            static bool ShouldSerialize(IContract contract, IField field)
             {
                 // if the field has been linked to a relationship or the field is the actual relationship field itself 
                 // then we dont serialize these as normal fields as they will be output in the relationships node
@@ -594,9 +594,16 @@ namespace Hypermedia.JsonApi
             /// </summary>
             /// <param name="relationship">The relationship to determine whether it can be serialized.</param>
             /// <returns>true if the relationship can be serialized, false if not.</returns>
-            static bool ShouldSerializeRelationship(IRelationship relationship)
+            static bool ShouldSerialize(IRelationship relationship)
             {
-                return relationship.RelatedTo != null && (relationship.Field != null || relationship.ViaField != null);
+                if (relationship.RelatedTo == null || (relationship.Field == null && relationship.ViaField == null))
+                {
+                    return false;
+                }
+
+                var field = relationship.Field ?? relationship.ViaField;
+
+                return field.Is(FieldOptions.Id) == false && field.Is(FieldOptions.CanSerialize);
             }
 
             /// <summary>
@@ -796,13 +803,13 @@ namespace Hypermedia.JsonApi
                 var attributes = jsonObject["attributes"] as JsonObject;
                 if (attributes != null)
                 {
-                    DeserializeFields(contract.Fields(f => ShouldDeserializeField(contract, f)).ToList(), attributes.Members, entity);
+                    DeserializeFields(contract.Fields(f => ShouldDeserialize(contract, f)).ToList(), attributes.Members, entity);
                 }
 
                 var relationships = jsonObject["relationships"] as JsonObject;
                 if (relationships != null)
                 {
-                    DeserializeRelationships(contract.Relationships, relationships.Members, entity);
+                    DeserializeRelationships(contract.Relationships(ShouldDeserialize).ToList(), relationships.Members, entity);
                 }
             }
 
@@ -976,7 +983,7 @@ namespace Hypermedia.JsonApi
             /// <param name="contract">The contract that the field belongs to.</param>
             /// <param name="field">The field to determine whether or not it should be included.</param>
             /// <returns>true if the field should be included, false if not.</returns>
-            static bool ShouldDeserializeField(IContract contract, IField field)
+            static bool ShouldDeserialize(IContract contract, IField field)
             {
                 if (contract.Relationships.Any(relationship => relationship.Field == field))
                 {
@@ -984,6 +991,21 @@ namespace Hypermedia.JsonApi
                 }
 
                 return field.Is(FieldOptions.Id) == false && field.Is(FieldOptions.CanDeserialize);
+            }
+
+            /// <summary>
+            /// Returns a value indicating whether or not the given relationship should be included when deserializing.
+            /// </summary>
+            /// <param name="relationship">The relationship to determine whether or not it should be included.</param>
+            /// <returns>true if the relationship should be included, false if not.</returns>
+            static bool ShouldDeserialize(IRelationship relationship)
+            {
+                if (relationship.ViaField != null && relationship.ViaField.Is(FieldOptions.CanDeserialize))
+                {
+                    return true;
+                }
+
+                return relationship.Field != null && relationship.Field.Is(FieldOptions.CanDeserialize);
             }
         }
 
