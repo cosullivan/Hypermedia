@@ -48,7 +48,7 @@ public class Comment
 
 Define your model using the Fluent builder interface.
 ```cs
-static IResourceContractResolver CreateResolver()
+static IContractResolver CreateResolver()
 {
     return new Builder()
         .With<User>("users")
