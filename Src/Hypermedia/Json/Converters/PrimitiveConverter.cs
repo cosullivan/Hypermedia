@@ -62,6 +62,11 @@ namespace Hypermedia.Json.Converters
                 return new JsonDecimal((decimal)(double)value);
             }
 
+            if (type == typeof(bool))
+            {
+                return new JsonBoolean((bool)value);
+            }
+
             if (type == typeof(DateTime))
             {
                 return new JsonString(((DateTime)value).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssK"));
@@ -137,6 +142,11 @@ namespace Hypermedia.Json.Converters
             if (type == typeof(DateTimeOffset))
             {
                 return DateTimeOffset.Parse(((JsonString)jsonValue).Value);
+            }
+
+            if (type == typeof(bool))
+            {
+                return ((JsonBoolean)jsonValue).Value;
             }
 
             throw new NotSupportedException(type.ToString());
