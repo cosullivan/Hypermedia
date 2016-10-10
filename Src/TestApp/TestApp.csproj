@@ -63,6 +63,10 @@
       <Project>{2b0660cd-ff64-47bd-bb96-04f80f845963}</Project>
       <Name>Hypermedia.JsonApi.Client</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Hypermedia.JsonApi.WebApi\Hypermedia.JsonApi.WebApi.csproj">
+      <Project>{0B2CBD5A-413F-4BCB-824D-580CCD2BCC82}</Project>
+      <Name>Hypermedia.JsonApi.WebApi</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Hypermedia.JsonApi\Hypermedia.JsonApi.csproj">
       <Project>{2ce482c3-8e6b-4df2-ac46-6193dead7259}</Project>
       <Name>Hypermedia.JsonApi</Name>
@@ -70,6 +74,10 @@
     <ProjectReference Include="..\Hypermedia.Sample.Client\Hypermedia.Sample.Client.csproj">
       <Project>{78e99ddd-2fe3-45a6-89b4-4c755ddea873}</Project>
       <Name>Hypermedia.Sample.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Hypermedia.Sample.WebApi\Hypermedia.Sample.WebApi.csproj">
+      <Project>{12e8873e-a28d-4d8e-8c14-d5f7ef3e1912}</Project>
+      <Name>Hypermedia.Sample.WebApi</Name>
     </ProjectReference>
     <ProjectReference Include="..\Hypermedia.Sample\Hypermedia.Sample.csproj">
       <Project>{138b5d8c-040d-404d-818e-57904fb06a67}</Project>

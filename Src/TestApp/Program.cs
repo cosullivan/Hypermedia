@@ -4,8 +4,12 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using Hypermedia.Json;
+using Hypermedia.JsonApi.WebApi;
+using Hypermedia.Metadata;
+using Hypermedia.Metadata.Runtime;
 using Hypermedia.Sample.Client;
 using Hypermedia.Sample.Data;
+using Hypermedia.Sample.Resources;
 using JsonLite;
 using JsonLite.Ast;
 
@@ -15,50 +19,32 @@ namespace TestApp
     {
         static void Main(string[] args)
         {
-            //var posts = new[] { new Post() };
-
-            //var serializer = new JsonSerializer();
-            //////var json = serializer.SerializeValue(new object[] { 1, 2, 3, 4, 5, new { A = 1, B = new { C = "A", D = 234.45 } } });
-            //var json = serializer.SerializeValue(posts);
-
-            //Console.WriteLine(json.Stringify());
-
-            //var array = serializer.DeserializeValue(typeof (List<Post>), Json.CreateAst(json.Stringify()));
-
             //const string Endpoint = "http://hypermedia.cainosullivan.com";
-            const string Endpoint = "http://localhost:59074/";
-            //using (var client = new HypermediaSampleClient(Endpoint, null))
+            //const string Endpoint = "http://localhost:59074/";
+            //using (var client = new HttpClient { BaseAddress = new Uri(Endpoint) })
             //{
-            //    //foreach (var user in client.GetUsersAsync().Result)
-            //    //{
-            //    //    Console.WriteLine(user.DisplayName);
-            //    //}
+            //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.api+json"));
 
-            //    //foreach (var post in client.GetPostsAsync(skip: 1, take: 10).Result)
-            //    //{
-            //    //    Console.WriteLine(post.Title);
-            //    //    //Console.WriteLine(post.OwnerUser.DisplayName);
+            //    //var json = "{ \"Id\": 1, \"Text\": \"Hello World\", \"Score\": 123 }";
+            //    var json = "{ \"data\": { \"type\": \"comments\", \"attributes\": { \"Text\": \"Hello World\", \"Score\": 123 } } }";
+            //    Json.CreateAst(json);
 
-            //    //    //foreach (var comment in post.Comments)
-            //    //    //{
-            //    //    //    Console.WriteLine("[{0}] {1}", comment.User.DisplayName, comment.Text);
-            //    //    //}
-
-            //    //    //Console.WriteLine();
-            //    //    //Console.WriteLine();
-            //    //}
+            //    var response = client.PostAsync("v1/comments", new StringContent(json, Encoding.UTF8, "application/vnd.api+json")).Result;
+            //    Console.WriteLine(response.StatusCode);
             //}
-            using (var client = new HttpClient { BaseAddress = new Uri(Endpoint) })
-            {
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.api+json"));
 
-                //var json = "{ \"Id\": 1, \"Text\": \"Hello World\", \"Score\": 123 }";
-                var json = "{ \"data\": { \"type\": \"comments\", \"attributes\": { \"Text\": \"Hello World\", \"Score\": 123 } } }";
-                Json.CreateAst(json);
+            var include = "owner-user,comments.user";
+            var resolver = Hypermedia.Sample.WebApi.WebApiConfig.CreateResolver();
 
-                var response = client.PostAsync("v1/comments", new StringContent(json, Encoding.UTF8, "application/vnd.api+json")).Result;
-                Console.WriteLine(response.StatusCode);
-            }
+            
+            //request.Contract = new DynamicContract<Post>();
+
+            
+        }
+
+        class IncludePath
+        {
+            public IRelationship Relationship { get; set; }
         }
     }
 }

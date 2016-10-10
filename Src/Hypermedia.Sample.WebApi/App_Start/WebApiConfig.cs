@@ -49,7 +49,7 @@ namespace Hypermedia.Sample.WebApi
         /// Creates an instance of the resource contract resolver for the configured model.
         /// </summary>
         /// <returns>The resource contract resolver for the configured model.</returns>
-        static IContractResolver CreateResolver()
+        internal static IContractResolver CreateResolver()
         {
             return new Builder()
                 .With<UserResource>("users")
