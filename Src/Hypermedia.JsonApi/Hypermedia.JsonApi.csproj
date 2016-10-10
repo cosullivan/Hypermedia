@@ -47,8 +47,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="JsonLite, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Json.Lite.1.2.1\lib\Portable-Net45+NetCore45+WP8+WPA81\JsonLite.dll</HintPath>
+    <Reference Include="JsonLite, Version=1.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Json.Lite.1.2.2\lib\Portable-Net45+NetCore45+WP8+WPA81\JsonLite.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
