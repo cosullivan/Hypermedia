@@ -34,6 +34,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="IJsonApiEntityCache.cs" />
+    <Compile Include="JsonApiEntityCache.cs" />
     <Compile Include="JsonApiEntityKeyEqualityComparer.cs" />
     <Compile Include="JsonApiException.cs" />
     <Compile Include="JsonApiSerializer.cs" />

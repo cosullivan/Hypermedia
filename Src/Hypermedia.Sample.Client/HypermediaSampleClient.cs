@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Hypermedia.Configuration;
+using Hypermedia.JsonApi;
 using Hypermedia.JsonApi.Client;
 using Hypermedia.Metadata;
 using Hypermedia.Sample.Resources;
@@ -17,7 +17,8 @@ namespace Hypermedia.Sample.Client
         const string MediaTypeName = "application/vnd.api+json";
 
         readonly HttpClient _httpClient;
-        readonly IContractResolver _resourceContractResolver;
+        readonly IContractResolver _contractResolver;
+        readonly IJsonApiEntityCache _cache = new JsonApiEntityCache();
 
         /// <summary>
         /// Constructor.
@@ -31,7 +32,7 @@ namespace Hypermedia.Sample.Client
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypeName));
 
-            _resourceContractResolver = CreateResolver();
+            _contractResolver = CreateResolver();
         }
 
         /// <summary>
@@ -70,7 +71,7 @@ namespace Hypermedia.Sample.Client
             var response = await _httpClient.GetAsync($"v1/users?skip={skip}&take={take}", cancellationToken);
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadAsJsonApiManyAsync<UserResource>(_resourceContractResolver);
+            return await response.Content.ReadAsJsonApiManyAsync<UserResource>(_contractResolver, _cache);
         }
 
         /// <summary>
@@ -84,7 +85,7 @@ namespace Hypermedia.Sample.Client
             var response = await _httpClient.GetAsync($"v1/users/{id}", cancellationToken);
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadAsJsonApiAsync<UserResource>(_resourceContractResolver);
+            return await response.Content.ReadAsJsonApiAsync<UserResource>(_contractResolver, _cache);
         }
 
         /// <summary>
@@ -99,7 +100,7 @@ namespace Hypermedia.Sample.Client
             var response = await _httpClient.GetAsync($"v1/posts?skip={skip}&take={take}", cancellationToken);
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadAsJsonApiManyAsync<PostResource>(_resourceContractResolver);
+            return await response.Content.ReadAsJsonApiManyAsync<PostResource>(_contractResolver, _cache);
         }
 
         /// <summary>
@@ -113,7 +114,7 @@ namespace Hypermedia.Sample.Client
             var response = await _httpClient.GetAsync($"v1/posts/{id}", cancellationToken);
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadAsJsonApiAsync<PostResource>(_resourceContractResolver);
+            return await response.Content.ReadAsJsonApiAsync<PostResource>(_contractResolver, _cache);
         }
 
         /// <summary>
@@ -127,7 +128,7 @@ namespace Hypermedia.Sample.Client
             var response = await _httpClient.GetAsync($"v1/posts/{postId}/comments", cancellationToken);
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadAsJsonApiManyAsync<CommentResource>(_resourceContractResolver);
+            return await response.Content.ReadAsJsonApiManyAsync<CommentResource>(_contractResolver, _cache);
         }
 
         /// <summary>

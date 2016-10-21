@@ -26,9 +26,9 @@ namespace Hypermedia.JsonApi.Client
         /// <returns>The list of JSON API entities.</returns>
         public TEntity Get<TEntity>()
         {
-            var resourceContractResolver = new ContractResolver(RuntimeContract<TEntity>.CreateRuntimeType());
+            var contractResolver = new ContractResolver(RuntimeContract<TEntity>.CreateRuntimeType());
 
-            return Get<TEntity>(resourceContractResolver);
+            return Get<TEntity>(contractResolver);
         }
 
         /// <summary>
@@ -39,9 +39,21 @@ namespace Hypermedia.JsonApi.Client
         /// <returns>The list of JSON API entities.</returns>
         public TEntity Get<TEntity>(IContractResolver contractResolver)
         {
+            return Get<TEntity>(contractResolver, new JsonApiEntityCache());
+        }
+
+        /// <summary>
+        /// Gets a single entity.
+        /// </summary>
+        /// <typeparam name="TEntity">The element type.</typeparam>
+        /// <param name="contractResolver">The contract resolver.</param>
+        /// <param name="cache">The entity cache to use for resolving existing instances in the object graph.</param>
+        /// <returns>The list of JSON API entities.</returns>
+        public TEntity Get<TEntity>(IContractResolver contractResolver, IJsonApiEntityCache cache)
+        {
             var serializer = new JsonApiSerializer(contractResolver);
 
-            return (TEntity)serializer.DeserializeEntity(_jsonObject);
+            return (TEntity)serializer.DeserializeEntity(_jsonObject, cache);
         }
 
         /// <summary>
@@ -64,9 +76,21 @@ namespace Hypermedia.JsonApi.Client
         /// <returns>The list of JSON API entities.</returns>
         public IEnumerable<TEntity> GetMany<TEntity>(IContractResolver contractResolver)
         {
+            return GetMany<TEntity>(contractResolver, new JsonApiEntityCache());
+        }
+
+        /// <summary>
+        /// Gets a list of entities.
+        /// </summary>
+        /// <typeparam name="TEntity">The element type.</typeparam>
+        /// <param name="contractResolver">The contract resolver.</param>
+        /// <param name="cache">The entity cache to use for resolving existing instances in the object graph.</param>
+        /// <returns>The list of JSON API entities.</returns>
+        public IEnumerable<TEntity> GetMany<TEntity>(IContractResolver contractResolver, IJsonApiEntityCache cache)
+        {
             var serializer = new JsonApiSerializer(contractResolver);
 
-            return serializer.DeserializeMany(_jsonObject).OfType<TEntity>().ToList();
+            return serializer.DeserializeMany(_jsonObject, cache).OfType<TEntity>().ToList();
         }
     }
 }

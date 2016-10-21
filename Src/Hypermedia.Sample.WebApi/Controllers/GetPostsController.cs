@@ -30,6 +30,11 @@ namespace Hypermedia.Sample.WebApi.Controllers
         {
             var posts = _database.Posts.GetAll(Predicate(q), skip, take).AsResource();
 
+            foreach (var post in posts)
+            {
+                post.Populate(_database);
+            }
+
             return Ok(posts);
         }
 
