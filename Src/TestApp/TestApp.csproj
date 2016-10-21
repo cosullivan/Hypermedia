@@ -33,8 +33,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="JsonLite, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Json.Lite.1.2.1\lib\Net45\JsonLite.dll</HintPath>
+    <Reference Include="JsonLite, Version=1.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Json.Lite.1.2.2\lib\Net45\JsonLite.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

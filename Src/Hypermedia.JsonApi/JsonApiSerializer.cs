@@ -111,7 +111,18 @@ namespace Hypermedia.JsonApi
         /// <returns>The list of items that was deserialized.</returns>
         public IEnumerable<object> DeserializeMany(JsonObject jsonObject)
         {
-            var deserializer = new Deserializer(jsonObject, _jsonSerializer, _contractResolver);
+            return DeserializeMany(jsonObject, new JsonApiEntityCache());
+        }
+
+        /// <summary>
+        /// Deserialize a collection of items.
+        /// </summary>
+        /// <param name="jsonObject">The top level object to deserialize.</param>
+        /// <param name="cache">The entity cache to use for resolving existing instances in the object graph.</param>
+        /// <returns>The list of items that was deserialized.</returns>
+        public IEnumerable<object> DeserializeMany(JsonObject jsonObject, IJsonApiEntityCache cache)
+        {
+            var deserializer = new Deserializer(jsonObject, _jsonSerializer, _contractResolver, cache);
 
             return deserializer.DeserializeMany();
         }
@@ -123,7 +134,18 @@ namespace Hypermedia.JsonApi
         /// <returns>The instance that was created.</returns>
         public object DeserializeEntity(JsonObject jsonObject)
         {
-            var deserializer = new Deserializer(jsonObject, _jsonSerializer, _contractResolver);
+            return DeserializeEntity(jsonObject, new JsonApiEntityCache());
+        }
+
+        /// <summary>
+        /// Deserialize a JSON object into a CLR type.
+        /// </summary>
+        /// <param name="jsonObject">The top level JSON object to deserialize into a CLR type.</param>
+        /// <param name="cache">The entity cache to use for resolving existing instances in the object graph.</param>
+        /// <returns>The instance that was created.</returns>
+        public object DeserializeEntity(JsonObject jsonObject, IJsonApiEntityCache cache)
+        {
+            var deserializer = new Deserializer(jsonObject, _jsonSerializer, _contractResolver, cache);
 
             return deserializer.DeserializeEntity();
         }
@@ -136,7 +158,7 @@ namespace Hypermedia.JsonApi
         /// <param name="entity">The entity instance to deserialize the fields into.</param>
         internal void DeserializeEntity(IContract type, JsonObject jsonObject, object entity)
         {
-            var deserializer = new Deserializer(jsonObject, _jsonSerializer, new ContractResolver(type));
+            var deserializer = new Deserializer(jsonObject, _jsonSerializer, new ContractResolver(type), new JsonApiEntityCache());
             
             deserializer.DeserializeEntity(type, jsonObject, entity);
         }
@@ -626,7 +648,7 @@ namespace Hypermedia.JsonApi
             readonly JsonObject _rootObject;
             readonly IJsonSerializer _jsonSerializer;
             readonly IContractResolver _contractResolver;
-            readonly IDictionary<JsonObject, object> _instanceCache = new Dictionary<JsonObject, object>(JsonApiEntityKeyEqualityComparer.Instance);
+            readonly IJsonApiEntityCache _instanceCache;
 
             /// <summary>
             /// Constructor.
@@ -634,11 +656,13 @@ namespace Hypermedia.JsonApi
             /// <param name="rootObject">The root JSON object that contains both the 'data' and the 'include' nodes.</param>
             /// <param name="jsonSerializer">The JSON serializer.</param>
             /// <param name="contractResolver">The resource contract resolver.</param>
-            internal Deserializer(JsonObject rootObject, IJsonSerializer jsonSerializer, IContractResolver contractResolver)
+            /// <param name="instanceCache">The entity cache to use for reusing existing instances in the object graph.</param>
+            internal Deserializer(JsonObject rootObject, IJsonSerializer jsonSerializer, IContractResolver contractResolver, IJsonApiEntityCache instanceCache)
             {
                 _rootObject = rootObject;
                 _jsonSerializer = jsonSerializer;
                 _contractResolver = contractResolver;
+                _instanceCache = instanceCache;
             }
 
             /// <summary>
@@ -774,7 +798,10 @@ namespace Hypermedia.JsonApi
             {
                 var entity = contract.CreateInstance();
 
-                _instanceCache.Add(jsonObject, entity);
+                if (_instanceCache.TryAdd(jsonObject, entity) == false)
+                {
+                    // TODO: not sure if anything should be done here
+                }
 
                 DeserializeEntity(contract, jsonObject, entity);
 

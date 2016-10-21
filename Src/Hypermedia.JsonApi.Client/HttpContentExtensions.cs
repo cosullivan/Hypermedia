@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Hypermedia.Metadata;
 using Hypermedia.Metadata.Runtime;
-using JsonLite;
 
 namespace Hypermedia.JsonApi.Client
 {
@@ -44,9 +43,9 @@ namespace Hypermedia.JsonApi.Client
         /// Read the content as a JSONAPI response object.
         /// </summary>
         /// <param name="httpContent">The HTTP content to read the JSONAPI response from.</param>
-        /// <param name="resourceContractResolver">The resource contract resolver use to resolve types during deserialization.</param>
+        /// <param name="contractResolver">The resource contract resolver use to resolve types during deserialization.</param>
         /// <returns>The JSONAPI response element that was read from the stream in the HTTP content.</returns>
-        public static async Task<TEntity> ReadAsJsonApiAsync<TEntity>(this HttpContent httpContent, IContractResolver resourceContractResolver)
+        public static async Task<TEntity> ReadAsJsonApiAsync<TEntity>(this HttpContent httpContent, IContractResolver contractResolver)
         {
             if (httpContent == null)
             {
@@ -55,7 +54,29 @@ namespace Hypermedia.JsonApi.Client
 
             var response = await httpContent.ReadAsJsonApiAsync();
 
-            return response.Get<TEntity>(resourceContractResolver);
+            return response.Get<TEntity>(contractResolver);
+        }
+
+        /// <summary>
+        /// Read the content as a JSONAPI response object.
+        /// </summary>
+        /// <param name="httpContent">The HTTP content to read the JSONAPI response from.</param>
+        /// <param name="contractResolver">The resource contract resolver use to resolve types during deserialization.</param>
+        /// <param name="cache">The entity cache to use for resolving existing instances in the object graph.</param>
+        /// <returns>The JSONAPI response element that was read from the stream in the HTTP content.</returns>
+        public static async Task<TEntity> ReadAsJsonApiAsync<TEntity>(
+            this HttpContent httpContent, 
+            IContractResolver contractResolver, 
+            IJsonApiEntityCache cache)
+        {
+            if (httpContent == null)
+            {
+                throw new ArgumentNullException(nameof(httpContent));
+            }
+
+            var response = await httpContent.ReadAsJsonApiAsync();
+
+            return response.Get<TEntity>(contractResolver, cache);
         }
 
         /// <summary>
@@ -74,9 +95,9 @@ namespace Hypermedia.JsonApi.Client
         /// Read the content as a JSONAPI response object.
         /// </summary>
         /// <param name="httpContent">The HTTP content to read the JSONAPI response from.</param>
-        /// <param name="resourceContractResolver">The resource contract resolver use to resolve types during deserialization.</param>
+        /// <param name="contractResolver">The resource contract resolver use to resolve types during deserialization.</param>
         /// <returns>The JSONAPI response element that was read from the stream in the HTTP content.</returns>
-        public static async Task<List<TEntity>> ReadAsJsonApiManyAsync<TEntity>(this HttpContent httpContent, IContractResolver resourceContractResolver)
+        public static async Task<List<TEntity>> ReadAsJsonApiManyAsync<TEntity>(this HttpContent httpContent, IContractResolver contractResolver)
         {
             if (httpContent == null)
             {
@@ -85,7 +106,29 @@ namespace Hypermedia.JsonApi.Client
 
             var response = await httpContent.ReadAsJsonApiAsync();
 
-            return response.GetMany<TEntity>(resourceContractResolver).ToList();
+            return response.GetMany<TEntity>(contractResolver).ToList();
+        }
+
+        /// <summary>
+        /// Read the content as a JSONAPI response object.
+        /// </summary>
+        /// <param name="httpContent">The HTTP content to read the JSONAPI response from.</param>
+        /// <param name="contractResolver">The resource contract resolver use to resolve types during deserialization.</param>
+        /// <param name="cache">The entity cache to use for resolving existing instances in the object graph.</param>
+        /// <returns>The JSONAPI response element that was read from the stream in the HTTP content.</returns>
+        public static async Task<List<TEntity>> ReadAsJsonApiManyAsync<TEntity>(
+            this HttpContent httpContent, 
+            IContractResolver contractResolver,
+            IJsonApiEntityCache cache)
+        {
+            if (httpContent == null)
+            {
+                throw new ArgumentNullException(nameof(httpContent));
+            }
+
+            var response = await httpContent.ReadAsJsonApiAsync();
+
+            return response.GetMany<TEntity>(contractResolver, cache).ToList();
         }
     }
 }
