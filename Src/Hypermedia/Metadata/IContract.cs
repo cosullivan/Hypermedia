@@ -57,7 +57,7 @@ namespace Hypermedia.Metadata
                 throw new ArgumentException(nameof(name));
             }
 
-            return contract.Fields.Single(field => String.Equals(field.Name, name, StringComparison.OrdinalIgnoreCase));
+            return contract.Fields.SingleOrDefault(field => String.Equals(field.Name, name, StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace Hypermedia.Metadata
                 throw new ArgumentException(nameof(name));
             }
 
-            return contract.Relationships.Single(relationship => String.Equals(relationship.Name, name, StringComparison.OrdinalIgnoreCase));
+            return contract.Relationships.SingleOrDefault(relationship => String.Equals(relationship.Name, name, StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>

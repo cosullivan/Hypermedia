@@ -51,7 +51,7 @@ namespace TestApp
             //MemberPathResolution options = new MemberPathResolution(resolver, post);
 
             //Console.WriteLine(MemberPath.TryParse("comments.user", options, out found));
-            var resolver = new MemberPathResolver(contractResolver, post, "comments");
+            var resolver = new MemberPathResolver(contractResolver, post, "comments.user");
             Console.WriteLine(resolver.TryResolve(out found));
         }
 
@@ -90,12 +90,83 @@ namespace TestApp
             {
                 memberPath = null;
 
-                foreach (var part in _path.Split('.'))
+                return TryResolve(_root, _path, ref memberPath);
+
+                //var root = _root;
+                //var parts = _path.Split('.');
+
+                //for (var i = 0; i < parts.Length; i++)
+                //{
+                //    var relationship = root.Relationship(parts[i]);
+
+                //    if (relationship == null || _contractResolver.TryResolve(relationship.RelatedTo, out root) == false)
+                //    {
+                //        return false;
+                //    }
+
+                //    Console.WriteLine(parts[i]);
+                //}
+
+                //return false;
+            }
+
+            bool TryResolve(IContract root, string path, ref MemberPath memberPath)
+            {
+                var index = path.IndexOf(".", StringComparison.Ordinal);
+
+                if (index < 0)
                 {
-                    
+                    return TryResolveRelationship(root, path, null, ref memberPath);
                 }
 
-                return false;
+                return TryResolveRelationship(root, path.Substring(0, index), path.Substring(index + 1), ref memberPath);
+
+                //// can only match the field if there are not more parts remaining
+                //if (index < 0 && TryResolveField(root, path, ref memberPath))
+                //{
+                //    return true;
+                //}
+
+                //return TryResolveRelationship(root, path.Substring(0, index), path.Substring(index + 1), ref memberPath);
+            }
+
+            bool TryResolveField(IContract root, string name, ref MemberPath memberPath)
+            {
+                var field = root.Field(name);
+
+                if (field == null)
+                {
+                    //memberPath = null;
+                    return false;
+                }
+
+                memberPath = new MemberPath(field);
+                return true;
+            }
+
+            bool TryResolveRelationship(IContract root, string name, string path, ref MemberPath memberPath)
+            {
+                var relationship = root.Relationship(name);
+                if (relationship == null)
+                {
+                    memberPath = null;
+                    return false;
+                }
+
+                if (String.IsNullOrEmpty(path))
+                {
+                    memberPath = new MemberPath(relationship);
+                    return true;
+                }
+
+                if (_contractResolver.TryResolve(relationship.RelatedTo, out root) == false)
+                {
+                    memberPath = null;
+                    return false;
+                }
+
+                memberPath = new MemberPath(relationship);
+                return TryResolve(root, path, ref memberPath);
             }
         }
     }
