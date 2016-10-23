@@ -10,6 +10,7 @@ using Hypermedia.Metadata.Runtime;
 using Hypermedia.Sample.Client;
 using Hypermedia.Sample.Data;
 using Hypermedia.Sample.Resources;
+using Hypermedia.WebApi;
 using JsonLite;
 using JsonLite.Ast;
 
@@ -34,17 +35,68 @@ namespace TestApp
             //}
 
             var include = "owner-user,comments.user";
-            var resolver = Hypermedia.Sample.WebApi.WebApiConfig.CreateResolver();
+            var contractResolver = Hypermedia.Sample.WebApi.WebApiConfig.CreateResolver();
 
-            
-            //request.Contract = new DynamicContract<Post>();
+            IContract post;
+            contractResolver.TryResolve(typeof(PostResource), out post);
 
+            IContract comment;
+            contractResolver.TryResolve(typeof(CommentResource), out comment);
             
+            var includeMember = new MemberPath(
+                post.Relationship(nameof(PostResource.Comments)),
+                    new MemberPath(comment.Relationship(nameof(CommentResource.User))));
+
+            MemberPath found;
+            //MemberPathResolution options = new MemberPathResolution(resolver, post);
+
+            //Console.WriteLine(MemberPath.TryParse("comments.user", options, out found));
+            var resolver = new MemberPathResolver(contractResolver, post, "comments");
+            Console.WriteLine(resolver.TryResolve(out found));
         }
 
-        class IncludePath
+        internal sealed class MemberPathResolver
         {
-            public IRelationship Relationship { get; set; }
+            readonly IContractResolver _contractResolver;
+            readonly IContract _root;
+            readonly string _path;
+
+            /// <summary>
+            /// Constructor.
+            /// </summary>
+            /// <param name="contractResolver">The contract resolver to resolve with.</param>
+            /// <param name="path">The path to parse from the root level.</param>
+            internal MemberPathResolver(IContractResolver contractResolver, string path) : this(contractResolver, null, path) { }
+
+            /// <summary>
+            /// Constructor.
+            /// </summary>
+            /// <param name="contractResolver">The contract resolver to resolve with.</param>
+            /// <param name="root">The root level contact to parse from, or null if parsing a full path.</param>
+            /// <param name="path">The path to parse from the root level.</param>
+            internal MemberPathResolver(IContractResolver contractResolver, IContract root, string path)
+            {
+                _contractResolver = contractResolver;
+                _root = root;
+                _path = path;
+            }
+
+            /// <summary>
+            /// Attempt to resolve the member path.
+            /// </summary>
+            /// <param name="memberPath">The member path to resolve.</param>
+            /// <returns>true if the member path could be resolved, false if not.</returns>
+            internal bool TryResolve(out MemberPath memberPath)
+            {
+                memberPath = null;
+
+                foreach (var part in _path.Split('.'))
+                {
+                    
+                }
+
+                return false;
+            }
         }
     }
 }

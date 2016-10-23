@@ -93,6 +93,27 @@ namespace Hypermedia.Metadata
         }
 
         /// <summary>
+        /// Returns the relationship with the given name.
+        /// </summary>
+        /// <param name="contract">The type to return the relationship from.</param>
+        /// <param name="name">The name of the relationship to return.</param>
+        /// <returns>The relationship with the given name.</returns>
+        public static IRelationship Relationship(this IContract contract, string name)
+        {
+            if (contract == null)
+            {
+                throw new ArgumentNullException(nameof(contract));
+            }
+
+            if (String.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException(nameof(name));
+            }
+
+            return contract.Relationships.Single(relationship => String.Equals(relationship.Name, name, StringComparison.OrdinalIgnoreCase));
+        }
+
+        /// <summary>
         /// Returns all relationships that match the predicate.
         /// </summary>
         /// <param name="contract">The contract to return the relationships from.</param>

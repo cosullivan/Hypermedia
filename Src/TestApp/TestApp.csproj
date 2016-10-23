@@ -83,6 +83,10 @@
       <Project>{138b5d8c-040d-404d-818e-57904fb06a67}</Project>
       <Name>Hypermedia.Sample</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Hypermedia.WebApi\Hypermedia.WebApi.csproj">
+      <Project>{F641C27C-4047-4C9E-B34A-99121A755A06}</Project>
+      <Name>Hypermedia.WebApi</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Hypermedia\Hypermedia.csproj">
       <Project>{a1f1f9f5-caf8-48b1-9a4a-ae87ab0f092e}</Project>
       <Name>Hypermedia</Name>
