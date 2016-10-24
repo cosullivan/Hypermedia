@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
 namespace Hypermedia.Metadata.Runtime
 {
+    [DebuggerDisplay("Name={Name} Type={ClrType}")]
     public class RuntimeContract : IContract
     {
         readonly string _type;

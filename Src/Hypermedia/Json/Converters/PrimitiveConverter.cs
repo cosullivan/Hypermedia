@@ -29,37 +29,37 @@ namespace Hypermedia.Json.Converters
 
             if (type == typeof(short))
             {
-                return new JsonInteger((short)value);
+                return new JsonNumber((short)value);
             }
 
             if (type == typeof(ushort))
             {
-                return new JsonInteger((ushort)value);
+                return new JsonNumber((ushort)value);
             }
 
             if (type == typeof (int))
             {
-                return new JsonInteger((int)value);
+                return new JsonNumber((int)value);
             }
 
             if (type == typeof(long))
             {
-                return new JsonInteger((long)value);
+                return new JsonNumber((long)value);
             }
 
             if (type == typeof (decimal))
             {
-                return new JsonDecimal((decimal)value);
+                return new JsonNumber((decimal)value);
             }
 
             if (type == typeof(float))
             {
-                return new JsonDecimal((decimal)(float)value);
+                return new JsonNumber((decimal)(float)value);
             }
 
             if (type == typeof (double))
             {
-                return new JsonDecimal((decimal)(double)value);
+                return new JsonNumber((decimal)(double)value);
             }
 
             if (type == typeof(bool))
@@ -101,37 +101,37 @@ namespace Hypermedia.Json.Converters
 
             if (type == typeof(short))
             {
-                return (short)((JsonInteger)jsonValue).Value;
+                return (short)((JsonNumber)jsonValue).Value;
             }
 
             if (type == typeof(ushort))
             {
-                return (ushort)((JsonInteger)jsonValue).Value;
+                return (ushort)((JsonNumber)jsonValue).Value;
             }
 
             if (type == typeof(int))
             {
-                return (int)((JsonInteger)jsonValue).Value;
+                return (int)((JsonNumber)jsonValue).Value;
             }
 
             if (type == typeof(long))
             {
-                return ((JsonInteger)jsonValue).Value;
+                return ((JsonNumber)jsonValue).Value;
             }
 
             if (type == typeof(decimal))
             {
-                return ((JsonDecimal)jsonValue).Value;
+                return ((JsonNumber)jsonValue).Value;
             }
 
             if (type == typeof(float))
             {
-                return (float)((JsonDecimal)jsonValue).Value;
+                return (float)((JsonNumber)jsonValue).Value;
             }
 
             if (type == typeof(double))
             {
-                return (double)((JsonDecimal)jsonValue).Value;
+                return (double)((JsonNumber)jsonValue).Value;
             }
 
             if (type == typeof(DateTime))

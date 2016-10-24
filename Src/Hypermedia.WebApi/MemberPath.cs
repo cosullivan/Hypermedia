@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Hypermedia.Metadata;
 
 namespace Hypermedia.WebApi
 {
+    [DebuggerDisplay("Member={Member.Name} Children={Children.Count}")]
     public sealed class MemberPath
     {
         /// <summary>
@@ -20,15 +22,16 @@ namespace Hypermedia.WebApi
         /// <summary>
         /// Attempt to parse the member path.
         /// </summary>
-        /// <param name="input">The input string to parse the member path from.</param>
         /// <param name="contractResolver">The contract resolver to use when performing resolution of members.</param>
+        /// <param name="root">The root level contract to parse from.</param>
+        /// <param name="path">The input string to parse the member path from.</param>
         /// <param name="memberPath">The member path that was found.</param>
         /// <returns>true if the input could be parsed, false if not.</returns>
-        public static bool TryParse(string input, IContractResolver contractResolver, out MemberPath memberPath)
+        public static bool TryParse(IContractResolver contractResolver, IContract root, string path, out MemberPath memberPath)
         {
-            memberPath = null;
+            var resolver = new MemberPathResolver(contractResolver, root, path);
 
-            return false;
+            return resolver.TryResolve(out memberPath);
         }
 
         /// <summary>
