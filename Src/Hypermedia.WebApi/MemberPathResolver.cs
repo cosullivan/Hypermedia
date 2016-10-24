@@ -7,31 +7,29 @@ namespace Hypermedia.WebApi
     {
         readonly IContractResolver _contractResolver;
         readonly IContract _root;
-        readonly string _path;
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="contractResolver">The contract resolver to resolve with.</param>
         /// <param name="root">The root level contact to parse from, or null if parsing a full path.</param>
-        /// <param name="path">The path to parse from the root level.</param>
-        internal MemberPathResolver(IContractResolver contractResolver, IContract root, string path)
+        internal MemberPathResolver(IContractResolver contractResolver, IContract root)
         {
             _contractResolver = contractResolver;
             _root = root;
-            _path = path;
         }
 
         /// <summary>
         /// Attempt to resolve the member path.
         /// </summary>
+        /// <param name="path">The path to resolve.</param>
         /// <param name="memberPath">The member path to resolve.</param>
         /// <returns>true if the member path could be resolved, false if not.</returns>
-        internal bool TryResolve(out MemberPath memberPath)
+        internal bool TryResolve(string path, out MemberPath memberPath)
         {
             memberPath = null;
 
-            return TryResolve(_root, _path, ref memberPath);
+            return TryResolve(_root, path, ref memberPath);
         }
 
         /// <summary>
