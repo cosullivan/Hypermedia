@@ -30,7 +30,7 @@ namespace Hypermedia.Sample.WebApi.Controllers
         /// <param name="metadata">The request metadtaa.</param>
         /// <returns>The HTTP action result that represents the posts.</returns>
         [HttpGet, Route("v1/posts")]
-        public IHttpActionResult Execute(string q = null, int skip = 0, int take = 100, IRequestMetadata metadata = null)
+        public IHttpActionResult Execute(string q = null, int skip = 0, int take = 100, IRequestMetadata<PostResource> metadata = null)
         {
             var posts = _database.Posts.GetAll(Predicate(q), skip, take).AsResource();
 

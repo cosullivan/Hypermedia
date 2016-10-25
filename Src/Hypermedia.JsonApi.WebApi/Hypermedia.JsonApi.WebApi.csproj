@@ -53,7 +53,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="JsonApiMediaTypeFormatter.cs" />
+    <Compile Include="JsonApiMediaTypeFormatterOptions.cs" />
     <Compile Include="JsonApiPatch.cs" />
+    <Compile Include="JsonApiRequestMetadata.cs" />
+    <Compile Include="MemberPathResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -2,7 +2,7 @@
 
 namespace Hypermedia.WebApi
 {
-    public interface IRequestMetadata
+    public interface IRequestMetadata<TResource>
     {
         /// <summary>
         /// The list of properties to include in the request.

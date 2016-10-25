@@ -1,7 +1,8 @@
 ﻿using System;
 using Hypermedia.Metadata;
+using Hypermedia.WebApi;
 
-namespace Hypermedia.WebApi
+namespace Hypermedia.JsonApi.WebApi
 {
     internal sealed class MemberPathResolver
     {

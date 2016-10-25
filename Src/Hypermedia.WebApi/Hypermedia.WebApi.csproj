@@ -60,11 +60,10 @@
     <Compile Include="Json\ContractConverter.cs" />
     <Compile Include="Json\JsonPatch.cs" />
     <Compile Include="Json\JsonMediaTypeFormatter.cs" />
+    <Compile Include="Json\NameValueCollectionExtensions.cs" />
     <Compile Include="MemberPath.cs" />
-    <Compile Include="MemberPathResolver.cs" />
     <Compile Include="MemberSortPath.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RequestMetadata.cs" />
     <Compile Include="SortDirection.cs" />
   </ItemGroup>
   <ItemGroup>

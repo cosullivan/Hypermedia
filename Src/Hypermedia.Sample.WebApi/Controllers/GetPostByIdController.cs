@@ -3,6 +3,7 @@ using System.Web.Http;
 using Hypermedia.Sample.Data;
 using Hypermedia.Sample.Resources;
 using Hypermedia.Sample.WebApi.Resources;
+using Hypermedia.WebApi;
 
 namespace Hypermedia.Sample.WebApi.Controllers
 {
@@ -23,9 +24,10 @@ namespace Hypermedia.Sample.WebApi.Controllers
         /// Returns the posts with the given id.
         /// </summary>
         /// <param name="id">the ID of the post to return.</param>
+        /// <param name="metadata">The metadata for the request.</param>
         /// <returns>The HTTP action result that represents the result of the action.</returns>
         [HttpGet, Route("v1/posts/{id}")]
-        public IHttpActionResult Execute(int id)
+        public IHttpActionResult Execute(int id, IRequestMetadata<PostResource> metadata = null)
         {
             var post = _database.Posts.GetById(new[] { id }).FirstOrDefault().AsResource();
 

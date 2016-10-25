@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
@@ -19,8 +17,7 @@ namespace Hypermedia.WebApi.Json
     {
         const string Name = "json";
         const string MediaTypeName = "application/json";
-        const string PrettifyParameterName = "$prettify";
-
+        
         readonly bool _prettify;
 
         /// <summary>
@@ -59,25 +56,12 @@ namespace Hypermedia.WebApi.Json
         {
             var parameters = request.RequestUri.ParseQueryString();
 
-            if (parameters[PrettifyParameterName] != null)
+            if (parameters.Prettify())
             {
-                var prettify = new[] { "yes", "1", "true" }.Contains(parameters[PrettifyParameterName], StringComparer.OrdinalIgnoreCase);
-
-                return CreatePerRequestInstance(ContractResolver, prettify);
+                return new JsonMediaTypeFormatter(ContractResolver, true);
             }
 
             return base.GetPerRequestFormatterInstance(type, request, mediaType);
-        }
-
-        /// <summary>
-        /// Creates a per request formatter instance.
-        /// </summary>
-        /// <param name="contractResolver">The contract resolver to create the request with.</param>
-        /// <param name="prettify">A value which indicates whether the output should be prettified.</param>
-        /// <returns>The formatter instance to use specifically for the scope of a request.</returns>
-        protected virtual MediaTypeFormatter CreatePerRequestInstance(IContractResolver contractResolver, bool prettify)
-        {
-            return new JsonMediaTypeFormatter(ContractResolver, prettify);
         }
 
         /// <summary>
@@ -98,12 +82,23 @@ namespace Hypermedia.WebApi.Json
                 throw new HypermediaWebApiException("Can not create a JSON instance from the stream.");
             }
 
+            return Task.FromResult(ReadFromJsonValue(type, jsonValue));
+        }
+
+        /// <summary>
+        /// Read an object from the given JSON value.
+        /// </summary>
+        /// <param name="type">The type of the object to deserialize.</param>
+        /// <param name="jsonValue">The JSON value to read.</param>
+        /// <returns>The object that was read.</returns>
+        protected virtual object ReadFromJsonValue(Type type, JsonValue jsonValue)
+        {
             if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IPatch<>))
             {
-                return Task.FromResult((object)CreatePatch(type, ContractResolver, jsonValue));
+                return CreatePatch(type, ContractResolver, jsonValue);
             }
 
-            return Task.FromResult(DeserializeValue(type, jsonValue));
+            return DeserializeValue(type, jsonValue);
         }
 
         /// <summary>
