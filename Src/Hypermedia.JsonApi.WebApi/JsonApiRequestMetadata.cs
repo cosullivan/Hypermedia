@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
+using System.Net.Http;
 using Hypermedia.Metadata;
 using Hypermedia.WebApi;
 
@@ -8,35 +10,39 @@ namespace Hypermedia.JsonApi.WebApi
 {
     internal sealed class JsonApiRequestMetadata<TResource> : IRequestMetadata<TResource>
     {
+        readonly IContractResolver _contractResolver;
+        readonly IContract _root;
+        readonly NameValueCollection _parameters;
         readonly Lazy<IReadOnlyList<MemberPath>> _include;
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="contractResolver">The contract resolver instance to use for resolving the paths.</param>
-        /// <param name="options">The options that the formatter was created with.</param>
-        public JsonApiRequestMetadata(IContractResolver contractResolver, JsonApiMediaTypeFormatterOptions options)
+        /// <param name="root">The root level contract that the request is referring to.</param>
+        /// <param name="request">The HTTP request message.</param>
+        public JsonApiRequestMetadata(IContractResolver contractResolver, IContract root, HttpRequestMessage request)
         {
-            ContractResolver = contractResolver;
-            Options = options;
+            _contractResolver = contractResolver;
+            _root = root;
+            _parameters = request.RequestUri.ParseQueryString();
 
-            _include = new Lazy<IReadOnlyList<MemberPath>>(InitializeInclude);
+            _include = new Lazy<IReadOnlyList<MemberPath>>(CreateInclusionPaths);
         }
 
         /// <summary>
         /// Initialize the included member path.
         /// </summary>
         /// <returns>The list of member paths that define the related items to include.</returns>
-        IReadOnlyList<MemberPath> InitializeInclude()
+        IReadOnlyList<MemberPath> CreateInclusionPaths()
         {
-            IContract root;
-            if (ContractResolver.TryResolve(typeof(TResource), out root) == false)
+            if (String.IsNullOrWhiteSpace(_parameters["include"]))
             {
                 return new MemberPath[0];
             }
 
             List<MemberPath> memberPaths;
-            if (TryResolveInclude(root, out memberPaths) == false)
+            if (TryResolveInclude(_parameters["include"], out memberPaths) == false)
             {
                 return new MemberPath[0];
             }
@@ -47,16 +53,16 @@ namespace Hypermedia.JsonApi.WebApi
         /// <summary>
         /// Attempt to resolve all paths from the include option.
         /// </summary>
-        /// <param name="root">The root level contract to parse from.</param>
+        /// <param name="path">The fully qualified inclusion path.</param>
         /// <param name="memberPaths">The list of member paths that were resolved.</param>
         /// <returns>true if the path could be resolved, fasle if not.</returns>
-        bool TryResolveInclude(IContract root, out List<MemberPath> memberPaths)
+        bool TryResolveInclude(string path, out List<MemberPath> memberPaths)
         {
             memberPaths = new List<MemberPath>();
 
-            var resolver = new MemberPathResolver(ContractResolver, root);
+            var resolver = new MemberPathResolver(_contractResolver, _root);
 
-            foreach (var part in Options.IncludePath.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            foreach (var part in path.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
             {
                 MemberPath memberPath;
                 if (resolver.TryResolve(part.Trim(), out memberPath) == false)
@@ -82,16 +88,6 @@ namespace Hypermedia.JsonApi.WebApi
                 yield return new MemberPath(group.Key, Combine(group.SelectMany(m => m.Children)).ToArray());
             }
         }
-
-        /// <summary>
-        /// Gets the resource contract resolver that is to be used for resolving the paths.
-        /// </summary>
-        public IContractResolver ContractResolver { get; }
-
-        /// <summary>
-        /// The options that the formatter was created with.
-        /// </summary>
-        public JsonApiMediaTypeFormatterOptions Options { get; }
 
         /// <summary>
         /// The list of properties to include in the request.

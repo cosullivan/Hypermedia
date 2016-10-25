@@ -7,6 +7,7 @@ using Hypermedia.JsonApi.WebApi;
 using Hypermedia.Metadata;
 using Hypermedia.Sample.Resources;
 using Hypermedia.Sample.WebApi.Resources;
+using Hypermedia.WebApi;
 using Hypermedia.WebApi.Json;
 using ExceptionLogger = Hypermedia.Sample.WebApi.Services.ExceptionLogger;
 
@@ -43,6 +44,16 @@ namespace Hypermedia.Sample.WebApi
 
             configuration.Formatters.Add(new JsonMediaTypeFormatter(resolver));
             configuration.Formatters.Add(new JsonApiMediaTypeFormatter(resolver));
+
+            configuration.ParameterBindingRules.Add(p =>
+            {
+                if (p.ParameterType.IsGenericType && p.ParameterType.GetGenericTypeDefinition() == typeof(IRequestMetadata<>))
+                {
+                    return new JsonApiRequestMetadataParameterBinding(p, resolver, p.ParameterType.GenericTypeArguments[0]);
+                }
+
+                return null;
+            });
         }
 
         /// <summary>

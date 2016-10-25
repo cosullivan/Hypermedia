@@ -1,22 +1,17 @@
 ﻿using System;
 using System.Collections;
 using System.Diagnostics;
-using System.Net.Http;
 using System.Net.Http.Formatting;
-using System.Net.Http.Headers;
 using Hypermedia.Metadata;
 using Hypermedia.WebApi;
-using Hypermedia.WebApi.Json;
 using JsonLite.Ast;
 
 namespace Hypermedia.JsonApi.WebApi
 {
-    public sealed class JsonApiMediaTypeFormatter : Hypermedia.WebApi.Json.JsonMediaTypeFormatter
+    public class JsonApiMediaTypeFormatter : Hypermedia.WebApi.Json.JsonMediaTypeFormatter
     {
         const string Name = "jsonapi";
         const string MediaTypeName = "application/vnd.api+json";
-
-        readonly JsonApiMediaTypeFormatterOptions _options;
 
         /// <summary>
         /// Constructor.
@@ -29,47 +24,17 @@ namespace Hypermedia.JsonApi.WebApi
         /// </summary>
         /// <param name="contractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
         /// <param name="prettify">A value which indicates whether the output should be prettified.</param>
-        /// <param name="options">The options to create the formatter with.</param>
-        JsonApiMediaTypeFormatter(IContractResolver contractResolver, bool prettify, JsonApiMediaTypeFormatterOptions options) : base(Name, MediaTypeName, contractResolver, prettify)
-        {
-            _options = options;
-        }
+        JsonApiMediaTypeFormatter(IContractResolver contractResolver, bool prettify) : base(Name, MediaTypeName, contractResolver, prettify) { }
 
         /// <summary>
-        /// Returns a specialized instance of the <see cref="T:System.Net.Http.Formatting.MediaTypeFormatter"/> that can format a response for the given parameters.
+        /// Creates a per request formatter instance.
         /// </summary>
-        /// <param name="type">The type to format.</param>
-        /// <param name="request">The request.</param>
-        /// <param name="mediaType">The media type.</param>
-        /// <returns>Returns <see cref="T:System.Net.Http.Formatting.MediaTypeFormatter"/>.</returns>
-        public override MediaTypeFormatter GetPerRequestFormatterInstance(Type type, HttpRequestMessage request, MediaTypeHeaderValue mediaType)
+        /// <param name="contractResolver">The contract resolver to create the request with.</param>
+        /// <param name="prettify">A value which indicates whether the output should be prettified.</param>
+        /// <returns>The formatter instance to use specifically for the scope of a request.</returns>
+        protected override MediaTypeFormatter CreatePerRequestInstance(IContractResolver contractResolver, bool prettify)
         {
-            var parameters = request.RequestUri.ParseQueryString();
-
-            var options = new JsonApiMediaTypeFormatterOptions(parameters["include"]);
-
-            return new JsonApiMediaTypeFormatter(ContractResolver, parameters.Prettify(), options);
-        }
-
-        /// <summary>
-        /// Read an object from the given JSON value.
-        /// </summary>
-        /// <param name="type">The type of the object to deserialize.</param>
-        /// <param name="jsonValue">The JSON value to read.</param>
-        /// <returns>The object that was read.</returns>
-        protected override object ReadFromJsonValue(Type type, JsonValue jsonValue)
-        {
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IRequestMetadata<>))
-            {
-                var metadata = typeof(JsonApiRequestMetadata<>).MakeGenericType(type.GenericTypeArguments[0]);
-
-                var constructor = metadata.GetConstructor(new[] { typeof(IContractResolver), typeof(JsonApiMediaTypeFormatterOptions) });
-                Debug.Assert(constructor != null);
-
-                return constructor.Invoke(new object[] { ContractResolver, _options });
-            }
-
-            return base.ReadFromJsonValue(type, jsonValue);
+            return new JsonApiMediaTypeFormatter(ContractResolver, prettify);
         }
 
         /// <summary>
