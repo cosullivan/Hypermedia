@@ -116,7 +116,7 @@ namespace Hypermedia.Json.Converters
 
             if (type == typeof(long))
             {
-                return ((JsonNumber)jsonValue).Value;
+                return (long)((JsonNumber)jsonValue).Value;
             }
 
             if (type == typeof(decimal))
