@@ -110,13 +110,13 @@ return await response.Content.ReadAsJsonApiManyAsync<PostResource>(_resourceCont
 View the Hypermedia.Sample.WebApi project for an example of how to use the Hypermedia library. The sample API is running
 live at http://hypermedia.cainosullivan.com/ and has the following endpoints;
 
-* http://hypermedia.cainosullivan.com/v1/users
-* http://hypermedia.cainosullivan.com/v1/posts
-* http://hypermedia.cainosullivan.com/v1/comments
+* http://hypermedia.cainosullivan.com/v1/users?$format=jsonapi
+* http://hypermedia.cainosullivan.com/v1/posts?$format=jsonapi
+* http://hypermedia.cainosullivan.com/v1/comments?$format=jsonapi
 
 Try it out now.
 
-http://hypermedia.cainosullivan.com/v1/posts/1?$prettify=true
+http://hypermedia.cainosullivan.com/v1/posts/1?$prettify=true&$format=jsonapi
 
 ```json
 {
