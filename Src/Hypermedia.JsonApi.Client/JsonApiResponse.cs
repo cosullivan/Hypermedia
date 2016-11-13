@@ -51,8 +51,18 @@ namespace Hypermedia.JsonApi.Client
         /// <returns>The list of JSON API entities.</returns>
         public TEntity Get<TEntity>(IContractResolver contractResolver, IJsonApiEntityCache cache)
         {
-            var serializer = new JsonApiSerializer(contractResolver);
+            return Get<TEntity>(new JsonApiSerializer(contractResolver), cache);
+        }
 
+        /// <summary>
+        /// Gets a single entity.
+        /// </summary>
+        /// <typeparam name="TEntity">The element type.</typeparam>
+        /// <param name="serializer">The JSON API serializer.</param>
+        /// <param name="cache">The entity cache to use for resolving existing instances in the object graph.</param>
+        /// <returns>The list of JSON API entities.</returns>
+        public TEntity Get<TEntity>(JsonApiSerializer serializer, IJsonApiEntityCache cache)
+        {
             return (TEntity)serializer.DeserializeEntity(_jsonObject, cache);
         }
 
@@ -88,8 +98,18 @@ namespace Hypermedia.JsonApi.Client
         /// <returns>The list of JSON API entities.</returns>
         public IEnumerable<TEntity> GetMany<TEntity>(IContractResolver contractResolver, IJsonApiEntityCache cache)
         {
-            var serializer = new JsonApiSerializer(contractResolver);
+            return GetMany<TEntity>(new JsonApiSerializer(contractResolver), cache);
+        }
 
+        /// <summary>
+        /// Gets a list of entities.
+        /// </summary>
+        /// <typeparam name="TEntity">The element type.</typeparam>
+        /// <param name="serializer">The JSON API serializer.</param>
+        /// <param name="cache">The entity cache to use for resolving existing instances in the object graph.</param>
+        /// <returns>The list of JSON API entities.</returns>
+        public IEnumerable<TEntity> GetMany<TEntity>(JsonApiSerializer serializer, IJsonApiEntityCache cache)
+        {
             return serializer.DeserializeMany(_jsonObject, cache).OfType<TEntity>().ToList();
         }
     }
