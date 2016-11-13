@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Diagnostics;
 using System.Net.Http.Formatting;
+using Hypermedia.Json;
 using Hypermedia.Metadata;
 using Hypermedia.WebApi;
 using JsonLite.Ast;
@@ -68,7 +69,9 @@ namespace Hypermedia.JsonApi.WebApi
                 throw new HypermediaWebApiException("The top level JSON value must be an Object.");
             }
 
-            var serializer = new JsonApiSerializer(ContractResolver);
+            var serializer = new JsonApiSerializer(
+                ContractResolver, 
+                new JsonSerializer(new JsonConverterFactory(), new DasherizedFieldNamingStrategy()));
 
             if (TypeHelper.IsEnumerable(type))
             {
@@ -86,7 +89,9 @@ namespace Hypermedia.JsonApi.WebApi
         /// <returns>The JSON object that represents the serialized value.</returns>
         protected override JsonValue SerializeValue(Type type, object value)
         {
-            var serializer = new JsonApiSerializer(ContractResolver);
+            var serializer = new JsonApiSerializer(
+                ContractResolver,
+                new JsonSerializer(new JsonConverterFactory(), new DasherizedFieldNamingStrategy()));
 
             if (TypeHelper.IsEnumerable(type))
             {

@@ -19,5 +19,10 @@ namespace Hypermedia.Json
         /// <param name="jsonValue">The JSON value to deserialize.</param>
         /// <returns>The CLR object that the JSON value was deserialized from.</returns>
         object DeserializeValue(Type type, JsonValue jsonValue);
+
+        /// <summary>
+        /// The field naming strategy.
+        /// </summary>
+        IFieldNamingStratgey FieldNamingStrategy { get; }
     }
 }

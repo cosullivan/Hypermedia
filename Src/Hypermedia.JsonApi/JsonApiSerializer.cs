@@ -12,15 +12,23 @@ namespace Hypermedia.JsonApi
     public sealed class JsonApiSerializer
     {
         readonly IContractResolver _contractResolver;
-        readonly IJsonSerializer _jsonSerializer = new JsonSerializer();
+        readonly IJsonSerializer _jsonSerializer;
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="contractResolver">The resource contract resolver.</param>
-        public JsonApiSerializer(IContractResolver contractResolver)
+        public JsonApiSerializer(IContractResolver contractResolver) : this(contractResolver, new JsonSerializer(new JsonConverterFactory(), new DasherizedFieldNamingStrategy())) { }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="contractResolver">The resource contract resolver.</param>
+        /// <param name="jsonSerializer">The JSON serializer instance.</param>
+        public JsonApiSerializer(IContractResolver contractResolver, IJsonSerializer jsonSerializer)
         {
             _contractResolver = contractResolver;
+            _jsonSerializer = jsonSerializer;
         }
 
         /// <summary>
@@ -284,7 +292,7 @@ namespace Hypermedia.JsonApi
             /// <returns>The JSON member which represents the given field on the entity.</returns>
             JsonMember SerializeField(IField field, object entity)
             {
-                return new JsonMember(field.Name.LowerFirstCharacter().Dasherize(), _jsonSerializer.SerializeValue(field.GetValue(entity)));
+                return new JsonMember(_jsonSerializer.FieldNamingStrategy.GetName(field.Name), _jsonSerializer.SerializeValue(field.GetValue(entity)));
             }
 
             /// <summary>
@@ -332,7 +340,7 @@ namespace Hypermedia.JsonApi
                     }
                 }
 
-                return new JsonMember(relationship.Name.LowerFirstCharacter().Dasherize(), new JsonObject(members));
+                return new JsonMember(_jsonSerializer.FieldNamingStrategy.GetName(relationship.Name), new JsonObject(members));
             }
 
             /// <summary>
@@ -850,7 +858,7 @@ namespace Hypermedia.JsonApi
             {
                 foreach (var member in members)
                 {
-                    var field = fields.SingleOrDefault(f => String.Equals(f.Name, member.Name.Camelize(), StringComparison.OrdinalIgnoreCase));
+                    var field = fields.SingleOrDefault(f => String.Equals(f.Name, _jsonSerializer.FieldNamingStrategy.ResolveName(member.Name), StringComparison.OrdinalIgnoreCase));
 
                     if (field != null)
                     {
@@ -885,7 +893,7 @@ namespace Hypermedia.JsonApi
             {
                 foreach (var member in members.Where(HasDataMember))
                 {
-                    var relationship = relationships.SingleOrDefault(r => String.Equals(r.Name, member.Name.Camelize(), StringComparison.OrdinalIgnoreCase));
+                    var relationship = relationships.SingleOrDefault(r => String.Equals(r.Name, _jsonSerializer.FieldNamingStrategy.ResolveName(member.Name), StringComparison.OrdinalIgnoreCase));
 
                     if (relationship == null)
                     {

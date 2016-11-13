@@ -139,6 +139,7 @@
     <Compile Include="Resources\Resource.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Properties\PublishProfiles\hypermediasamplewebapi - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\HypermediaSampleWebApi - Web Deploy.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

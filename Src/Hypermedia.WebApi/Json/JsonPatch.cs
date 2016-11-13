@@ -35,7 +35,7 @@ namespace Hypermedia.WebApi.Json
                     return false;
                 }
 
-                var serializer = new JsonSerializer(new JsonConverterFactory(new ContractConverter(ContractResolver)));
+                var serializer = new JsonSerializer(new JsonConverterFactory(new ContractConverter(ContractResolver)), new DefaultFieldNamingStrategy());
 
                 var converter = new ContractConverter(contractResolver);
                 converter.DeserializeObject(serializer, (JsonObject)_jsonValue, contract, entity);

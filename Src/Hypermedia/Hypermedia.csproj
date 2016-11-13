@@ -39,6 +39,9 @@
     <Compile Include="Configuration\EmptyTypeDiscovery.cs" />
     <Compile Include="Json\Converters\EnumConverter.cs" />
     <Compile Include="Json\Converters\EnumerableConverter.cs" />
+    <Compile Include="Json\DasherizedFieldNamingStrategy.cs" />
+    <Compile Include="Json\DefaultFieldNamingStrategy.cs" />
+    <Compile Include="Json\IFieldNamingStratgey.cs" />
     <Compile Include="Json\IJsonConverter.cs" />
     <Compile Include="Json\IJsonConverterFactory.cs" />
     <Compile Include="Json\IJsonSerializer.cs" />
@@ -49,6 +52,7 @@
     <Compile Include="Json\Converters\ComplexConverter.cs" />
     <Compile Include="Json\Converters\NullableConverter.cs" />
     <Compile Include="Json\Converters\PrimitiveConverter.cs" />
+    <Compile Include="Json\StringExtensions.cs" />
     <Compile Include="Metadata\IFieldAccessor.cs" />
     <Compile Include="Metadata\Runtime\DelegatingFieldAccessor.cs" />
     <Compile Include="Metadata\Runtime\IResourceInflector.cs" />

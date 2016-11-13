@@ -141,7 +141,7 @@ namespace Hypermedia.WebApi.Json
         /// <param name="jsonValue">The JSON value that represents the object to deserialize.</param>
         protected virtual object DeserializeValue(Type type, JsonValue jsonValue)
         {
-            var serializer = new JsonSerializer(new JsonConverterFactory(new ContractConverter(ContractResolver)));
+            var serializer = new JsonSerializer(new JsonConverterFactory(new ContractConverter(ContractResolver)), new DefaultFieldNamingStrategy());
 
             return serializer.DeserializeValue(type, jsonValue);
         }
@@ -176,7 +176,7 @@ namespace Hypermedia.WebApi.Json
         /// <returns>The JSON object that represents the serialized value.</returns>
         protected virtual JsonValue SerializeValue(Type type, object value)
         {
-            var serializer = new JsonSerializer(new JsonConverterFactory(new ContractConverter(ContractResolver)));
+            var serializer = new JsonSerializer(new JsonConverterFactory(new ContractConverter(ContractResolver)), new DefaultFieldNamingStrategy());
 
             return serializer.SerializeValue(value);
         }

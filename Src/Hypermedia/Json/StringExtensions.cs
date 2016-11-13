@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Hypermedia.JsonApi
+namespace Hypermedia.Json
 {
     internal static class StringExtensions
     {
