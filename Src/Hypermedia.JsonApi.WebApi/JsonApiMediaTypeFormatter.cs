@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Diagnostics;
+using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Formatting;
+using System.Net.Http.Headers;
 using Hypermedia.Json;
 using Hypermedia.Metadata;
 using Hypermedia.WebApi;
@@ -14,6 +17,7 @@ namespace Hypermedia.JsonApi.WebApi
         readonly IFieldNamingStratgey _fieldNamingStratgey;
         const string Name = "jsonapi";
         const string MediaTypeName = "application/vnd.api+json";
+        const string FieldNamingStrategyParameterName = "$fieldnamingstrategy";
 
         /// <summary>
         /// Constructor.
@@ -40,14 +44,42 @@ namespace Hypermedia.JsonApi.WebApi
         }
 
         /// <summary>
-        /// Creates a per request formatter instance.
+        /// Returns a specialized instance of the <see cref="T:System.Net.Http.Formatting.MediaTypeFormatter"/> that can format a response for the given parameters.
         /// </summary>
-        /// <param name="contractResolver">The contract resolver to create the request with.</param>
-        /// <param name="prettify">A value which indicates whether the output should be prettified.</param>
-        /// <returns>The formatter instance to use specifically for the scope of a request.</returns>
-        protected override MediaTypeFormatter CreatePerRequestInstance(IContractResolver contractResolver, bool prettify)
+        /// <param name="type">The type to format.</param>
+        /// <param name="request">The request.</param>
+        /// <param name="mediaType">The media type.</param>
+        /// <returns>Returns <see cref="T:System.Net.Http.Formatting.MediaTypeFormatter"/>.</returns>
+        public override MediaTypeFormatter GetPerRequestFormatterInstance(Type type, HttpRequestMessage request, MediaTypeHeaderValue mediaType)
         {
-            return new JsonApiMediaTypeFormatter(ContractResolver, _fieldNamingStratgey, prettify);
+            var parameters = request.RequestUri.ParseQueryString();
+
+            var prettify = false;
+            if (parameters[PrettifyParameterName] != null)
+            {
+                prettify = new[] { "yes", "1", "true" }.Contains(parameters[PrettifyParameterName], StringComparer.OrdinalIgnoreCase);
+            }
+            
+            var fieldNamingStratgey = _fieldNamingStratgey;
+            if (parameters[FieldNamingStrategyParameterName] != null)
+            {
+                switch (parameters[FieldNamingStrategyParameterName])
+                {
+                    case "none":
+                        fieldNamingStratgey = new DefaultFieldNamingStrategy();
+                        break;
+
+                    case "dash":
+                        fieldNamingStratgey = new DasherizedFieldNamingStrategy();
+                        break;
+
+                    case "snake":
+                        fieldNamingStratgey = new SnakeCaseNamingStrategy();
+                        break;
+                }
+            }
+
+            return new JsonApiMediaTypeFormatter(ContractResolver, fieldNamingStratgey, prettify);
         }
 
         /// <summary>

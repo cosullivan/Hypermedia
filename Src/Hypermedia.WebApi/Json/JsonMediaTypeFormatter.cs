@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -19,7 +18,7 @@ namespace Hypermedia.WebApi.Json
     {
         const string Name = "json";
         const string MediaTypeName = "application/json";
-        const string PrettifyParameterName = "$prettify";
+        protected const string PrettifyParameterName = "$prettify";
 
         readonly bool _prettify;
 
@@ -63,21 +62,10 @@ namespace Hypermedia.WebApi.Json
             {
                 var prettify = new[] { "yes", "1", "true" }.Contains(parameters[PrettifyParameterName], StringComparer.OrdinalIgnoreCase);
 
-                return CreatePerRequestInstance(ContractResolver, prettify);
+                return new JsonMediaTypeFormatter(ContractResolver, prettify);
             }
 
             return base.GetPerRequestFormatterInstance(type, request, mediaType);
-        }
-
-        /// <summary>
-        /// Creates a per request formatter instance.
-        /// </summary>
-        /// <param name="contractResolver">The contract resolver to create the request with.</param>
-        /// <param name="prettify">A value which indicates whether the output should be prettified.</param>
-        /// <returns>The formatter instance to use specifically for the scope of a request.</returns>
-        protected virtual MediaTypeFormatter CreatePerRequestInstance(IContractResolver contractResolver, bool prettify)
-        {
-            return new JsonMediaTypeFormatter(ContractResolver, prettify);
         }
 
         /// <summary>

@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using Hypermedia.Json;
 using Hypermedia.Metadata;
+using Hypermedia.Sample.Client;
 using Hypermedia.Sample.Resources;
 using Hypermedia.WebApi;
 using JsonLite;
@@ -15,35 +16,16 @@ namespace TestApp
     {
         static void Main(string[] args)
         {
-            ////const string Endpoint = "http://hypermedia.cainosullivan.com";
+            const string Endpoint = "http://hypermedia.cainosullivan.com";
             //const string Endpoint = "http://localhost:59074/";
-            //using (var client = new HttpClient { BaseAddress = new Uri(Endpoint) })
-            //{
-            //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.api+json"));
-
-            //    var response = client.GetAsync("v1/posts").Result;
-            //    Console.WriteLine(response.StatusCode);
-            //}
-
-            var naming = new SnakeCaseNamingStrategy();
-            Console.WriteLine(naming.GetName("FirstName"));
-            Console.WriteLine(naming.ResolveName(naming.GetName("FirstName")));
-        }
-
-        static void Dump(IEnumerable<MemberPath> memberPaths, int depth)
-        {
-            foreach (var memberPath in memberPaths)
+            using (var client = new HypermediaSampleClient(Endpoint, ""))
             {
-                Dump(memberPath, depth);
+                var posts = client.GetPostsAsync().Result;
+                foreach (var post in posts)
+                {
+                    Console.WriteLine(post.ViewCount);
+                }
             }
-        }
-
-        static void Dump(MemberPath memberPath, int depth)
-        {
-            Console.Write(String.Empty.PadLeft(depth * 2));
-            Console.WriteLine(memberPath.Member.Name);
-
-            Dump(memberPath.Children, depth + 1);
         }
     }
 }
