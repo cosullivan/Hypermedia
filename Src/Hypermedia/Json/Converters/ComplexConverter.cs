@@ -33,7 +33,7 @@ namespace Hypermedia.Json.Converters
         {
             foreach (var property in type.GetRuntimeProperties().Where(p => p.CanRead))
             {
-                yield return new JsonMember(property.Name, serializer.SerializeValue(property.GetValue(value)));
+                yield return new JsonMember(serializer.FieldNamingStrategy.GetName(property.Name), serializer.SerializeValue(property.GetValue(value)));
             }
         }
 
@@ -62,7 +62,7 @@ namespace Hypermedia.Json.Converters
 
             foreach (var member in jsonObject.Members)
             {
-                var property = type.GetRuntimeProperty(member.Name);
+                var property = type.GetRuntimeProperty(serializer.FieldNamingStrategy.ResolveName(member.Name));
 
                 property?.SetValue(entity, serializer.DeserializeValue(property.PropertyType, member.Value));
             }

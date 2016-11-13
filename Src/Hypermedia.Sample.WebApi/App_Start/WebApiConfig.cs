@@ -3,6 +3,7 @@ using System.Web.Http.Cors;
 using System.Web.Http.ExceptionHandling;
 using Autofac.Integration.WebApi;
 using Hypermedia.Configuration;
+using Hypermedia.Json;
 using Hypermedia.JsonApi.WebApi;
 using Hypermedia.Metadata;
 using Hypermedia.Sample.Resources;
@@ -43,7 +44,7 @@ namespace Hypermedia.Sample.WebApi
             var resolver = CreateResolver();
 
             configuration.Formatters.Add(new JsonMediaTypeFormatter(resolver));
-            configuration.Formatters.Add(new JsonApiMediaTypeFormatter(resolver));
+            configuration.Formatters.Add(new JsonApiMediaTypeFormatter(resolver, new DasherizedFieldNamingStrategy()));
 
             configuration.ParameterBindingRules.Add(p =>
             {

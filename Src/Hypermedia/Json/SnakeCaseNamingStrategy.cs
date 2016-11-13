@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 
 namespace Hypermedia.Json
 {
-    public sealed class DasherizedFieldNamingStrategy : IFieldNamingStratgey
+    public sealed class SnakeCaseNamingStrategy : IFieldNamingStratgey
     {
         /// <summary>
         /// Returns the name as to how it is represented for this strategy.
@@ -15,8 +15,8 @@ namespace Hypermedia.Json
             {
                 throw new ArgumentNullException(nameof(name));
             }
-
-            return name.SplitAt(Char.IsUpper).ToLowerCase().Join("-");
+            
+            return name.SplitAt(Char.IsUpper).ToLowerCase().Join("_");
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Hypermedia.Json
         /// <returns>The name that exists in the model.</returns>
         public string ResolveName(string name)
         {
-            return name.Split('-').Camelize();
+            return name.Split('_').Camelize();
         }
     }
 }

@@ -9,16 +9,16 @@ namespace Hypermedia.Json
         /// <summary>
         /// Convert a dasherized string input into a camel case representation.
         /// </summary>
-        /// <param name="input">The dasherized input.</param>
+        /// <param name="parts">The list of string parts to return as a camelized string.</param>
         /// <returns>The camelized output.</returns>
-        internal static string Camelize(this string input)
+        internal static string Camelize(this IEnumerable<string> parts)
         {
-            if (input == null)
+            if (parts == null)
             {
-                throw new ArgumentNullException(nameof(input));
+                throw new ArgumentNullException(nameof(parts));
             }
 
-            return String.Concat(input.Split('-').Select(CamelCase));
+            return String.Concat(parts.Select(CamelCase));
         }
 
         /// <summary>
@@ -42,59 +42,56 @@ namespace Hypermedia.Json
         }
 
         /// <summary>
-        /// Return the dasherized version of the given input.
-        /// </summary>
-        /// <param name="input">The name to dasherize.</param>
-        /// <returns>The dasherized version of the input.</returns>
-        internal static string Dasherize(this string input)
-        {
-            if (input == null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
-
-            return String.Join("-", SplitAtUpperCase(input).Select(part => part.ToLower()));
-        }
-
-        /// <summary>
         /// Split the input based on upper-case character boundaries.
         /// </summary>
         /// <param name="input">The input to split.</param>
+        /// <param name="predicate">The predicate to match to determine the split.</param>
         /// <returns>The list of parts that the input was split into.</returns>
-        static IEnumerable<string> SplitAtUpperCase(string input)
+        public static IEnumerable<string> SplitAt(this string input, Func<char, bool> predicate)
         {
             int i;
             int last;
-            for (i = 0, last = 0; i < input.Length; i++)
+            for (i = 1, last = 0; i < input.Length; i++)
             {
-                if (Char.IsUpper(input[i]))
+                if (predicate(input[i]))
                 {
-                    yield return input.Substring(last, i - last);
+                    yield return input.Substring(last, i - last).ToLower();
                     last = i;
                 }
             }
 
-            yield return input.Substring(last, i - last);
+            yield return input.Substring(last, i - last).ToLower();
         }
 
         /// <summary>
-        /// Return the string with the first character set to lowercase.
+        /// Returns the sequence of input's as a sequence of lower case strings.
         /// </summary>
-        /// <param name="input">The input string to convert.</param>
-        /// <returns>The representation of the input with the first character set to lowercase.</returns>
-        internal static string LowerFirstCharacter(this string input)
+        /// <param name="parts">The input parts to return as a lower case sequence.</param>
+        /// <returns>The lower case sequence.</returns>
+        public static IEnumerable<string> ToLowerCase(this IEnumerable<string> parts)
         {
-            if (String.IsNullOrWhiteSpace(input))
+            if (parts == null)
             {
-                return input;
+                throw new ArgumentNullException(nameof(parts));
             }
 
-            if (input.Length == 1)
+            return parts.Select(i => i.ToLower());
+        }
+
+        /// <summary>
+        /// Join the string parts with the given separator.
+        /// </summary>
+        /// <param name="parts">The string parts to join.</param>
+        /// <param name="separator">The separator to join the string parts with.</param>
+        /// <returns>The string that was created by joining the parts.</returns>
+        public static string Join(this IEnumerable<string> parts, string separator)
+        {
+            if (parts == null)
             {
-                return input.ToLower();
+                throw new ArgumentNullException(nameof(parts));
             }
 
-            return $"{input[0].ToString().ToLower()}{input.Substring(1)}";
+            return String.Join(separator, parts);
         }
     }
 }

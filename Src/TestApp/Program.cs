@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using Hypermedia.Json;
 using Hypermedia.Metadata;
 using Hypermedia.Sample.Resources;
 using Hypermedia.WebApi;
@@ -14,15 +15,19 @@ namespace TestApp
     {
         static void Main(string[] args)
         {
-            //const string Endpoint = "http://hypermedia.cainosullivan.com";
-            const string Endpoint = "http://localhost:59074/";
-            using (var client = new HttpClient { BaseAddress = new Uri(Endpoint) })
-            {
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.api+json"));
+            ////const string Endpoint = "http://hypermedia.cainosullivan.com";
+            //const string Endpoint = "http://localhost:59074/";
+            //using (var client = new HttpClient { BaseAddress = new Uri(Endpoint) })
+            //{
+            //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.api+json"));
 
-                var response = client.GetAsync("v1/posts").Result;
-                Console.WriteLine(response.StatusCode);
-            }
+            //    var response = client.GetAsync("v1/posts").Result;
+            //    Console.WriteLine(response.StatusCode);
+            //}
+
+            var naming = new SnakeCaseNamingStrategy();
+            Console.WriteLine(naming.GetName("FirstName"));
+            Console.WriteLine(naming.ResolveName(naming.GetName("FirstName")));
         }
 
         static void Dump(IEnumerable<MemberPath> memberPaths, int depth)

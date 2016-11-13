@@ -52,6 +52,7 @@
     <Compile Include="Json\Converters\ComplexConverter.cs" />
     <Compile Include="Json\Converters\NullableConverter.cs" />
     <Compile Include="Json\Converters\PrimitiveConverter.cs" />
+    <Compile Include="Json\SnakeCaseNamingStrategy.cs" />
     <Compile Include="Json\StringExtensions.cs" />
     <Compile Include="Metadata\IFieldAccessor.cs" />
     <Compile Include="Metadata\Runtime\DelegatingFieldAccessor.cs" />

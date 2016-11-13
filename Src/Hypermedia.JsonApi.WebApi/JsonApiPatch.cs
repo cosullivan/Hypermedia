@@ -1,4 +1,5 @@
-﻿using Hypermedia.Metadata;
+﻿using Hypermedia.Json;
+using Hypermedia.Metadata;
 using Hypermedia.WebApi;
 using JsonLite.Ast;
 
@@ -6,16 +7,20 @@ namespace Hypermedia.JsonApi.WebApi
 {
     public sealed class JsonApiPatch<T> : IPatch<T>
     {
+        readonly IFieldNamingStratgey _fieldNamingStratgey;
         readonly JsonObject _jsonValue;
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="contractResolver">The resource contractor resolver.</param>
+        /// <param name="fieldNamingStratgey">The field naming strategy to use.</param>
         /// <param name="jsonValue">The root document node.</param>
-        public JsonApiPatch(IContractResolver contractResolver, JsonObject jsonValue)
+        public JsonApiPatch(IContractResolver contractResolver, IFieldNamingStratgey fieldNamingStratgey, JsonObject jsonValue)
         {
+            _fieldNamingStratgey = fieldNamingStratgey;
             _jsonValue = jsonValue;
+
             ContractResolver = contractResolver;
         }
 
@@ -43,7 +48,7 @@ namespace Hypermedia.JsonApi.WebApi
                     return false;
                 }
 
-                var serializer = new JsonApiSerializer(contractResolver);
+                var serializer = new JsonApiSerializer(contractResolver, new JsonSerializer(new JsonConverterFactory(), _fieldNamingStratgey));
                 serializer.DeserializeEntity(contract, jsonObject, entity);
 
                 return true;

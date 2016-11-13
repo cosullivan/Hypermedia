@@ -11,6 +11,7 @@ namespace Hypermedia.JsonApi.WebApi
 {
     public class JsonApiMediaTypeFormatter : Hypermedia.WebApi.Json.JsonMediaTypeFormatter
     {
+        readonly IFieldNamingStratgey _fieldNamingStratgey;
         const string Name = "jsonapi";
         const string MediaTypeName = "application/vnd.api+json";
 
@@ -18,14 +19,25 @@ namespace Hypermedia.JsonApi.WebApi
         /// Constructor.
         /// </summary>
         /// <param name="contractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
-        public JsonApiMediaTypeFormatter(IContractResolver contractResolver) : base(Name, MediaTypeName, contractResolver, false) { }
+        public JsonApiMediaTypeFormatter(IContractResolver contractResolver) : this(contractResolver, new DasherizedFieldNamingStrategy(), false) { }
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="contractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
+        /// <param name="fieldNamingStratgey">The field naming strategy to use.</param>
+        public JsonApiMediaTypeFormatter(IContractResolver contractResolver, IFieldNamingStratgey fieldNamingStratgey) : this(contractResolver, fieldNamingStratgey, false) { }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="contractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
+        /// <param name="fieldNamingStratgey">The field naming strategy to use.</param>
         /// <param name="prettify">A value which indicates whether the output should be prettified.</param>
-        JsonApiMediaTypeFormatter(IContractResolver contractResolver, bool prettify) : base(Name, MediaTypeName, contractResolver, prettify) { }
+        JsonApiMediaTypeFormatter(IContractResolver contractResolver, IFieldNamingStratgey fieldNamingStratgey, bool prettify) : base(Name, MediaTypeName, contractResolver, prettify)
+        {
+            _fieldNamingStratgey = fieldNamingStratgey;
+        }
 
         /// <summary>
         /// Creates a per request formatter instance.
@@ -35,7 +47,7 @@ namespace Hypermedia.JsonApi.WebApi
         /// <returns>The formatter instance to use specifically for the scope of a request.</returns>
         protected override MediaTypeFormatter CreatePerRequestInstance(IContractResolver contractResolver, bool prettify)
         {
-            return new JsonApiMediaTypeFormatter(ContractResolver, prettify);
+            return new JsonApiMediaTypeFormatter(ContractResolver, _fieldNamingStratgey, prettify);
         }
 
         /// <summary>
@@ -49,7 +61,7 @@ namespace Hypermedia.JsonApi.WebApi
         {
             var patch = typeof(JsonApiPatch<>).MakeGenericType(type.GenericTypeArguments[0]);
 
-            var constructor = patch.GetConstructor(new[] { typeof(IContractResolver), typeof(JsonObject) });
+            var constructor = patch.GetConstructor(new[] { typeof(IContractResolver), typeof(IFieldNamingStratgey), typeof(JsonObject) });
             Debug.Assert(constructor != null);
 
             return (IPatch)constructor.Invoke(new object[] { ContractResolver, jsonValue });
@@ -71,7 +83,7 @@ namespace Hypermedia.JsonApi.WebApi
 
             var serializer = new JsonApiSerializer(
                 ContractResolver, 
-                new JsonSerializer(new JsonConverterFactory(), new DasherizedFieldNamingStrategy()));
+                new JsonSerializer(new JsonConverterFactory(), _fieldNamingStratgey));
 
             if (TypeHelper.IsEnumerable(type))
             {
@@ -91,7 +103,7 @@ namespace Hypermedia.JsonApi.WebApi
         {
             var serializer = new JsonApiSerializer(
                 ContractResolver,
-                new JsonSerializer(new JsonConverterFactory(), new DasherizedFieldNamingStrategy()));
+                new JsonSerializer(new JsonConverterFactory(), _fieldNamingStratgey));
 
             if (TypeHelper.IsEnumerable(type))
             {

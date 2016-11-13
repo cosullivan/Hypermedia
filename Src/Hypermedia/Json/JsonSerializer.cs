@@ -15,6 +15,12 @@ namespace Hypermedia.Json
         /// Constructor.
         /// </summary>
         /// <param name="jsonConverterFactory">The JSON converter factory.</param>
+        public JsonSerializer(IJsonConverterFactory jsonConverterFactory) : this(jsonConverterFactory, new DefaultFieldNamingStrategy()) { }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="jsonConverterFactory">The JSON converter factory.</param>
         /// <param name="fieldNamingStrategy">The field naming strategy.</param>
         public JsonSerializer(IJsonConverterFactory jsonConverterFactory, IFieldNamingStratgey fieldNamingStrategy)
         {
