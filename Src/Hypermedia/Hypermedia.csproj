@@ -41,7 +41,7 @@
     <Compile Include="Json\Converters\EnumerableConverter.cs" />
     <Compile Include="Json\DasherizedFieldNamingStrategy.cs" />
     <Compile Include="Json\DefaultFieldNamingStrategy.cs" />
-    <Compile Include="Json\IFieldNamingStratgey.cs" />
+    <Compile Include="Json\IFieldNamingStrategy.cs" />
     <Compile Include="Json\IJsonConverter.cs" />
     <Compile Include="Json\IJsonConverterFactory.cs" />
     <Compile Include="Json\IJsonSerializer.cs" />

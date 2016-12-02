@@ -1,6 +1,6 @@
 ﻿namespace Hypermedia.Json
 {
-    public sealed class DefaultFieldNamingStrategy : IFieldNamingStratgey
+    public sealed class DefaultFieldNamingStrategy : IFieldNamingStrategy
     {
         /// <summary>
         /// Returns the name as to how it is represented for this strategy.

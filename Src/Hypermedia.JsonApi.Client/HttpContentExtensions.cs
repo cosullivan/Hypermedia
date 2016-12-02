@@ -63,9 +63,7 @@ namespace Hypermedia.JsonApi.Client
             IContractResolver contractResolver, 
             IJsonApiEntityCache cache)
         {
-            var serializer = new JsonApiSerializer(
-                contractResolver,
-                new JsonSerializer(new JsonConverterFactory(), new DasherizedFieldNamingStrategy()));
+            var serializer = new JsonApiSerializer(contractResolver, new DasherizedFieldNamingStrategy());
 
             return httpContent.ReadAsJsonApiAsync<TEntity>(serializer, cache);
         }
@@ -121,9 +119,7 @@ namespace Hypermedia.JsonApi.Client
         /// <returns>The JSONAPI response element that was read from the stream in the HTTP content.</returns>
         public static Task<List<TEntity>> ReadAsJsonApiManyAsync<TEntity>(this HttpContent httpContent, IContractResolver contractResolver, IJsonApiEntityCache cache)
         {
-            var serializer = new JsonApiSerializer(
-                contractResolver,
-                new JsonSerializer(new JsonConverterFactory(), new DasherizedFieldNamingStrategy()));
+            var serializer = new JsonApiSerializer(contractResolver, new DasherizedFieldNamingStrategy());
 
             return httpContent.ReadAsJsonApiManyAsync<TEntity>(serializer, cache);
         }

@@ -1,6 +1,6 @@
 namespace Hypermedia.Json
 {
-    public interface IFieldNamingStratgey
+    public interface IFieldNamingStrategy
     {
         /// <summary>
         /// Returns the name as to how it is represented for this strategy.

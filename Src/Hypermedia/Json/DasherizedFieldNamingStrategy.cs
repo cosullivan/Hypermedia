@@ -2,7 +2,7 @@ using System;
 
 namespace Hypermedia.Json
 {
-    public sealed class DasherizedFieldNamingStrategy : IFieldNamingStratgey
+    public sealed class DasherizedFieldNamingStrategy : IFieldNamingStrategy
     {
         /// <summary>
         /// Returns the name as to how it is represented for this strategy.

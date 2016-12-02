@@ -23,6 +23,6 @@ namespace Hypermedia.Json
         /// <summary>
         /// The field naming strategy.
         /// </summary>
-        IFieldNamingStratgey FieldNamingStrategy { get; }
+        IFieldNamingStrategy FieldNamingStrategy { get; }
     }
 }

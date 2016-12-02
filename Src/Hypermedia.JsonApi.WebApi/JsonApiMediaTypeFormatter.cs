@@ -14,7 +14,7 @@ namespace Hypermedia.JsonApi.WebApi
 {
     public class JsonApiMediaTypeFormatter : Hypermedia.WebApi.Json.JsonMediaTypeFormatter
     {
-        readonly IFieldNamingStratgey _fieldNamingStratgey;
+        readonly IFieldNamingStrategy _fieldNamingStratgey;
         const string Name = "jsonapi";
         const string MediaTypeName = "application/vnd.api+json";
         const string FieldNamingStrategyParameterName = "$fieldnamingstrategy";
@@ -30,7 +30,7 @@ namespace Hypermedia.JsonApi.WebApi
         /// </summary>
         /// <param name="contractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
         /// <param name="fieldNamingStratgey">The field naming strategy to use.</param>
-        public JsonApiMediaTypeFormatter(IContractResolver contractResolver, IFieldNamingStratgey fieldNamingStratgey) : this(contractResolver, fieldNamingStratgey, false) { }
+        public JsonApiMediaTypeFormatter(IContractResolver contractResolver, IFieldNamingStrategy fieldNamingStratgey) : this(contractResolver, fieldNamingStratgey, false) { }
 
         /// <summary>
         /// Constructor.
@@ -38,7 +38,7 @@ namespace Hypermedia.JsonApi.WebApi
         /// <param name="contractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
         /// <param name="fieldNamingStratgey">The field naming strategy to use.</param>
         /// <param name="prettify">A value which indicates whether the output should be prettified.</param>
-        JsonApiMediaTypeFormatter(IContractResolver contractResolver, IFieldNamingStratgey fieldNamingStratgey, bool prettify) : base(Name, MediaTypeName, contractResolver, prettify)
+        JsonApiMediaTypeFormatter(IContractResolver contractResolver, IFieldNamingStrategy fieldNamingStratgey, bool prettify) : base(Name, MediaTypeName, contractResolver, prettify)
         {
             _fieldNamingStratgey = fieldNamingStratgey;
         }
@@ -93,7 +93,7 @@ namespace Hypermedia.JsonApi.WebApi
         {
             var patch = typeof(JsonApiPatch<>).MakeGenericType(type.GenericTypeArguments[0]);
 
-            var constructor = patch.GetConstructor(new[] { typeof(IContractResolver), typeof(IFieldNamingStratgey), typeof(JsonObject) });
+            var constructor = patch.GetConstructor(new[] { typeof(IContractResolver), typeof(IFieldNamingStrategy), typeof(JsonObject) });
             Debug.Assert(constructor != null);
 
             return (IPatch)constructor.Invoke(new object[] { ContractResolver, jsonValue });
@@ -113,9 +113,7 @@ namespace Hypermedia.JsonApi.WebApi
                 throw new HypermediaWebApiException("The top level JSON value must be an Object.");
             }
 
-            var serializer = new JsonApiSerializer(
-                ContractResolver, 
-                new JsonSerializer(new JsonConverterFactory(), _fieldNamingStratgey));
+            var serializer = new JsonApiSerializer(ContractResolver, _fieldNamingStratgey);
 
             if (TypeHelper.IsEnumerable(type))
             {
@@ -133,9 +131,7 @@ namespace Hypermedia.JsonApi.WebApi
         /// <returns>The JSON object that represents the serialized value.</returns>
         protected override JsonValue SerializeValue(Type type, object value)
         {
-            var serializer = new JsonApiSerializer(
-                ContractResolver,
-                new JsonSerializer(new JsonConverterFactory(), _fieldNamingStratgey));
+            var serializer = new JsonApiSerializer(ContractResolver, _fieldNamingStratgey);
 
             if (TypeHelper.IsEnumerable(type))
             {

@@ -22,7 +22,7 @@ namespace Hypermedia.Json
         /// </summary>
         /// <param name="jsonConverterFactory">The JSON converter factory.</param>
         /// <param name="fieldNamingStrategy">The field naming strategy.</param>
-        public JsonSerializer(IJsonConverterFactory jsonConverterFactory, IFieldNamingStratgey fieldNamingStrategy)
+        public JsonSerializer(IJsonConverterFactory jsonConverterFactory, IFieldNamingStrategy fieldNamingStrategy)
         {
             JsonConverterFactory = jsonConverterFactory;
             FieldNamingStrategy = fieldNamingStrategy;
@@ -64,7 +64,7 @@ namespace Hypermedia.Json
         /// <summary>
         /// The field naming strategy.
         /// </summary>
-        public IFieldNamingStratgey FieldNamingStrategy { get; }
+        public IFieldNamingStrategy FieldNamingStrategy { get; }
 
         #region Serializer
 
@@ -77,7 +77,7 @@ namespace Hypermedia.Json
             /// </summary>
             /// <param name="jsonConverterFactory">The JSON converter factory.</param>
             /// <param name="fieldNamingStrategy">The field naming strategy.</param>
-            public Serializer(IJsonConverterFactory jsonConverterFactory, IFieldNamingStratgey fieldNamingStrategy)
+            public Serializer(IJsonConverterFactory jsonConverterFactory, IFieldNamingStrategy fieldNamingStrategy)
             {
                 JsonConverterFactory = jsonConverterFactory;
                 FieldNamingStrategy = fieldNamingStrategy;
@@ -126,7 +126,7 @@ namespace Hypermedia.Json
             /// <summary>
             /// The field naming strategy.
             /// </summary>
-            public IFieldNamingStratgey FieldNamingStrategy { get; }
+            public IFieldNamingStrategy FieldNamingStrategy { get; }
         }
 
         #endregion

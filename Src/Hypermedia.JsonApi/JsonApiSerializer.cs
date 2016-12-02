@@ -9,6 +9,57 @@ using JsonLite.Ast;
 
 namespace Hypermedia.JsonApi
 {
+    public sealed class ContractConverter : IJsonConverter
+    {
+        readonly JsonApiSerializer _jsonApiSerializer;
+        readonly IContractResolver _contractResolver;
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="jsonApiSerializer">The JSON API serializer.</param>
+        /// <param name="contractResolver">The contract resolver.</param>
+        public ContractConverter(JsonApiSerializer jsonApiSerializer, IContractResolver contractResolver)
+        {
+            _jsonApiSerializer = jsonApiSerializer;
+            _contractResolver = contractResolver;
+        }
+
+        /// <summary>
+        /// Serialize the value.
+        /// </summary>
+        /// <param name="serializer">The serializer to utilize when serializing nested objects.</param>
+        /// <param name="type">The CLR type of the value to serialize.</param>
+        /// <param name="value">The value to serialize.</param>
+        /// <returns>The JSON value that represents the given CLR value.</returns>
+        public JsonValue SerializeValue(IJsonSerializer serializer, Type type, object value)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Deserialize a JSON value to a defined CLR type.
+        /// </summary>
+        /// <param name="serializer">The serializer to utilize when deserializing nested objects.</param>
+        /// <param name="type">The CLR type to deserialize the JSON value to.</param>
+        /// <param name="jsonValue">The JSON value to deserialize.</param>
+        /// <returns>The object that represents the CLR version of the given JSON value.</returns>
+        public object DeserializeValue(IJsonSerializer serializer, Type type, JsonValue jsonValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Returns a value indicating whether or not the converter can convert the given type.
+        /// </summary>
+        /// <param name="type">The type to convert.</param>
+        /// <returns>true if the type can be converted by this converter, false if not.</returns>
+        public bool CanConvert(Type type)
+        {
+            return _contractResolver.CanResolve(type);
+        }
+    }
+
     public sealed class JsonApiSerializer
     {
         readonly IContractResolver _contractResolver;
@@ -18,17 +69,17 @@ namespace Hypermedia.JsonApi
         /// Constructor.
         /// </summary>
         /// <param name="contractResolver">The resource contract resolver.</param>
-        public JsonApiSerializer(IContractResolver contractResolver) : this(contractResolver, new JsonSerializer(new JsonConverterFactory(), new DasherizedFieldNamingStrategy())) { }
+        public JsonApiSerializer(IContractResolver contractResolver) : this(contractResolver, new DasherizedFieldNamingStrategy()) { }
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="contractResolver">The resource contract resolver.</param>
-        /// <param name="jsonSerializer">The JSON serializer instance.</param>
-        public JsonApiSerializer(IContractResolver contractResolver, IJsonSerializer jsonSerializer)
+        /// <param name="fieldNamingStrategy">The field naming strategy.</param>
+        public JsonApiSerializer(IContractResolver contractResolver, IFieldNamingStrategy fieldNamingStrategy)
         {
             _contractResolver = contractResolver;
-            _jsonSerializer = jsonSerializer;
+            _jsonSerializer = new JsonSerializer(new JsonConverterFactory(new ContractConverter(this, contractResolver)), fieldNamingStrategy);
         }
 
         /// <summary>

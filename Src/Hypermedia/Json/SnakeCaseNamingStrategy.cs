@@ -2,7 +2,7 @@
 
 namespace Hypermedia.Json
 {
-    public sealed class SnakeCaseNamingStrategy : IFieldNamingStratgey
+    public sealed class SnakeCaseNamingStrategy : IFieldNamingStrategy
     {
         /// <summary>
         /// Returns the name as to how it is represented for this strategy.

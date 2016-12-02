@@ -32,9 +32,7 @@ namespace Hypermedia.JsonApi.Client
         /// <returns>The string that represents the serialized version of the entity.</returns>
         static string SerializeEntity(TEntity entity, IContractResolver contractResolver)
         {
-            var serializer = new JsonApiSerializer(
-                contractResolver,
-                new JsonSerializer(new JsonConverterFactory(), new DasherizedFieldNamingStrategy()));
+            var serializer = new JsonApiSerializer(contractResolver, new DasherizedFieldNamingStrategy());
 
             return serializer.SerializeEntity(entity).Stringify();
         }
@@ -47,9 +45,7 @@ namespace Hypermedia.JsonApi.Client
         /// <returns>The string that represents the serialized version of the entity.</returns>
         static string SerializeMany(IEnumerable<TEntity> entities, IContractResolver contractResolver)
         {
-            var serializer = new JsonApiSerializer(
-                contractResolver,
-                new JsonSerializer(new JsonConverterFactory(), new DasherizedFieldNamingStrategy()));
+            var serializer = new JsonApiSerializer(contractResolver, new DasherizedFieldNamingStrategy());
 
             return serializer.SerializeMany(entities).Stringify();
         }
