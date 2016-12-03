@@ -8,25 +8,21 @@ namespace Hypermedia.Configuration
 {
     public sealed class RelationshipBuilder<T> : IContractBuilder<T>
     {
-        readonly IContractBuilder<T> _builder;
-        readonly string _name;
+        readonly FieldBuilder<T> _builder;
         readonly Type _relatedTo;
         readonly RelationshipType _type;
-        RelationshipOptions _options = RelationshipOptions.Default;
         string _field;
         UriTemplateBuilder<T> _uriTemplateBuilder;
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="builder">The parent builder.</param>
-        /// <param name="name">The name of the relationship.</param>
+        /// <param name="builder">The parent field builder.</param>
         /// <param name="relatedTo">The type of the model that this relationship is related to.</param>
         /// <param name="type">The relationship type.</param>
-        internal RelationshipBuilder(IContractBuilder<T> builder, string name, Type relatedTo, RelationshipType type)
+        internal RelationshipBuilder(FieldBuilder<T> builder, Type relatedTo, RelationshipType type)
         {
             _builder = builder;
-            _name = name;
             _relatedTo = relatedTo;
             _type = type;
         }
@@ -38,19 +34,21 @@ namespace Hypermedia.Configuration
         /// <returns>The runtime relationship proxy class.</returns>
         internal RuntimeRelationship CreateRuntimeRelationship(IReadOnlyList<IField> fields)
         {
-            var field = _name == null
-                ? null
-                : fields.SingleOrDefault(f => String.Equals(f.Name, _name, StringComparison.OrdinalIgnoreCase));
+            //var field = _name == null
+            //    ? null
+            //    : fields.SingleOrDefault(f => String.Equals(f.Name, _name, StringComparison.OrdinalIgnoreCase));
 
-            var viaField = _field == null 
-                ? null
-                : fields.SingleOrDefault(f => String.Equals(f.Name, _field, StringComparison.OrdinalIgnoreCase));
+            //var viaField = _field == null 
+            //    ? null
+            //    : fields.SingleOrDefault(f => String.Equals(f.Name, _field, StringComparison.OrdinalIgnoreCase));
 
-            var template = _uriTemplateBuilder != null
-                ? _uriTemplateBuilder.CreateTemplate()
-                : null;
+            //var template = _uriTemplateBuilder != null
+            //    ? _uriTemplateBuilder.CreateTemplate()
+            //    : null;
 
-            return new RuntimeRelationship(_type, _name, _options, _relatedTo, field, viaField, template);
+            //return new RuntimeRelationship(_type, _name, _options, _relatedTo, field, viaField, template);
+
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -116,21 +114,12 @@ namespace Hypermedia.Configuration
         }
 
         /// <summary>
-        /// Sets the given options for the relationship.
+        /// Defines the relationship as being readonly.
         /// </summary>
-        /// <param name="options">The list of options to set.</param>
-        /// <param name="setOptionOn">true if the options are to be set, false if not.</param>
         /// <returns>The relationship builder to continue building on.</returns>
-        public RelationshipBuilder<T> Options(RelationshipOptions options, bool setOptionOn = true)
+        public RelationshipBuilder<T> Embedded()
         {
-            if (setOptionOn)
-            {
-                _options |= options;
-            }
-            else
-            {
-                _options &= ~(options);
-            }
+            _builder.Options(FieldOptions.Embedded);
 
             return this;
         }
@@ -139,21 +128,9 @@ namespace Hypermedia.Configuration
         /// Defines the relationship as being readonly.
         /// </summary>
         /// <returns>The relationship builder to continue building on.</returns>
-        public RelationshipBuilder<T> Embedded()
-        {
-            return Options(RelationshipOptions.Embedded);
-        }
-
-        /// <summary>
-        /// Defines the relationship as being readonly.
-        /// </summary>
-        /// <returns>The relationship builder to continue building on.</returns>
         public RelationshipBuilder<T> ReadOnly()
         {
-            if (_name != null)
-            {
-                _builder.Field(_name).ReadOnly();
-            }
+            _builder.ReadOnly();
 
             return this;
         }
@@ -164,10 +141,7 @@ namespace Hypermedia.Configuration
         /// <returns>The relationship builder to continue building on.</returns>
         public RelationshipBuilder<T> WriteOnly()
         {
-            if (_name != null)
-            {
-                _builder.Field(_name).WriteOnly();
-            }
+            _builder.WriteOnly();
 
             return this;
         }
@@ -201,7 +175,7 @@ namespace Hypermedia.Configuration
         /// </summary>
         internal string Name
         {
-            get { return _name; }
+            get { return _builder.Name; }
         }
     }
 }

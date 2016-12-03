@@ -26,6 +26,16 @@ namespace Hypermedia.Metadata
         CanDeserialize = 0x04,
 
         /// <summary>
+        /// The field is a realtionship.
+        /// </summary>
+        Relationship = 0x08,
+
+        /// <summary>
+        /// The relationship should be embedded.
+        /// </summary>
+        Embedded = 0x10,
+
+        /// <summary>
         /// The default set of options.
         /// </summary>
         Default = CanSerialize | CanDeserialize

@@ -7,11 +7,6 @@ namespace Hypermedia.Metadata.Runtime
     [DebuggerDisplay("{Name}")]
     internal class RuntimeField : IField
     {
-        readonly string _name;
-        readonly Type _clrType;
-        readonly IFieldAccessor _accessor;
-        readonly FieldOptions _options;
-
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -21,10 +16,10 @@ namespace Hypermedia.Metadata.Runtime
         /// <param name="options">The field options.</param>
         internal RuntimeField(string name, Type clrType, IFieldAccessor accessor, FieldOptions options)
         {
-            _name = name;
-            _clrType = clrType;
-            _accessor = accessor;
-            _options = options;
+            Name = name;
+            ClrType = clrType;
+            Accessor = accessor;
+            Options = options;
         }
 
         /// <summary>
@@ -61,34 +56,22 @@ namespace Hypermedia.Metadata.Runtime
         /// <summary>
         /// Gets the name of the member.
         /// </summary>
-        public string Name
-        {
-            get { return _name; }
-        }
+        public string Name { get; }
 
         /// <summary>
         /// Gets the CLR type that the member maps to.
         /// </summary>
-        public Type ClrType
-        {
-            get { return _clrType; }
-        }
-
+        public Type ClrType { get; }
+        
         /// <summary>
         /// Gets the field accessor.
         /// </summary>
-        public IFieldAccessor Accessor
-        {
-            get { return _accessor; }
-        }
+        public IFieldAccessor Accessor { get; }
 
         /// <summary>
         /// Gets the list of options for the field.
         /// </summary>
-        public FieldOptions Options
-        {
-            get { return _options; }
-        }
+        public FieldOptions Options { get; }
     }
 
     internal sealed class RuntimeField<T> : RuntimeField

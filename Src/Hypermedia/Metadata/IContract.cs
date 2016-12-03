@@ -20,11 +20,6 @@ namespace Hypermedia.Metadata
         /// Gets a list of the fields that are available on the resource.
         /// </summary>
         IReadOnlyList<IField> Fields { get; }
-
-        /// <summary>
-        /// Gets a list of relationships that are available on the resource.
-        /// </summary>
-        IReadOnlyList<IRelationship> Relationships { get; }
     }
 
     public static class ContractExtensions
@@ -93,6 +88,21 @@ namespace Hypermedia.Metadata
         }
 
         /// <summary>
+        /// Return the relationships for the contract.
+        /// </summary>
+        /// <param name="contract">The contract to return the relationships for.</param>
+        /// <returns>The list of relationships for the contract.</returns>
+        public static IEnumerable<IRelationship> Relationships(this IContract contract)
+        {
+            if (contract == null)
+            {
+                throw new ArgumentNullException(nameof(contract));
+            }
+
+            return contract.Fields(field => field.Is(FieldOptions.Relationship)).OfType<IRelationship>().ToList();
+        }
+
+        /// <summary>
         /// Returns the relationship with the given name.
         /// </summary>
         /// <param name="contract">The type to return the relationship from.</param>
@@ -110,7 +120,7 @@ namespace Hypermedia.Metadata
                 throw new ArgumentException(nameof(name));
             }
 
-            return contract.Relationships.SingleOrDefault(relationship => String.Equals(relationship.Name, name, StringComparison.OrdinalIgnoreCase));
+            return contract.Relationships().SingleOrDefault(relationship => String.Equals(relationship.Name, name, StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>
@@ -126,7 +136,7 @@ namespace Hypermedia.Metadata
                 throw new ArgumentNullException(nameof(contract));
             }
 
-            return contract.Relationships.Where(predicate).ToList();
+            return contract.Relationships().Where(predicate).ToList();
         }
 
         /// <summary>

@@ -66,19 +66,18 @@ namespace Hypermedia.WebApi
         /// <returns>true if the entity could be patched, false if not.</returns>
         static bool TryPatchWithInclude<T>(IPatch<T> patch, T entity, IEnumerable<string> includedFields)
         {
-            IContract resourceContract;
-            if (patch.ContractResolver.TryResolve(typeof (T), out resourceContract) == false)
+            IContract contract;
+            if (patch.ContractResolver.TryResolve(typeof (T), out contract) == false)
             {
                 return false;
             }
 
             // exclude the fields that havent been included
-            var fields = resourceContract.Fields.Where(field => includedFields.Contains(field.Name, StringComparer.OrdinalIgnoreCase)).ToList();
+            var fields = contract.Fields.Where(field => includedFields.Contains(field.Name, StringComparer.OrdinalIgnoreCase)).ToList();
 
             return patch.TryPatch(
                 entity, 
-                new ContractResolver(
-                    new RuntimeContract(resourceContract.Name, resourceContract.ClrType, fields, resourceContract.Relationships)));
+                new ContractResolver(new RuntimeContract(contract.Name, contract.ClrType, fields)));
         }
 
         /// <summary>
@@ -91,19 +90,18 @@ namespace Hypermedia.WebApi
         /// <returns>true if the entity could be patched, false if not.</returns>
         static bool TryPatchWithIgnore<T>(IPatch<T> patch, T entity, IEnumerable<string> ignoredFields)
         {
-            IContract resourceContract;
-            if (patch.ContractResolver.TryResolve(typeof(T), out resourceContract) == false)
+            IContract contract;
+            if (patch.ContractResolver.TryResolve(typeof(T), out contract) == false)
             {
                 return false;
             }
 
             // exclude the fields that havent been included
-            var fields = resourceContract.Fields.Where(field => ignoredFields.Contains(field.Name, StringComparer.OrdinalIgnoreCase) == false).ToList();
+            var fields = contract.Fields.Where(field => ignoredFields.Contains(field.Name, StringComparer.OrdinalIgnoreCase) == false).ToList();
 
             return patch.TryPatch(
                 entity,
-                new ContractResolver(
-                    new RuntimeContract(resourceContract.Name, resourceContract.ClrType, fields, resourceContract.Relationships)));
+                new ContractResolver(new RuntimeContract(contract.Name, contract.ClrType, fields)));
         }
     }
 }

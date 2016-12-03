@@ -9,7 +9,7 @@ namespace Hypermedia.Configuration
         /// Build the resource contract.
         /// </summary>
         /// <returns>The resource ontract.</returns>
-        IContract CreateRuntimeContract();
+        IContract CreateContract();
     }
 
     public interface IContractBuilder<T> : IBuilder

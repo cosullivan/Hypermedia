@@ -243,21 +243,23 @@ namespace Hypermedia.JsonApi
             /// <returns>The JSON object that represents the serialized entity.</returns>
             JsonObject SerializeEntity(IContract contract, object entity)
             {
-                var members = new List<JsonMember>(SerializeResourceKey(contract, entity));
+                throw new NotImplementedException();
 
-                var fields = SerializeFields(contract, entity).Where(IsNotNull).ToList();
-                if (fields.Any())
-                {
-                    members.Add(new JsonMember("attributes", new JsonObject(fields)));
-                }
+                //var members = new List<JsonMember>(SerializeResourceKey(contract, entity));
 
-                var relationships = SerializeRelationships(contract.Relationships, entity);
-                if (relationships.Any())
-                {
-                    members.Add(new JsonMember("relationships", new JsonObject(relationships)));
-                }
+                //var fields = SerializeFields(contract, entity).Where(IsNotNull).ToList();
+                //if (fields.Any())
+                //{
+                //    members.Add(new JsonMember("attributes", new JsonObject(fields)));
+                //}
 
-                return new JsonObject(members);
+                //var relationships = SerializeRelationships(contract.Relationships, entity);
+                //if (relationships.Any())
+                //{
+                //    members.Add(new JsonMember("relationships", new JsonObject(relationships)));
+                //}
+
+                //return new JsonObject(members);
             }
 
             /// <summary>
@@ -394,7 +396,7 @@ namespace Hypermedia.JsonApi
             /// <returns>The value that represents the data node for the relationship.</returns>
             JsonValue SerializeHasMany(IRelationship relationship, IContract contract, object entity)
             {
-                var value = relationship.Field.GetValue(entity);
+                var value = relationship.GetValue(entity);
 
                 if (value == null)
                 {
@@ -463,20 +465,21 @@ namespace Hypermedia.JsonApi
             /// <returns>The list of JSON objects that represent the included entities.</returns>
             internal IEnumerable<JsonObject> SerializeIncluded(IEnumerable entities)
             {
-                var included = new List<JsonObject>();
+                throw new NotImplementedException();
+                //var included = new List<JsonObject>();
 
-                foreach (var entity in entities)
-                {
-                    IContract contract;
-                    if (_contractResolver.TryResolve(entity.GetType(), out contract) == false)
-                    {
-                        throw new JsonApiException("Could not find the entity type for the CLR type of '{0}'.", entity.GetType());
-                    }
+                //foreach (var entity in entities)
+                //{
+                //    IContract contract;
+                //    if (_contractResolver.TryResolve(entity.GetType(), out contract) == false)
+                //    {
+                //        throw new JsonApiException("Could not find the entity type for the CLR type of '{0}'.", entity.GetType());
+                //    }
 
-                    included.AddRange(SerializeIncluded(contract.Relationships, entity));
-                }
+                //    included.AddRange(SerializeIncluded(contract.Relationships, entity));
+                //}
 
-                return included;
+                //return included;
             }
 
             /// <summary>
@@ -505,16 +508,18 @@ namespace Hypermedia.JsonApi
             /// <returns>The list of types to included for the entity.</returns>
             IEnumerable<JsonObject> SerializeIncluded(IContract contract, object entity)
             {
-                var jsonObject = SerializeEntity(contract, entity);
+                //var jsonObject = SerializeEntity(contract, entity);
 
-                if (HasVisited(jsonObject))
-                {
-                    return new JsonObject[0];
-                }
+                //if (HasVisited(jsonObject))
+                //{
+                //    return new JsonObject[0];
+                //}
 
-                Visit(jsonObject);
+                //Visit(jsonObject);
 
-                return new[] { jsonObject }.Union(SerializeIncluded(contract.Relationships, entity));
+                //return new[] { jsonObject }.Union(SerializeIncluded(contract.Relationships, entity));
+
+                throw new NotImplementedException();
             }
 
             /// <summary>
@@ -567,7 +572,7 @@ namespace Hypermedia.JsonApi
             /// <returns>The list of types to include for the entity.</returns>
             IEnumerable<JsonObject> SerializeIncludedHasMany(IRelationship relationship, IContract contract, object entity)
             {
-                var collection = relationship.Field.GetValue(entity);
+                var collection = relationship.GetValue(entity);
 
                 if (collection == null)
                 {
@@ -591,7 +596,7 @@ namespace Hypermedia.JsonApi
             /// <returns>The list of types to include for the entity.</returns>
             IEnumerable<JsonObject> SerializeIncludedBelongsTo(IRelationship relationship, IContract contract, object entity)
             {
-                var value = relationship.Field.GetValue(entity);
+                var value = relationship.GetValue(entity);
 
                 if (value == null || TypeHelper.IsReferenceType(value.GetType()) == false)
                 {
@@ -616,14 +621,16 @@ namespace Hypermedia.JsonApi
                 //    return false;
                 //}
 
-                var relationship = contract.Relationships.SingleOrDefault(r => r.Field == field || r.ViaField == field);
+                throw new NotImplementedException();
 
-                if (relationship == null || relationship.Is(RelationshipOptions.Embedded))
-                {
-                    return field.Is(FieldOptions.Id) == false && field.Is(FieldOptions.CanSerialize);
-                }
+                //var relationship = contract.Relationships.SingleOrDefault(r => r.Field == field || r.ViaField == field);
 
-                return false;
+                //if (relationship == null || relationship.Is(RelationshipOptions.Embedded))
+                //{
+                //    return field.Is(FieldOptions.Id) == false && field.Is(FieldOptions.CanSerialize);
+                //}
+
+                //return false;
             }
 
             /// <summary>
@@ -633,14 +640,16 @@ namespace Hypermedia.JsonApi
             /// <returns>true if the relationship can be serialized, false if not.</returns>
             static bool ShouldSerialize(IRelationship relationship)
             {
-                if (relationship.RelatedTo == null || (relationship.Field == null && relationship.ViaField == null))
-                {
-                    return false;
-                }
+                throw new NotImplementedException();
 
-                var field = relationship.Field ?? relationship.ViaField;
+                //if (relationship.RelatedTo == null || (relationship.Field == null && relationship.ViaField == null))
+                //{
+                //    return false;
+                //}
 
-                return field.Is(FieldOptions.Id) == false && field.Is(FieldOptions.CanSerialize);
+                //var field = relationship.Field ?? relationship.ViaField;
+
+                //return field.Is(FieldOptions.Id) == false && field.Is(FieldOptions.CanSerialize);
             }
 
             /// <summary>
@@ -939,24 +948,26 @@ namespace Hypermedia.JsonApi
             /// <param name="entity">The entity to set the value on.</param>
             void DeserializeBelongsTo(IRelationship relationship, JsonObject value, object entity)
             {
-                if (relationship.ViaField != null)
-                {
-                    var member = value["id"];
+                throw new NotImplementedException();
 
-                    if (member != null)
-                    {
-                        DeserializeField(relationship.ViaField, member, entity);
-                    }
-                }
+                //if (relationship.ViaField != null)
+                //{
+                //    var member = value["id"];
 
-                if (relationship.Field != null)
-                {
-                    object related;
-                    if (TryResolve(value, out related))
-                    {
-                        relationship.Field.SetValue(entity, related);
-                    }
-                }
+                //    if (member != null)
+                //    {
+                //        DeserializeField(relationship.ViaField, member, entity);
+                //    }
+                //}
+
+                //if (relationship.Field != null)
+                //{
+                //    object related;
+                //    if (TryResolve(value, out related))
+                //    {
+                //        relationship.Field.SetValue(entity, related);
+                //    }
+                //}
             }
 
             /// <summary>
@@ -967,29 +978,31 @@ namespace Hypermedia.JsonApi
             /// <param name="entity">The entity to set the value on.</param>
             void DeserializeHasMany(IRelationship relationship, JsonArray value, object entity)
             {
-                if (relationship.Field == null)
-                {
-                    return;
-                }
+                throw new NotImplementedException();
 
-                var collection = CreateListInstance(relationship.Field.ClrType);
+                //if (relationship.Field == null)
+                //{
+                //    return;
+                //}
 
-                if (collection == null)
-                {
-                    throw new JsonApiException(
-                        $"Can not deserialize the related collection as an appropriate IList instance could not be created for '{relationship.Field.ClrType}'.");
-                }
+                //var collection = CreateListInstance(relationship.Field.ClrType);
 
-                foreach (var jsonObject in value.OfType<JsonObject>())
-                {
-                    object related;
-                    if (TryResolve(jsonObject, out related))
-                    {
-                        collection.Add(related);
-                    }
-                }
+                //if (collection == null)
+                //{
+                //    throw new JsonApiException(
+                //        $"Can not deserialize the related collection as an appropriate IList instance could not be created for '{relationship.Field.ClrType}'.");
+                //}
 
-                relationship.Field.SetValue(entity, collection);
+                //foreach (var jsonObject in value.OfType<JsonObject>())
+                //{
+                //    object related;
+                //    if (TryResolve(jsonObject, out related))
+                //    {
+                //        collection.Add(related);
+                //    }
+                //}
+
+                //relationship.Field.SetValue(entity, collection);
             }
 
             /// <summary>
@@ -1027,12 +1040,13 @@ namespace Hypermedia.JsonApi
             /// <returns>true if the field should be included, false if not.</returns>
             static bool ShouldDeserialize(IContract contract, IField field)
             {
-                if (contract.Relationships.Any(relationship => relationship.Field == field))
-                {
-                    return false;
-                }
+                throw new NotImplementedException();
+                //if (contract.Relationships.Any(relationship => relationship.Field == field))
+                //{
+                //    return false;
+                //}
 
-                return field.Is(FieldOptions.Id) == false && field.Is(FieldOptions.CanDeserialize);
+                //return field.Is(FieldOptions.Id) == false && field.Is(FieldOptions.CanDeserialize);
             }
 
             /// <summary>
@@ -1042,12 +1056,13 @@ namespace Hypermedia.JsonApi
             /// <returns>true if the relationship should be included, false if not.</returns>
             static bool ShouldDeserialize(IRelationship relationship)
             {
-                if (relationship.ViaField != null && relationship.ViaField.Is(FieldOptions.CanDeserialize))
-                {
-                    return true;
-                }
+                throw new NotImplementedException();
+                //if (relationship.ViaField != null && relationship.ViaField.Is(FieldOptions.CanDeserialize))
+                //{
+                //    return true;
+                //}
 
-                return relationship.Field != null && relationship.Field.Is(FieldOptions.CanDeserialize);
+                //return relationship.Field != null && relationship.Field.Is(FieldOptions.CanDeserialize);
             }
         }
 

@@ -137,7 +137,7 @@ namespace Hypermedia.Configuration
         /// <param name="options">The list of options to set.</param>
         /// <param name="setOptionOn">true if the options are to be set, false if not.</param>
         /// <returns>The field builder to continue building on.</returns>
-        public FieldBuilder<T> Options(FieldOptions options, bool setOptionOn = true)
+        internal FieldBuilder<T> Options(FieldOptions options, bool setOptionOn = true)
         {
             if (setOptionOn)
             {

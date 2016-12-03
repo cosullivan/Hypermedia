@@ -37,10 +37,12 @@ namespace Hypermedia.Configuration
         /// <returns>The entity type.</returns>
         IContract IContractBuilder.CreateRuntimeContract()
         {
-            var fields = _fields.Select(field => field.CreateRuntimeField()).ToList();
-            var relationships = _relationships.Values.Select(relationship => relationship.CreateRuntimeRelationship(fields)).ToList();
+            _
 
-            return new RuntimeContract<T>(_name, fields, relationships);
+            //var fields = _fields.Select(field => field.CreateRuntimeField()).ToList();
+            //var relationships = _relationships.Values.Select(relationship => relationship.CreateRuntimeRelationship(fields)).ToList();
+
+            //return new RuntimeContract<T>(_name, fields, relationships);
         }
 
         /// <summary>
@@ -119,7 +121,7 @@ namespace Hypermedia.Configuration
                 return builder;
             }
 
-            _relationships.Add(name, new RelationshipBuilder<T>(this, name, typeof(TOther), type));
+            _relationships.Add(name, new RelationshipBuilder<T>(Field(name), typeof(TOther), type));
 
             return _relationships[name];
         }

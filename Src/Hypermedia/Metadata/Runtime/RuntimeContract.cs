@@ -9,11 +9,6 @@ namespace Hypermedia.Metadata.Runtime
     [DebuggerDisplay("Name={Name} Type={ClrType}")]
     public class RuntimeContract : IContract
     {
-        readonly string _type;
-        readonly Type _clrType;
-        readonly IReadOnlyList<IField> _fields;
-        readonly IReadOnlyList<IRelationship> _relationships;
-
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -28,13 +23,11 @@ namespace Hypermedia.Metadata.Runtime
         /// <param name="type">The name of the entity type.</param>
         /// <param name="clrType">The CLR type that the entity type is mapped to.</param>
         /// <param name="fields">The list of fields for the entity.</param>
-        /// <param name="relationships">The list of relationships for the entity.</param>
-        internal RuntimeContract(string type, Type clrType, IReadOnlyList<IField> fields, IReadOnlyList<IRelationship> relationships)
+        internal RuntimeContract(string type, Type clrType, IReadOnlyList<IField> fields)
         {
-            _type = type;
-            _clrType = clrType;
-            _fields = fields;
-            _relationships = relationships;
+            Name = type;
+            ClrType = clrType;
+            Fields = fields;
         }
 
         /// <summary>
@@ -46,7 +39,7 @@ namespace Hypermedia.Metadata.Runtime
         {
             var name = Inflector.Pluralize(type.Name.ToLower());
 
-            return new RuntimeContract(name, type, CreateRuntimeFields(type), new List<RuntimeRelationship>());
+            return new RuntimeContract(name, type, CreateRuntimeFields(type));
         }
 
         /// <summary>
@@ -57,7 +50,7 @@ namespace Hypermedia.Metadata.Runtime
         /// <returns>The entity type that represents a default configuration of the given entity type.</returns>
         internal static IContract CreateRuntimeType(Type type, string name)
         {
-            return new RuntimeContract(name, type, CreateRuntimeFields(type), new List<RuntimeRelationship>());
+            return new RuntimeContract(name, type, CreateRuntimeFields(type));
         }
 
         /// <summary>
@@ -73,35 +66,18 @@ namespace Hypermedia.Metadata.Runtime
         /// <summary>
         /// Gets the name of the metadata model.
         /// </summary>
-        public string Name
-        {
-            get { return _type; }
-        }
-
+        public string Name { get; }
+        
         /// <summary>
         /// Gets the CLR type that the metadata maps to.
         /// </summary>
-        public Type ClrType
-        {
-            get { return _clrType; }
-        }
+        public Type ClrType { get; }
 
         /// <summary>
         /// Gets a list of the fields that are available on the model.
         /// </summary>
-        public IReadOnlyList<IField> Fields
-        {
-            get { return _fields; }
-        }
-
-        /// <summary>
-        /// Gets a list of relationships that are available on the model.
-        /// </summary>
-        public IReadOnlyList<IRelationship> Relationships
-        {
-            get { return _relationships; }
-        }
-
+        public IReadOnlyList<IField> Fields { get; }
+        
         /// <summary>
         /// Gets or sets the inflector to use when creating contracts at runtime.
         /// </summary>
@@ -115,8 +91,7 @@ namespace Hypermedia.Metadata.Runtime
         /// </summary>
         /// <param name="type">The name of the entity type.</param>
         /// <param name="fields">The list of fields for the entity.</param>
-        /// <param name="relationships">The list of relationships for the entity.</param>
-        internal RuntimeContract(string type, IReadOnlyList<RuntimeField<T>> fields, IReadOnlyList<RuntimeRelationship> relationships) : base(type, typeof(T), fields, relationships) { }
+        internal RuntimeContract(string type, IReadOnlyList<RuntimeField<T>> fields) : base(type, typeof(T), fields) { }
 
         /// <summary>
         /// Create a default runtime type from the given entity.
@@ -126,7 +101,7 @@ namespace Hypermedia.Metadata.Runtime
         {
             var name = Inflector.Pluralize(typeof(T).Name.ToLower());
 
-            return new RuntimeContract<T>(name, CreateRuntimeFields(), new List<RuntimeRelationship>());
+            return new RuntimeContract<T>(name, CreateRuntimeFields());
         }
 
         /// <summary>
@@ -136,7 +111,7 @@ namespace Hypermedia.Metadata.Runtime
         /// <returns>The entity type that represents a default configuration of the given entity type.</returns>
         internal static IContract CreateRuntimeType(string name)
         {
-            return new RuntimeContract<T>(name, CreateRuntimeFields(), new List<RuntimeRelationship>());
+            return new RuntimeContract<T>(name, CreateRuntimeFields());
         }
 
         /// <summary>
