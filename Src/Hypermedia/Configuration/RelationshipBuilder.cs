@@ -12,6 +12,7 @@ namespace Hypermedia.Configuration
         readonly string _name;
         readonly Type _relatedTo;
         readonly RelationshipType _type;
+        RelationshipOptions _options = RelationshipOptions.Default;
         string _field;
         UriTemplateBuilder<T> _uriTemplateBuilder;
 
@@ -49,7 +50,7 @@ namespace Hypermedia.Configuration
                 ? _uriTemplateBuilder.CreateTemplate()
                 : null;
 
-            return new RuntimeRelationship(_type, _name, _relatedTo, field, viaField, template);
+            return new RuntimeRelationship(_type, _name, _options, _relatedTo, field, viaField, template);
         }
 
         /// <summary>
@@ -112,6 +113,35 @@ namespace Hypermedia.Configuration
             _field = field;
 
             return this;
+        }
+
+        /// <summary>
+        /// Sets the given options for the relationship.
+        /// </summary>
+        /// <param name="options">The list of options to set.</param>
+        /// <param name="setOptionOn">true if the options are to be set, false if not.</param>
+        /// <returns>The relationship builder to continue building on.</returns>
+        public RelationshipBuilder<T> Options(RelationshipOptions options, bool setOptionOn = true)
+        {
+            if (setOptionOn)
+            {
+                _options |= options;
+            }
+            else
+            {
+                _options &= ~(options);
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the relationship as being readonly.
+        /// </summary>
+        /// <returns>The relationship builder to continue building on.</returns>
+        public RelationshipBuilder<T> Embedded()
+        {
+            return Options(RelationshipOptions.Embedded);
         }
 
         /// <summary>

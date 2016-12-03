@@ -9,61 +9,10 @@ using JsonLite.Ast;
 
 namespace Hypermedia.JsonApi
 {
-    public sealed class ContractConverter : IJsonConverter
-    {
-        readonly JsonApiSerializer _jsonApiSerializer;
-        readonly IContractResolver _contractResolver;
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="jsonApiSerializer">The JSON API serializer.</param>
-        /// <param name="contractResolver">The contract resolver.</param>
-        public ContractConverter(JsonApiSerializer jsonApiSerializer, IContractResolver contractResolver)
-        {
-            _jsonApiSerializer = jsonApiSerializer;
-            _contractResolver = contractResolver;
-        }
-
-        /// <summary>
-        /// Serialize the value.
-        /// </summary>
-        /// <param name="serializer">The serializer to utilize when serializing nested objects.</param>
-        /// <param name="type">The CLR type of the value to serialize.</param>
-        /// <param name="value">The value to serialize.</param>
-        /// <returns>The JSON value that represents the given CLR value.</returns>
-        public JsonValue SerializeValue(IJsonSerializer serializer, Type type, object value)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Deserialize a JSON value to a defined CLR type.
-        /// </summary>
-        /// <param name="serializer">The serializer to utilize when deserializing nested objects.</param>
-        /// <param name="type">The CLR type to deserialize the JSON value to.</param>
-        /// <param name="jsonValue">The JSON value to deserialize.</param>
-        /// <returns>The object that represents the CLR version of the given JSON value.</returns>
-        public object DeserializeValue(IJsonSerializer serializer, Type type, JsonValue jsonValue)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Returns a value indicating whether or not the converter can convert the given type.
-        /// </summary>
-        /// <param name="type">The type to convert.</param>
-        /// <returns>true if the type can be converted by this converter, false if not.</returns>
-        public bool CanConvert(Type type)
-        {
-            return _contractResolver.CanResolve(type);
-        }
-    }
-
     public sealed class JsonApiSerializer
     {
         readonly IContractResolver _contractResolver;
-        readonly IJsonSerializer _jsonSerializer;
+        readonly IFieldNamingStrategy _fieldNamingStrategy;
 
         /// <summary>
         /// Constructor.
@@ -79,7 +28,7 @@ namespace Hypermedia.JsonApi
         public JsonApiSerializer(IContractResolver contractResolver, IFieldNamingStrategy fieldNamingStrategy)
         {
             _contractResolver = contractResolver;
-            _jsonSerializer = new JsonSerializer(new JsonConverterFactory(new ContractConverter(this, contractResolver)), fieldNamingStrategy);
+            _fieldNamingStrategy = fieldNamingStrategy;
         }
 
         /// <summary>
@@ -100,7 +49,7 @@ namespace Hypermedia.JsonApi
         /// <returns>The JSON object that represents the serialized entity.</returns>
         public JsonObject SerializeMany(IEnumerable entities)
         {
-            var serializer = new Serializer(_jsonSerializer, _contractResolver);
+            var serializer = new Serializer(_contractResolver, _fieldNamingStrategy);
 
             var members = new List<JsonMember>
             {
@@ -145,7 +94,7 @@ namespace Hypermedia.JsonApi
                 throw new ArgumentNullException(nameof(entity));
             }
 
-            var serializer = new Serializer(_jsonSerializer, _contractResolver);
+            var serializer = new Serializer(_contractResolver, _fieldNamingStrategy);
 
             var members = new List<JsonMember>
             {
@@ -181,7 +130,7 @@ namespace Hypermedia.JsonApi
         /// <returns>The list of items that was deserialized.</returns>
         public IEnumerable<object> DeserializeMany(JsonObject jsonObject, IJsonApiEntityCache cache)
         {
-            var deserializer = new Deserializer(jsonObject, _jsonSerializer, _contractResolver, cache);
+            var deserializer = new Deserializer(jsonObject, _contractResolver, _fieldNamingStrategy, cache);
 
             return deserializer.DeserializeMany();
         }
@@ -204,7 +153,7 @@ namespace Hypermedia.JsonApi
         /// <returns>The instance that was created.</returns>
         public object DeserializeEntity(JsonObject jsonObject, IJsonApiEntityCache cache)
         {
-            var deserializer = new Deserializer(jsonObject, _jsonSerializer, _contractResolver, cache);
+            var deserializer = new Deserializer(jsonObject, _contractResolver, _fieldNamingStrategy, cache);
 
             return deserializer.DeserializeEntity();
         }
@@ -217,7 +166,7 @@ namespace Hypermedia.JsonApi
         /// <param name="entity">The entity instance to deserialize the fields into.</param>
         internal void DeserializeEntity(IContract type, JsonObject jsonObject, object entity)
         {
-            var deserializer = new Deserializer(jsonObject, _jsonSerializer, new ContractResolver(type), new JsonApiEntityCache());
+            var deserializer = new Deserializer(jsonObject, new ContractResolver(type), _fieldNamingStrategy, new JsonApiEntityCache());
             
             deserializer.DeserializeEntity(type, jsonObject, entity);
         }
@@ -227,18 +176,18 @@ namespace Hypermedia.JsonApi
         class Serializer
         {
             readonly IContractResolver _contractResolver;
-            readonly HashSet<JsonObject> _visited = new HashSet<JsonObject>(JsonApiEntityKeyEqualityComparer.Instance);
             readonly IJsonSerializer _jsonSerializer;
+            readonly HashSet<JsonObject> _visited = new HashSet<JsonObject>(JsonApiEntityKeyEqualityComparer.Instance);
 
             /// <summary>
             /// Constructor.
             /// </summary>
-            /// <param name="jsonSerializer">The JSON serializer.</param>
             /// <param name="contractResolver">The resource contract resolver.</param>
-            internal Serializer(IJsonSerializer jsonSerializer, IContractResolver contractResolver)
+            /// <param name="fieldNamingStrategy">The field naming strategy.</param>
+            internal Serializer(IContractResolver contractResolver, IFieldNamingStrategy fieldNamingStrategy)
             {
-                _jsonSerializer = jsonSerializer;
                 _contractResolver = contractResolver;
+                _jsonSerializer = new JsonSerializer(new JsonConverterFactory(), fieldNamingStrategy);
             }
 
             /// <summary>
@@ -660,14 +609,21 @@ namespace Hypermedia.JsonApi
             /// <returns>true if the field should be included, false if not.</returns>
             static bool ShouldSerialize(IContract contract, IField field)
             {
-                // if the field has been linked to a relationship or the field is the actual relationship field itself 
-                // then we dont serialize these as normal fields as they will be output in the relationships node
-                if (contract.Relationships.Any(relationship => relationship.Field == field || relationship.ViaField == field))
+                //// if the field has been linked to a relationship or the field is the actual relationship field itself 
+                //// then we dont serialize these as normal fields as they will be output in the relationships node
+                //if (contract.Relationships.Any(relationship => relationship.Field == field || relationship.ViaField == field))
+                //{
+                //    return false;
+                //}
+
+                var relationship = contract.Relationships.SingleOrDefault(r => r.Field == field || r.ViaField == field);
+
+                if (relationship == null || relationship.Is(RelationshipOptions.Embedded))
                 {
-                    return false;
+                    return field.Is(FieldOptions.Id) == false && field.Is(FieldOptions.CanSerialize);
                 }
 
-                return field.Is(FieldOptions.Id) == false && field.Is(FieldOptions.CanSerialize);
+                return false;
             }
 
             /// <summary>
@@ -705,23 +661,23 @@ namespace Hypermedia.JsonApi
         class Deserializer
         {
             readonly JsonObject _rootObject;
-            readonly IJsonSerializer _jsonSerializer;
             readonly IContractResolver _contractResolver;
             readonly IJsonApiEntityCache _instanceCache;
+            readonly IJsonSerializer _jsonSerializer;
 
             /// <summary>
             /// Constructor.
             /// </summary>
             /// <param name="rootObject">The root JSON object that contains both the 'data' and the 'include' nodes.</param>
-            /// <param name="jsonSerializer">The JSON serializer.</param>
             /// <param name="contractResolver">The resource contract resolver.</param>
+            /// <param name="fieldNamingStrategy">The field naming strategy for deserialization.</param>
             /// <param name="instanceCache">The entity cache to use for reusing existing instances in the object graph.</param>
-            internal Deserializer(JsonObject rootObject, IJsonSerializer jsonSerializer, IContractResolver contractResolver, IJsonApiEntityCache instanceCache)
+            internal Deserializer(JsonObject rootObject, IContractResolver contractResolver, IFieldNamingStrategy fieldNamingStrategy, IJsonApiEntityCache instanceCache)
             {
                 _rootObject = rootObject;
-                _jsonSerializer = jsonSerializer;
                 _contractResolver = contractResolver;
                 _instanceCache = instanceCache;
+                _jsonSerializer = new JsonSerializer(new JsonConverterFactory(), fieldNamingStrategy);
             }
 
             /// <summary>

@@ -55,6 +55,7 @@
     <Compile Include="Json\SnakeCaseNamingStrategy.cs" />
     <Compile Include="Json\StringExtensions.cs" />
     <Compile Include="Metadata\IFieldAccessor.cs" />
+    <Compile Include="Metadata\RelationshipOptions.cs" />
     <Compile Include="Metadata\Runtime\DelegatingFieldAccessor.cs" />
     <Compile Include="Metadata\Runtime\IResourceInflector.cs" />
     <Compile Include="Configuration\ContractBuilder.cs" />
