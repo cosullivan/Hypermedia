@@ -11,6 +11,18 @@ namespace Hypermedia.Metadata.Runtime
         /// Constructor.
         /// </summary>
         /// <param name="type">The relationship type.</param>
+        /// <param name="name">The name of the relationship.</param>
+        internal RuntimeRelationship(RelationshipType type, string name)
+        {
+            Type = type;
+            Name = name;
+            Options = FieldOptions.Default | FieldOptions.Relationship;
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="type">The relationship type.</param>
         /// <param name="field">The field to initialize the relationship from.</param>
         internal RuntimeRelationship(RelationshipType type, RuntimeField field)
         {

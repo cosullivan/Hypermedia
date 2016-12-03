@@ -71,6 +71,30 @@ namespace Hypermedia.Configuration
         }
 
         /// <summary>
+        /// Sets the field accessor for the given field.
+        /// </summary>
+        /// <param name="accessor">The field accessor for the given field.</param>
+        /// <returns>The field builder to continue building on.</returns>
+        public RelationshipBuilder<T> Accessor(IFieldAccessor accessor)
+        {
+            _relationship.Accessor = accessor;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the property that the field is to be mapped to.
+        /// </summary>
+        /// <param name="property">The name of the property that the field is mapped to.</param>
+        /// <returns>The field builder to continue building on.</returns>
+        public RelationshipBuilder<T> From(string property)
+        {
+            _relationship.Accessor = RuntimeFieldAccessor.From<T>(property);
+
+            return this;
+        }
+
+        /// <summary>
         /// Sets the field that the relationship link is stored through.
         /// </summary>
         /// <param name="field">The field that links the relationship.</param>

@@ -13,6 +13,15 @@ namespace Hypermedia.Metadata.Runtime
         protected RuntimeField() { }
 
         /// <summary>
+        /// The name of the field.
+        /// </summary>
+        /// <param name="name">The name of the field.</param>
+        internal RuntimeField(string name)
+        {
+            Name = name;
+        }
+
+        /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="propertyInfo">The property information to create the field from.</param>
@@ -41,11 +50,16 @@ namespace Hypermedia.Metadata.Runtime
         /// <returns>The field options for the given property info.</returns>
         internal static FieldOptions CreateDefaultOptions(PropertyInfo propertyInfo)
         {
-            var options = FieldOptions.None;
+            var options = FieldOptions.Default;
+
+            if (propertyInfo.CanRead == false)
+            {
+                options = options & ~FieldOptions.Serializable;
+            }
 
             if (propertyInfo.CanWrite == false)
             {
-                options = options | FieldOptions.Deserializable;
+                options = options & ~FieldOptions.Deserializable;
             }
 
             return options;

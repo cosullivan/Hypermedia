@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Hypermedia.Metadata;
 using Hypermedia.Metadata.Runtime;
@@ -9,7 +10,7 @@ namespace Hypermedia.Configuration
     {
         readonly IBuilder _builder;
         readonly RuntimeContract _contract;
-        readonly IDictionary<string, RuntimeField> _fields = new Dictionary<string, RuntimeField>();
+        readonly List<RuntimeField> _fields = new List<RuntimeField>();
 
         /// <summary>
         /// Constructor.
@@ -36,7 +37,7 @@ namespace Hypermedia.Configuration
         /// <returns>The entity type.</returns>
         IContract IContractBuilder.CreateContract()
         {
-            _contract.Fields = _fields.Values.OfType<IField>().ToList();
+            _contract.Fields = _fields.ToList();
 
             return _contract;
         }
@@ -65,6 +66,33 @@ namespace Hypermedia.Configuration
         }
 
         /// <summary>
+        /// Attempt to find the field with the given name.
+        /// </summary>
+        /// <param name="name">The name of the field to find.</param>
+        /// <param name="field">The field that was found with the given name, or null if not field could be found.</param>
+        /// <returns>true if a field with the given name was found, false if not.</returns>
+        bool TryFindField(string name, out RuntimeField field)
+        {
+            field = _fields.SingleOrDefault(f => String.Equals(f.Name, name, StringComparison.OrdinalIgnoreCase));
+
+            return field != null;
+        }
+
+        /// <summary>
+        /// Create a new field.
+        /// </summary>
+        /// <param name="name">The name of the field to create.</param>
+        /// <returns>The field that was created.</returns>
+        RuntimeField CreateField(string name)
+        {
+            var field = new RuntimeField(name);
+
+            _fields.Add(field);
+
+            return field;
+        }
+
+        /// <summary>
         /// Returns a field.
         /// </summary>
         /// <param name="name">The name of the field to return.</param>
@@ -72,12 +100,12 @@ namespace Hypermedia.Configuration
         public FieldBuilder<T> Field(string name)
         {
             RuntimeField field;
-            if (_fields.TryGetValue(name, out field) == false)
+            if (TryFindField(name, out field))
             {
-                _fields.Add(name, RuntimeField<T>.CreateRuntimeField(name));
+                return new FieldBuilder<T>(this, field);
             }
 
-            return new FieldBuilder<T>(this, _fields[name]);
+            return new FieldBuilder<T>(this, CreateField(name));
         }
 
         /// <summary>
@@ -99,7 +127,41 @@ namespace Hypermedia.Configuration
         {
             return Relationship<TOther>(name, RelationshipType.HasMany);
         }
-        
+
+        /// <summary>
+        /// Promote the field to a relationship.
+        /// </summary>
+        /// <typeparam name="TOther">The type of the related element.</typeparam>
+        /// <param name="type">The type of relationship.</param>
+        /// <param name="field">The field to use as a prototype when creating the relationship.</param>
+        /// <returns>The runtime relationship that was created.</returns>
+        RuntimeRelationship PromoteRelationship<TOther>(RelationshipType type, RuntimeField field)
+        {
+            _fields.Remove(field);
+
+            var relationship = new RuntimeRelationship(type, field) { RelatedTo = typeof(TOther) };
+
+            _fields.Add(relationship);
+
+            return relationship;
+        }
+
+        /// <summary>
+        /// Create a new relationship.
+        /// </summary>
+        /// <typeparam name="TOther">The type of the related element.</typeparam>
+        /// <param name="name">The name of the relationship to return.</param>
+        /// <param name="type">The type of relationship.</param>
+        /// <returns>The runtime relationship that was created.</returns>
+        RuntimeRelationship CreateRelationship<TOther>(string name, RelationshipType type)
+        {
+            var relationship = new RuntimeRelationship(type, name) { RelatedTo = typeof(TOther) };
+
+            _fields.Add(relationship);
+
+            return relationship;
+        }
+
         /// <summary>
         /// Returns a relationship.
         /// </summary>
@@ -109,17 +171,13 @@ namespace Hypermedia.Configuration
         RelationshipBuilder<T> Relationship<TOther>(string name, RelationshipType type)
         {
             RuntimeField field;
-            if (_fields.TryGetValue(name, out field))
+            if (TryFindField(name, out field))
             {
                 // promote the field to a relationship
-                _fields[name] = new RuntimeRelationship(type, field) { RelatedTo = typeof(TOther) };
-            }
-            else
-            {
-                _fields.Add(name, RuntimeRelationship<T>.CreateRuntimeField(type, name));
+                return new RelationshipBuilder<T>(this, PromoteRelationship<TOther>(type, field));
             }
 
-            return new RelationshipBuilder<T>(this, (RuntimeRelationship) _fields[name]);
+            return new RelationshipBuilder<T>(this, CreateRelationship<TOther>(name, type));
         }
     }
 }

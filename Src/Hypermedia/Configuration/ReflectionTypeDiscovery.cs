@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Hypermedia.Metadata.Runtime;
 
 namespace Hypermedia.Configuration
 {
@@ -29,7 +30,10 @@ namespace Hypermedia.Configuration
         {
             foreach (var property in type.DeclaredProperties)
             {
-                builder.Field(property.Name);
+                builder
+                    .Field(property.Name)
+                    .Accessor(new RuntimeFieldAccessor(property))
+                    .Options(RuntimeField.CreateDefaultOptions(property));
             }
 
             if (type.BaseType != null && type.BaseType != typeof(object))
