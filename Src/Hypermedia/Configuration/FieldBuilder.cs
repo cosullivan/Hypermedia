@@ -7,19 +7,22 @@ namespace Hypermedia.Configuration
     public sealed class FieldBuilder<T> : IContractBuilder<T>
     {
         readonly IContractBuilder<T> _builder;
-        string _name;
-        FieldOptions _options = FieldOptions.Default;
-        IFieldAccessor _fieldAccessor;
+        readonly RuntimeField _field;
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="builder">The parent builder.</param>
-        /// <param name="name">The name of the field.</param>
-        internal FieldBuilder(IContractBuilder<T> builder, string name)
+        /// <param name="field">The field to build on.</param>
+        internal FieldBuilder(IContractBuilder<T> builder, RuntimeField field)
         {
             _builder = builder;
-            _name = name;
+            _field = field;
+
+            if (_field.Accessor == null)
+            {
+                _field.Accessor = RuntimeFieldAccessor.From<T>(_field.Name);
+            }
         }
 
         /// <summary>
@@ -29,22 +32,6 @@ namespace Hypermedia.Configuration
         public IContractResolver Build()
         {
             return _builder.Build();
-        }
-
-        /// <summary>
-        /// Create the runtime field.
-        /// </summary>
-        /// <returns>The field.</returns>
-        internal RuntimeField<T> CreateRuntimeField()
-        {
-            var accessor = _fieldAccessor;
-
-            if (accessor == null)
-            {
-                accessor = RuntimeFieldAccessor.From<T>(_name);
-            }
-            
-            return new RuntimeField<T>(_name, accessor.ValueType, accessor, _options);
         }
 
         /// <summary>
@@ -95,7 +82,7 @@ namespace Hypermedia.Configuration
         /// <returns>The field builder to continue building on.</returns>
         public FieldBuilder<T> Accessor(IFieldAccessor accessor)
         {
-            _fieldAccessor = accessor;
+            _field.Accessor = accessor;
 
             return this;
         }
@@ -107,7 +94,7 @@ namespace Hypermedia.Configuration
         /// <returns>The field builder to continue building on.</returns>
         public FieldBuilder<T> From(string property)
         {
-            _fieldAccessor = RuntimeFieldAccessor.From<T>(property);
+            _field.Accessor = RuntimeFieldAccessor.From<T>(property);
 
             return this;
         }
@@ -121,12 +108,12 @@ namespace Hypermedia.Configuration
         /// as the mapping property and then the new name is applied.</remarks>
         public FieldBuilder<T> Rename(string name)
         {
-            if (_fieldAccessor == null)
+            if (_field.Accessor == null)
             {
-                _fieldAccessor = RuntimeFieldAccessor.From<T>(_name);
+                _field.Accessor = RuntimeFieldAccessor.From<T>(_field.Name);
             }
 
-            _name = name;
+            _field.Name = name;
 
             return this;
         }
@@ -141,11 +128,11 @@ namespace Hypermedia.Configuration
         {
             if (setOptionOn)
             {
-                _options |= options;
+                _field.Options |= options;
             }
             else
             {
-                _options &= ~(options);
+                _field.Options &= ~(options);
             }
 
             return this;
@@ -168,7 +155,7 @@ namespace Hypermedia.Configuration
         /// <returns>The field builder to continue building on.</returns>
         public FieldBuilder<T> Ignore(bool value = true)
         {
-            return Options(FieldOptions.CanSerialize, value == false).Options(FieldOptions.CanDeserialize, value == false);
+            return Options(FieldOptions.Serializable, value == false).Options(FieldOptions.Deserializable, value == false);
         }
 
         /// <summary>
@@ -177,7 +164,7 @@ namespace Hypermedia.Configuration
         /// <returns>The field builder to continue building on.</returns>
         public FieldBuilder<T> ReadOnly()
         {
-            return Options(FieldOptions.CanSerialize, true).Options(FieldOptions.CanDeserialize, false);
+            return Options(FieldOptions.Serializable, true).Options(FieldOptions.Deserializable, false);
         }
 
         /// <summary>
@@ -186,7 +173,7 @@ namespace Hypermedia.Configuration
         /// <returns>The field builder to continue building on.</returns>
         public FieldBuilder<T> WriteOnly()
         {
-            return Options(FieldOptions.CanSerialize, false).Options(FieldOptions.CanDeserialize, true);
+            return Options(FieldOptions.Serializable, false).Options(FieldOptions.Deserializable, true);
         }
 
         /// <summary>
@@ -200,12 +187,12 @@ namespace Hypermedia.Configuration
             return new CalculatedFieldBuilder<T, TValue>(this, expression);
         }
 
-        /// <summary>
-        /// Gets the name of the field.
-        /// </summary>
-        internal string Name
-        {
-            get { return _name; }
-        }
+        ///// <summary>
+        ///// Gets the name of the field.
+        ///// </summary>
+        //internal string Name
+        //{
+        //    get { return _field.Name; }
+        //}
     }
 }

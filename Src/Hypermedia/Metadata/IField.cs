@@ -69,5 +69,16 @@ namespace Hypermedia.Metadata
 
             return (field.Options & options) == options;
         }
+
+        /// <summary>
+        /// Returns a value indicating whether the field does not adheres to the list of specified options.
+        /// </summary>
+        /// <param name="field">The field to test the options against.</param>
+        /// <param name="options">The list of options to test on the field.</param>
+        /// <returns>true if the field does not contain the list of options, false if it does.</returns>
+        public static bool IsNot(this IField field, FieldOptions options)
+        {
+            return Is(field, options) == false;
+        }
     }
 }

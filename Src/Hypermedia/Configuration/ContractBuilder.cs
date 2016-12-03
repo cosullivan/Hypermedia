@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Hypermedia.Metadata;
 using Hypermedia.Metadata.Runtime;
@@ -9,9 +8,8 @@ namespace Hypermedia.Configuration
     public sealed class ContractBuilder<T> : IContractBuilder<T>, IContractBuilder
     {
         readonly IBuilder _builder;
-        readonly List<FieldBuilder<T>> _fields = new List<FieldBuilder<T>>();
-        readonly IDictionary<string, RelationshipBuilder<T>> _relationships = new Dictionary<string, RelationshipBuilder<T>>();
-        string _name = typeof(T).Name;
+        readonly RuntimeContract _contract;
+        readonly IDictionary<string, RuntimeField> _fields = new Dictionary<string, RuntimeField>();
 
         /// <summary>
         /// Constructor.
@@ -20,6 +18,7 @@ namespace Hypermedia.Configuration
         internal ContractBuilder(IBuilder builder)
         {
             _builder = builder;
+            _contract = new RuntimeContract { Name = typeof(T).Name, ClrType = typeof(T) };
         }
 
         /// <summary>
@@ -35,14 +34,11 @@ namespace Hypermedia.Configuration
         /// Build the entity type.
         /// </summary>
         /// <returns>The entity type.</returns>
-        IContract IContractBuilder.CreateRuntimeContract()
+        IContract IContractBuilder.CreateContract()
         {
-            _
+            _contract.Fields = _fields.Values.OfType<IField>().ToList();
 
-            //var fields = _fields.Select(field => field.CreateRuntimeField()).ToList();
-            //var relationships = _relationships.Values.Select(relationship => relationship.CreateRuntimeRelationship(fields)).ToList();
-
-            //return new RuntimeContract<T>(_name, fields, relationships);
+            return _contract;
         }
 
         /// <summary>
@@ -63,7 +59,7 @@ namespace Hypermedia.Configuration
         /// <returns>The metadata builder to configure.</returns>
         public ContractBuilder<T> Name(string name)
         {
-            _name = name;
+            _contract.Name = name;
 
             return this;
         }
@@ -75,16 +71,13 @@ namespace Hypermedia.Configuration
         /// <returns>The field builder build the field.</returns>
         public FieldBuilder<T> Field(string name)
         {
-            var builder = _fields.SingleOrDefault(field => String.Equals(field.Name, name, StringComparison.OrdinalIgnoreCase));
-
-            if (builder == null)
+            RuntimeField field;
+            if (_fields.TryGetValue(name, out field) == false)
             {
-                builder = new FieldBuilder<T>(this, name);
-
-                _fields.Add(builder);
+                _fields.Add(name, new RuntimeField { Name = name, Options = FieldOptions.Default });
             }
 
-            return builder;
+            return new FieldBuilder<T>(this, _fields[name]);
         }
 
         /// <summary>
@@ -115,15 +108,25 @@ namespace Hypermedia.Configuration
         /// <returns>The relationship builder build the relationship.</returns>
         RelationshipBuilder<T> Relationship<TOther>(string name, RelationshipType type)
         {
-            RelationshipBuilder<T> builder;
-            if (_relationships.TryGetValue(name, out builder))
+            RuntimeField field;
+            if (_fields.TryGetValue(name, out field) == false)
             {
-                return builder;
+                _fields.Add(name, new RuntimeRelationship(type) { Name = name, Options = FieldOptions.Default | FieldOptions.Relationship });
+            }
+            else
+            {
+                // promote the field to a relationship
+                _fields[name] = new RuntimeRelationship(type)
+                {
+                    Name = field.Name,
+                    ClrType = field.ClrType,
+                    Options = field.Options | FieldOptions.Relationship,
+                    Accessor = field.Accessor,
+                    RelatedTo = typeof(TOther)
+                };
             }
 
-            _relationships.Add(name, new RelationshipBuilder<T>(Field(name), typeof(TOther), type));
-
-            return _relationships[name];
+            return new RelationshipBuilder<T>(this, (RuntimeRelationship) _fields[name]);
         }
     }
 }

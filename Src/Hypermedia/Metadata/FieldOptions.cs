@@ -18,12 +18,12 @@ namespace Hypermedia.Metadata
         /// <summary>
         /// The field should serialize.
         /// </summary>
-        CanSerialize = 0x02,
+        Serializable = 0x02,
 
         /// <summary>
         /// The field should deserialize.
         /// </summary>
-        CanDeserialize = 0x04,
+        Deserializable = 0x04,
 
         /// <summary>
         /// The field is a realtionship.
@@ -38,6 +38,6 @@ namespace Hypermedia.Metadata
         /// <summary>
         /// The default set of options.
         /// </summary>
-        Default = CanSerialize | CanDeserialize
+        Default = Serializable | Deserializable
     }
 }

@@ -133,7 +133,7 @@ namespace Hypermedia.WebApi.Json
         /// <returns>true if the field should be included, false if not.</returns>
         static bool ShouldSerializeField(IField field)
         {
-            return field.Is(FieldOptions.CanSerialize);
+            return field.Is(FieldOptions.Serializable);
         }
 
         /// <summary>
@@ -153,7 +153,7 @@ namespace Hypermedia.WebApi.Json
         /// <returns>true if the field should be included, false if not.</returns>
         static bool ShouldDeserializeField(IField field)
         {
-            return field.Is(FieldOptions.CanDeserialize);
+            return field.Is(FieldOptions.Deserializable);
         }
     }
 }

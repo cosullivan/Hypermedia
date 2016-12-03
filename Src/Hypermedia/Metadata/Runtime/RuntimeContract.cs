@@ -7,7 +7,7 @@ using System.Reflection;
 namespace Hypermedia.Metadata.Runtime
 {
     [DebuggerDisplay("Name={Name} Type={ClrType}")]
-    public class RuntimeContract : IContract
+    internal class RuntimeContract : IContract
     {
         /// <summary>
         /// Constructor.
@@ -16,6 +16,11 @@ namespace Hypermedia.Metadata.Runtime
         {
             Inflector = new ResourceInflector();
         }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        internal RuntimeContract() { }
 
         /// <summary>
         /// Constructor.
@@ -66,17 +71,17 @@ namespace Hypermedia.Metadata.Runtime
         /// <summary>
         /// Gets the name of the metadata model.
         /// </summary>
-        public string Name { get; }
+        public string Name { get; internal set; }
         
         /// <summary>
         /// Gets the CLR type that the metadata maps to.
         /// </summary>
-        public Type ClrType { get; }
+        public Type ClrType { get; internal set; }
 
         /// <summary>
         /// Gets a list of the fields that are available on the model.
         /// </summary>
-        public IReadOnlyList<IField> Fields { get; }
+        public IReadOnlyList<IField> Fields { get; internal set; }
         
         /// <summary>
         /// Gets or sets the inflector to use when creating contracts at runtime.
