@@ -83,6 +83,16 @@ namespace Hypermedia.Configuration
         {
             _field.Accessor = accessor;
 
+            if (_field.Accessor.CanRead)
+            {
+                Options(FieldOptions.Serializable);
+            }
+
+            if (_field.Accessor.CanWrite)
+            {
+                Options(FieldOptions.Deserializable);
+            }
+
             return this;
         }
 
@@ -109,7 +119,7 @@ namespace Hypermedia.Configuration
         {
             if (_field.Accessor == null)
             {
-                _field.Accessor = RuntimeFieldAccessor.From<T>(_field.Name);
+                Accessor(RuntimeFieldAccessor.From<T>(_field.Name));
             }
 
             _field.Name = name;

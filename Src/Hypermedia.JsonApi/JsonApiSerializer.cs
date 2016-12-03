@@ -294,7 +294,16 @@ namespace Hypermedia.JsonApi
             {
                 if (field.Is(FieldOptions.Relationship | FieldOptions.Embedded))
                 {
-                    //return new JsonMember(_jsonSerializer.FieldNamingStrategy.GetName(field.Name), SerializeEntity(entity)));
+                    var relationship = (IRelationship)field;
+
+                    IContract contract;
+                    if (_contractResolver.TryResolve(relationship.RelatedTo, out contract) == false)
+                    {
+                        throw new JsonApiException(
+                            "Could not find the related type '{0}' for the relationship '{1}'.", relationship.RelatedTo, relationship.Name);
+                    }
+                    
+                    return new JsonMember(_jsonSerializer.FieldNamingStrategy.GetName(field.Name), SerializeEntity(contract, entity));
                 }
 
                 return new JsonMember(_jsonSerializer.FieldNamingStrategy.GetName(field.Name), _jsonSerializer.SerializeValue(field.GetValue(entity)));
@@ -903,7 +912,7 @@ namespace Hypermedia.JsonApi
                     return;
                 }
 
-                field.SetValue(entity, _jsonSerializer.DeserializeValue(field.ClrType, value));
+                field.SetValue(entity, _jsonSerializer.DeserializeValue(field.Accessor.ValueType, value));
             }
 
             /// <summary>

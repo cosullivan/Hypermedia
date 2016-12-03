@@ -10,11 +10,6 @@ namespace Hypermedia.Metadata
         FieldOptions Options { get; }
 
         /// <summary>
-        /// Gets the CLR type that the member maps to.
-        /// </summary>
-        Type ClrType { get; }
-
-        /// <summary>
         /// Gets the field accessor.
         /// </summary>
         IFieldAccessor Accessor { get; }

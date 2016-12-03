@@ -79,6 +79,16 @@ namespace Hypermedia.Configuration
         {
             _relationship.Accessor = accessor;
 
+            if (_relationship.Accessor.CanRead)
+            {
+                Options(FieldOptions.Serializable);
+            }
+
+            if (_relationship.Accessor.CanWrite)
+            {
+                Options(FieldOptions.Deserializable);
+            }
+
             return this;
         }
 

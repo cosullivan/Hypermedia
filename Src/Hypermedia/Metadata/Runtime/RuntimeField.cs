@@ -28,7 +28,6 @@ namespace Hypermedia.Metadata.Runtime
         protected RuntimeField(PropertyInfo propertyInfo)
         {
             Name = propertyInfo.Name;
-            ClrType = propertyInfo.PropertyType;
             Accessor = new RuntimeFieldAccessor(propertyInfo);
             Options = CreateDefaultOptions(propertyInfo);
         }
@@ -69,11 +68,6 @@ namespace Hypermedia.Metadata.Runtime
         /// Gets the name of the member.
         /// </summary>
         public string Name { get; internal set; }
-
-        /// <summary>
-        /// Gets the CLR type that the member maps to.
-        /// </summary>
-        public Type ClrType { get; internal set; }
         
         /// <summary>
         /// Gets the field accessor.

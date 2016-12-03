@@ -112,7 +112,7 @@ namespace Hypermedia.WebApi.Json
             {
                 var field = fields.SingleOrDefault(f => String.Equals(f.Name, member.Name, StringComparison.OrdinalIgnoreCase));
 
-                field?.SetValue(instance, serializer.DeserializeValue(field.ClrType, member.Value));
+                field?.SetValue(instance, serializer.DeserializeValue(field.Accessor.ValueType, member.Value));
             }
         }
 

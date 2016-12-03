@@ -22,5 +22,15 @@ namespace Hypermedia.Metadata
         /// Gets the value type.
         /// </summary>
         Type ValueType { get; }
+
+        /// <summary>
+        /// Indicates whether the value accessor gives the ability to read from the underlying instance.
+        /// </summary>
+        bool CanRead { get; }
+
+        /// <summary>
+        /// Indicates whether the value accessor gives the ability to write to the underlying instance.
+        /// </summary>
+        bool CanWrite { get; }
     }
 }

@@ -81,5 +81,21 @@ namespace Hypermedia.Metadata.Runtime
         {
             get { return typeof (TValue); }
         }
+
+        /// <summary>
+        /// Indicates whether the value accessor gives the ability to read from the underlying instance.
+        /// </summary>
+        public bool CanRead
+        {
+            get { return _getter != null; }
+        }
+
+        /// <summary>
+        /// Indicates whether the value accessor gives the ability to write to the underlying instance.
+        /// </summary>
+        public bool CanWrite
+        {
+            get { return _setter != null; }
+        }
     }
 }
