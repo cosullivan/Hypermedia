@@ -74,7 +74,7 @@ namespace Hypermedia.Configuration
             RuntimeField field;
             if (_fields.TryGetValue(name, out field) == false)
             {
-                _fields.Add(name, new RuntimeField { Name = name, Options = FieldOptions.Default });
+                _fields.Add(name, RuntimeField<T>.CreateRuntimeField(name));
             }
 
             return new FieldBuilder<T>(this, _fields[name]);
@@ -109,21 +109,14 @@ namespace Hypermedia.Configuration
         RelationshipBuilder<T> Relationship<TOther>(string name, RelationshipType type)
         {
             RuntimeField field;
-            if (_fields.TryGetValue(name, out field) == false)
+            if (_fields.TryGetValue(name, out field))
             {
-                _fields.Add(name, new RuntimeRelationship(type) { Name = name, Options = FieldOptions.Default | FieldOptions.Relationship });
+                // promote the field to a relationship
+                _fields[name] = new RuntimeRelationship(type, field) { RelatedTo = typeof(TOther) };
             }
             else
             {
-                // promote the field to a relationship
-                _fields[name] = new RuntimeRelationship(type)
-                {
-                    Name = field.Name,
-                    ClrType = field.ClrType,
-                    Options = field.Options | FieldOptions.Relationship,
-                    Accessor = field.Accessor,
-                    RelatedTo = typeof(TOther)
-                };
+                _fields.Add(name, RuntimeRelationship<T>.CreateRuntimeField(type, name));
             }
 
             return new RelationshipBuilder<T>(this, (RuntimeRelationship) _fields[name]);

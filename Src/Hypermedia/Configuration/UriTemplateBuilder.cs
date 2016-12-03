@@ -7,27 +7,17 @@ namespace Hypermedia.Configuration
     public class UriTemplateBuilder<T> : IContractBuilder<T>
     {
         readonly IContractBuilder<T> _builder;
-        readonly string _format;
-        readonly List<UriTemplateParameter> _parameters = new List<UriTemplateParameter>();
+        readonly UriTemplate _uriTemplate;
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="builder">The parent builder.</param>
-        /// <param name="format">The URI template format.</param>
-        internal UriTemplateBuilder(IContractBuilder<T> builder, string format)
+        /// <param name="uriTemplate">The URI template that is being editted.</param>
+        internal UriTemplateBuilder(IContractBuilder<T> builder, UriTemplate uriTemplate)
         {
             _builder = builder;
-            _format = format;
-        }
-
-        /// <summary>
-        /// Create an instance of the Uri Template.
-        /// </summary>
-        /// <returns>The intance of the Uri Template.</returns>
-        internal UriTemplate CreateTemplate()
-        {
-            return new UriTemplate(_format, _parameters.ToArray());
+            _uriTemplate = uriTemplate;
         }
 
         /// <summary>
@@ -88,7 +78,10 @@ namespace Hypermedia.Configuration
         /// <returns>The URI template builder.</returns>
         public UriTemplateBuilder<T> Parameter(string name, Func<T, object> selector)
         {
-            _parameters.Add(new UriTemplateParameter(name, t => selector((T)t)));
+            _uriTemplate.Parameters = new List<UriTemplateParameter>(_uriTemplate.Parameters)
+            {
+                new UriTemplateParameter(name, t => selector((T) t))
+            };
 
             return this;
         }

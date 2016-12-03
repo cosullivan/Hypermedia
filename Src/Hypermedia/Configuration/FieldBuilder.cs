@@ -1,5 +1,4 @@
-﻿using System;
-using Hypermedia.Metadata;
+﻿using Hypermedia.Metadata;
 using Hypermedia.Metadata.Runtime;
 
 namespace Hypermedia.Configuration
@@ -175,24 +174,5 @@ namespace Hypermedia.Configuration
         {
             return Options(FieldOptions.Serializable, false).Options(FieldOptions.Deserializable, true);
         }
-
-        /// <summary>
-        /// Sets the field as a calculated field.
-        /// </summary>
-        /// <typeparam name="TValue">The value type.</typeparam>
-        /// <param name="expression">The expression to return the calculated value for the field.</param>
-        /// <returns>The field building to continue building on.</returns>
-        public CalculatedFieldBuilder<T, TValue> Calculated<TValue>(Func<T, TValue> expression)
-        {
-            return new CalculatedFieldBuilder<T, TValue>(this, expression);
-        }
-
-        ///// <summary>
-        ///// Gets the name of the field.
-        ///// </summary>
-        //internal string Name
-        //{
-        //    get { return _field.Name; }
-        //}
     }
 }

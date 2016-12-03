@@ -75,13 +75,12 @@ namespace Hypermedia.Configuration
         /// </summary>
         /// <param name="field">The field that links the relationship.</param>
         /// <returns>The relationship builder build the relationship.</returns>
-        public RelationshipBuilder<T> Via(string field)
+        public RelationshipBuilder<T> BackingField(string field)
         {
+            //_builder.Field(field);
             //_field = field;
 
-            //return this;
-
-            throw new NotImplementedException();
+            return this;
         }
 
         /// <summary>
@@ -138,11 +137,9 @@ namespace Hypermedia.Configuration
         /// <returns>The template builder instance.</returns>
         public UriTemplateBuilder<T> Template(string format)
         {
-            //_uriTemplateBuilder = new UriTemplateBuilder<T>(_builder, format);
+            _relationship.UriTemplate = new UriTemplate(format);
 
-            //return _uriTemplateBuilder;
-
-            throw new NotImplementedException();
+            return new UriTemplateBuilder<T>(_builder, _relationship.UriTemplate);
         }
 
         /// <summary>

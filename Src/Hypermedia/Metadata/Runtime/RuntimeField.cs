@@ -8,19 +8,30 @@ namespace Hypermedia.Metadata.Runtime
     internal class RuntimeField : IField
     {
         /// <summary>
+        /// Constructor.
+        /// </summary>
+        protected RuntimeField() { }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="propertyInfo">The property information to create the field from.</param>
+        protected RuntimeField(PropertyInfo propertyInfo)
+        {
+            Name = propertyInfo.Name;
+            ClrType = propertyInfo.PropertyType;
+            Accessor = new RuntimeFieldAccessor(propertyInfo);
+            Options = CreateDefaultOptions(propertyInfo);
+        }
+
+        /// <summary>
         /// Creates a runtime field from a property info.
         /// </summary>
         /// <param name="propertyInfo">The property info to create the runtime field for.</param>
         /// <returns>The runtime field that wraps the given property info.</returns>
         internal static RuntimeField CreateRuntimeField(PropertyInfo propertyInfo)
         {
-            return new RuntimeField
-            {
-                Name = propertyInfo.Name,
-                ClrType = propertyInfo.PropertyType,
-                Accessor = new RuntimeFieldAccessor(propertyInfo),
-                Options = CreateDefaultOptions(propertyInfo)
-            };
+            return new RuntimeField(propertyInfo);
         }
 
         /// <summary>
@@ -64,19 +75,31 @@ namespace Hypermedia.Metadata.Runtime
     internal sealed class RuntimeField<T> : RuntimeField
     {
         /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="propertyInfo">The property information to create the field from.</param>
+        RuntimeField(PropertyInfo propertyInfo) : base(propertyInfo) { }
+
+        /// <summary>
+        /// Creates a runtime field from a property name.
+        /// </summary>
+        /// <param name="name">The name of the field to create from.</param>
+        /// <returns>The runtime field that wraps the given property info.</returns>
+        internal static RuntimeField<T> CreateRuntimeField(string name)
+        {
+            var property = typeof(T).GetRuntimeProperty(name);
+
+            return CreateRuntimeField(property);
+        }
+
+        /// <summary>
         /// Creates a runtime field from a property info.
         /// </summary>
         /// <param name="propertyInfo">The property info to create the runtime field for.</param>
         /// <returns>The runtime field that wraps the given property info.</returns>
         internal new static RuntimeField<T> CreateRuntimeField(PropertyInfo propertyInfo)
         {
-            return new RuntimeField<T>
-            {
-                Name = propertyInfo.Name,
-                ClrType = propertyInfo.PropertyType,
-                Accessor = new RuntimeFieldAccessor(propertyInfo),
-                Options = CreateDefaultOptions(propertyInfo)
-            };
+            return new RuntimeField<T>(propertyInfo);
         }
     }
 }

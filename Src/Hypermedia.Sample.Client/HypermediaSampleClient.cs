@@ -49,14 +49,14 @@ namespace Hypermedia.Sample.Client
                 .With<PostResource>("posts")
                     .Id(nameof(PostResource.Id))
                     .BelongsTo<UserResource>(nameof(PostResource.OwnerUser))
-                        .Via(nameof(PostResource.OwnerUserId))
+                        .BackingField(nameof(PostResource.OwnerUserId))
                     .HasMany<CommentResource>(nameof(PostResource.Comments))
                 .With<CommentResource>("comments")
                     .Id(nameof(CommentResource.Id))
                     .BelongsTo<UserResource>(nameof(CommentResource.User))
-                        .Via(nameof(CommentResource.UserId))
+                        .BackingField(nameof(CommentResource.UserId))
                     .BelongsTo<PostResource>(nameof(CommentResource.Post))
-                        .Via(nameof(CommentResource.PostId))
+                        .BackingField(nameof(CommentResource.PostId))
                 .Build();
         }
 

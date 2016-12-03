@@ -5,9 +5,6 @@ namespace Hypermedia.Metadata
 {
     public sealed class UriTemplate
     {
-        readonly string _format;
-        readonly IReadOnlyList<UriTemplateParameter> _parameters;
-
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -20,8 +17,8 @@ namespace Hypermedia.Metadata
                 throw new ArgumentNullException(nameof(format));
             }
 
-            _format = format;
-            _parameters = parameters;
+            Format = format;
+            Parameters = new List<UriTemplateParameter>();
         }
 
         /// <summary>
@@ -31,9 +28,9 @@ namespace Hypermedia.Metadata
         /// <returns>The URI template with the resource bound to it.</returns>
         public string Bind(object resource)
         {
-            var template = _format;
+            var template = Format;
 
-            foreach (var parameter in _parameters)
+            foreach (var parameter in Parameters)
             {
                 var name = $"{{{parameter.Name}}}";
                 var value = $"{parameter.Accessor(resource)}";
@@ -43,5 +40,15 @@ namespace Hypermedia.Metadata
 
             return template;
         }
+
+        /// <summary>
+        /// The format of the URI.
+        /// </summary>
+        public string Format { get; }
+
+        /// <summary>
+        /// The list of parameters for the template.
+        /// </summary>
+        public IReadOnlyList<UriTemplateParameter> Parameters { get; internal set; }
     }
 }

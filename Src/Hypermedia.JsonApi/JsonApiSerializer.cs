@@ -292,6 +292,11 @@ namespace Hypermedia.JsonApi
             /// <returns>The JSON member which represents the given field on the entity.</returns>
             JsonMember SerializeField(IField field, object entity)
             {
+                if (field.Is(FieldOptions.Relationship | FieldOptions.Embedded))
+                {
+                    //return new JsonMember(_jsonSerializer.FieldNamingStrategy.GetName(field.Name), SerializeEntity(entity)));
+                }
+
                 return new JsonMember(_jsonSerializer.FieldNamingStrategy.GetName(field.Name), _jsonSerializer.SerializeValue(field.GetValue(entity)));
             }
 
@@ -952,13 +957,13 @@ namespace Hypermedia.JsonApi
             {
                 throw new NotImplementedException();
 
-                //if (relationship.ViaField != null)
+                //if (relationship.BackingField != null)
                 //{
                 //    var member = value["id"];
 
                 //    if (member != null)
                 //    {
-                //        DeserializeField(relationship.ViaField, member, entity);
+                //        DeserializeField(relationship.BackingField, member, entity);
                 //    }
                 //}
 
@@ -1059,7 +1064,7 @@ namespace Hypermedia.JsonApi
             static bool ShouldDeserialize(IRelationship relationship)
             {
                 throw new NotImplementedException();
-                //if (relationship.ViaField != null && relationship.ViaField.Is(FieldOptions.Deserializable))
+                //if (relationship.BackingField != null && relationship.BackingField.Is(FieldOptions.Deserializable))
                 //{
                 //    return true;
                 //}

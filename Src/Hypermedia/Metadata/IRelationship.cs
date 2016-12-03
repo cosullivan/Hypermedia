@@ -22,6 +22,6 @@ namespace Hypermedia.Metadata
         /// <summary>
         /// Gets the field that the relationship is linked via.
         /// </summary>
-        IField ViaField { get; }
+        IField BackingField { get; }
     }
 }
