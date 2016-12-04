@@ -18,10 +18,5 @@ namespace Hypermedia.Metadata
         /// Gets the entity type that the relationship is related to.
         /// </summary>
         Type RelatedTo { get; }
-
-        /// <summary>
-        /// Gets the field that the relationship is linked via.
-        /// </summary>
-        IField BackingField { get; }
     }
 }

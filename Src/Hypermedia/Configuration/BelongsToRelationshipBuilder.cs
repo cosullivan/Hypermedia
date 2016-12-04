@@ -1,4 +1,5 @@
-﻿using Hypermedia.Metadata.Runtime;
+﻿using Hypermedia.Metadata;
+using Hypermedia.Metadata.Runtime;
 
 namespace Hypermedia.Configuration
 {
@@ -9,7 +10,7 @@ namespace Hypermedia.Configuration
         /// </summary>
         /// <param name="builder">The parent builder.</param>
         /// <param name="relationship">The relationship to build on.</param>
-        internal BelongsToRelationshipBuilder(IContractBuilder<T> builder, RuntimeRelationship relationship) : base(builder, relationship) { }
+        internal BelongsToRelationshipBuilder(IContractBuilder<T> builder, RuntimeBelongsToRelationship relationship) : base(builder, relationship) { }
 
         /// <summary>
         /// Sets the field that the relationship link is stored through.
@@ -18,9 +19,9 @@ namespace Hypermedia.Configuration
         /// <returns>The relationship builder build the relationship.</returns>
         public BelongsToRelationshipBuilder<T> BackingField(string field)
         {
-            var builder = Builder.Field(field);
+            var builder = Builder.Field(field).Options(FieldOptions.BackingField);
 
-            Instance.BackingField = builder.Instance;
+            ((RuntimeBelongsToRelationship)Instance).BackingField = builder.Instance;
 
             return this;
         }

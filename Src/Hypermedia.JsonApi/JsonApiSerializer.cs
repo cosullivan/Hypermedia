@@ -637,7 +637,7 @@ namespace Hypermedia.JsonApi
             {
                 if (field.IsNot(FieldOptions.Relationship))
                 {
-                    return field.IsNot(FieldOptions.Id) && field.Is(FieldOptions.Serializable);
+                    return field.IsNot(FieldOptions.Id) && field.IsNot(FieldOptions.BackingField) && field.Is(FieldOptions.Serializable);
                 }
 
                 return field.Is(FieldOptions.SerializeAsEmbedded);
@@ -936,11 +936,11 @@ namespace Hypermedia.JsonApi
 
                     if (relationship.Type == RelationshipType.HasMany)
                     {
-                        DeserializeHasMany(relationship, (JsonArray)data, entity);
+                        DeserializeHasMany((IHasManyRelationship)relationship, (JsonArray)data, entity);
                         continue;
                     }
 
-                    DeserializeBelongsTo(relationship, (JsonObject)data, entity);
+                    DeserializeBelongsTo((IBelongsToRelationship)relationship, (JsonObject)data, entity);
                 }
             }
 
@@ -962,17 +962,17 @@ namespace Hypermedia.JsonApi
             /// <param name="relationship">The relationship to set on the entity.</param>
             /// <param name="value">The JSON value to set on the entity.</param>
             /// <param name="entity">The entity to set the value on.</param>
-            void DeserializeBelongsTo(IRelationship relationship, JsonObject value, object entity)
+            void DeserializeBelongsTo(IBelongsToRelationship relationship, JsonObject value, object entity)
             {
-                //if (relationship.BackingField != null)
-                //{
-                //    var member = value["id"];
+                if (relationship.BackingField != null)
+                {
+                    var member = value["id"];
 
-                //    if (member != null)
-                //    {
-                //        DeserializeField(relationship.BackingField, member, entity);
-                //    }
-                //}
+                    if (member != null)
+                    {
+                        DeserializeField(relationship.BackingField, member, entity);
+                    }
+                }
 
                 if (relationship.Accessor != null && relationship.Accessor.CanWrite)
                 {
@@ -990,7 +990,7 @@ namespace Hypermedia.JsonApi
             /// <param name="relationship">The relationship to set on the entity.</param>
             /// <param name="value">The JSON value to set on the entity.</param>
             /// <param name="entity">The entity to set the value on.</param>
-            void DeserializeHasMany(IRelationship relationship, JsonArray value, object entity)
+            void DeserializeHasMany(IHasManyRelationship relationship, JsonArray value, object entity)
             {
                 if (relationship.Accessor == null || relationship.Accessor.CanWrite == false)
                 {

@@ -109,6 +109,19 @@ namespace Hypermedia.Configuration
         }
 
         /// <summary>
+        /// Add the relationship to the fields list.
+        /// </summary>
+        /// <typeparam name="TRelationship">The instance type to add and return.</typeparam>
+        /// <param name="relationship">The relationship to add.</param>
+        /// <returns>The instance that was added.</returns>
+        TRelationship Add<TRelationship>(TRelationship relationship) where TRelationship : RuntimeField
+        {
+            _fields.Add(relationship);
+
+            return relationship;
+        }
+
+        /// <summary>
         /// Returns a BelongsTo relationship.
         /// </summary>
         /// <param name="name">The name of the relationship to return.</param>
@@ -118,10 +131,16 @@ namespace Hypermedia.Configuration
             RuntimeField field;
             if (TryFindField(name, out field))
             {
-                return new BelongsToRelationshipBuilder<T>(this, PromoteRelationship<TOther>(RelationshipType.BelongsTo, field));
+                _fields.Remove(field);
+
+                return new BelongsToRelationshipBuilder<T>(
+                    this,
+                    Add(new RuntimeBelongsToRelationship(field) { RelatedTo = typeof(TOther) }));
             }
 
-            return new BelongsToRelationshipBuilder<T>(this, CreateRelationship<TOther>(name, RelationshipType.BelongsTo));
+            return new BelongsToRelationshipBuilder<T>(
+                this,
+                Add(new RuntimeBelongsToRelationship(name) { RelatedTo = typeof(TOther) }));
         }
 
         /// <summary>
@@ -134,44 +153,16 @@ namespace Hypermedia.Configuration
             RuntimeField field;
             if (TryFindField(name, out field))
             {
-                return new HasManyRelationshipBuilder<T>(this, PromoteRelationship<TOther>(RelationshipType.HasMany, field));
+                _fields.Remove(field);
+
+                return new HasManyRelationshipBuilder<T>(
+                    this, 
+                    Add(new RuntimeHasManyRelationship(field) { RelatedTo = typeof(TOther) }));
             }
 
-            return new HasManyRelationshipBuilder<T>(this, CreateRelationship<TOther>(name, RelationshipType.HasMany));
-        }
-
-        /// <summary>
-        /// Promote the field to a relationship.
-        /// </summary>
-        /// <typeparam name="TOther">The type of the related element.</typeparam>
-        /// <param name="type">The type of relationship.</param>
-        /// <param name="field">The field to use as a prototype when creating the relationship.</param>
-        /// <returns>The runtime relationship that was created.</returns>
-        RuntimeRelationship PromoteRelationship<TOther>(RelationshipType type, RuntimeField field)
-        {
-            _fields.Remove(field);
-
-            var relationship = new RuntimeRelationship(type, field) { RelatedTo = typeof(TOther) };
-
-            _fields.Add(relationship);
-
-            return relationship;
-        }
-
-        /// <summary>
-        /// Create a new relationship.
-        /// </summary>
-        /// <typeparam name="TOther">The type of the related element.</typeparam>
-        /// <param name="name">The name of the relationship to return.</param>
-        /// <param name="type">The type of relationship.</param>
-        /// <returns>The runtime relationship that was created.</returns>
-        RuntimeRelationship CreateRelationship<TOther>(string name, RelationshipType type)
-        {
-            var relationship = new RuntimeRelationship(type, name) { RelatedTo = typeof(TOther) };
-
-            _fields.Add(relationship);
-
-            return relationship;
+            return new HasManyRelationshipBuilder<T>(
+                this, 
+                Add(new RuntimeHasManyRelationship(name) { RelatedTo = typeof(TOther) }));
         }
     }
 }

@@ -15,10 +15,9 @@ namespace TestApp
     class Program
     {
         // TODO:
-        // 1. SerializeAsEmbedded relationships
-        // 2. BackingField field should only be available on BelongsTo - maybe need a new builder for this
-        // 3. BackingField field could look at the parent object if it is not set (ie, default or null)
-        // 4. BackingField should not serialize if the parent is being serialized as a relationship, ie, "user-id" shouldn't be returned
+        // - SerializeAsEmbedded relationships
+        // - BackingField field could look at the parent object if it is not set (ie, default or null)
+        // - BackingField should not serialize if the parent is being serialized as a relationship, ie, "user-id" shouldn't be returned
 
         static void Main(string[] args)
         {
@@ -34,6 +33,8 @@ namespace TestApp
 
                 var post = client.GetPostByIdAsync(38).Result;
                 Console.WriteLine(post.ViewCount);
+                Console.WriteLine(post.OwnerUserId);
+                Console.WriteLine(post.OwnerUser.DisplayName);
             }
         }
     }

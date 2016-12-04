@@ -38,6 +38,11 @@ namespace Hypermedia.Metadata
         /// <summary>
         /// The relationship should be embedded when deserialized.
         /// </summary>
-        DeserializeAsEmbedded = 0x20
+        DeserializeAsEmbedded = 0x20,
+
+        /// <summary>
+        /// This field is used as a backing field for a BelongsTo relationship.
+        /// </summary>
+        BackingField = 0x40,
     }
 }

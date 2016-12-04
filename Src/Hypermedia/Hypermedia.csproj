@@ -58,7 +58,9 @@
     <Compile Include="Json\Converters\PrimitiveConverter.cs" />
     <Compile Include="Json\SnakeCaseNamingStrategy.cs" />
     <Compile Include="Json\StringExtensions.cs" />
+    <Compile Include="Metadata\IBelongsToRelationship.cs" />
     <Compile Include="Metadata\IFieldAccessor.cs" />
+    <Compile Include="Metadata\IHasManyRelationship.cs" />
     <Compile Include="Metadata\Runtime\DelegatingFieldAccessor.cs" />
     <Compile Include="Metadata\Runtime\IResourceInflector.cs" />
     <Compile Include="Configuration\ContractBuilder.cs" />
@@ -79,9 +81,11 @@
     <Compile Include="Metadata\IContractResolver.cs" />
     <Compile Include="Metadata\RelationshipType.cs" />
     <Compile Include="Metadata\Runtime\ResourceInflector.cs" />
+    <Compile Include="Metadata\Runtime\RuntimeBelongsToRelationship.cs" />
     <Compile Include="Metadata\Runtime\RuntimeContract.cs" />
     <Compile Include="Metadata\Runtime\RuntimeField.cs" />
     <Compile Include="Metadata\Runtime\RuntimeFieldAccessor.cs" />
+    <Compile Include="Metadata\Runtime\RuntimeHasManyRelationship.cs" />
     <Compile Include="Metadata\Runtime\RuntimeRelationship.cs" />
     <Compile Include="Metadata\UriTemplate.cs" />
     <Compile Include="Metadata\UriTemplateParameter.cs" />
