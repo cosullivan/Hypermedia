@@ -173,7 +173,7 @@ namespace Hypermedia.JsonApi
 
         #region Serializer
 
-        class Serializer
+        class Serializer : IJsonConverter
         {
             readonly IContractResolver _contractResolver;
             readonly IJsonSerializer _jsonSerializer;
@@ -187,7 +187,7 @@ namespace Hypermedia.JsonApi
             internal Serializer(IContractResolver contractResolver, IFieldNamingStrategy fieldNamingStrategy)
             {
                 _contractResolver = contractResolver;
-                _jsonSerializer = new JsonSerializer(new JsonConverterFactory(), fieldNamingStrategy);
+                _jsonSerializer = new JsonSerializer(new JsonConverterFactory(this), fieldNamingStrategy);
             }
 
             /// <summary>
@@ -292,20 +292,6 @@ namespace Hypermedia.JsonApi
             /// <returns>The JSON member which represents the given field on the entity.</returns>
             JsonMember SerializeField(IField field, object entity)
             {
-                //if (field.Is(FieldOptions.Relationship | FieldOptions.SerializeAsEmbedded))
-                //{
-                //    var relationship = (IRelationship)field;
-
-                //    IContract contract;
-                //    if (_contractResolver.TryResolve(relationship.RelatedTo, out contract) == false)
-                //    {
-                //        throw new JsonApiException(
-                //            "Could not find the related type '{0}' for the relationship '{1}'.", relationship.RelatedTo, relationship.Name);
-                //    }
-
-                //    return new JsonMember(_jsonSerializer.FieldNamingStrategy.GetName(field.Name), SerializeEntity(contract, entity));
-                //}
-
                 return new JsonMember(_jsonSerializer.FieldNamingStrategy.GetName(field.Name), _jsonSerializer.SerializeValue(field.GetValue(entity)));
             }
 
@@ -676,6 +662,48 @@ namespace Hypermedia.JsonApi
             static bool IsNotEmbedded(IRelationship relationship)
             {
                 return relationship.IsNot(FieldOptions.SerializeAsEmbedded);
+            }
+
+            /// <summary>
+            /// Serialize the value.
+            /// </summary>
+            /// <param name="serializer">The serializer to utilize when serializing nested objects.</param>
+            /// <param name="type">The CLR type of the value to serialize.</param>
+            /// <param name="value">The value to serialize.</param>
+            /// <returns>The JSON value that represents the given CLR value.</returns>
+            /// <remarks>This is called by the JsonSerializer when it is to serialize an embedded field/relationship which is a complex object.</remarks>
+            JsonValue IJsonConverter.SerializeValue(IJsonSerializer serializer, Type type, object value)
+            {
+                IContract contract;
+                if (_contractResolver.TryResolve(type, out contract) == false)
+                {
+                    throw new JsonApiException("Could not resolve the contract with the CLR type of '{0}'.", type);
+                }
+
+                return SerializeEntity(contract, value);
+            }
+
+            /// <summary>
+            /// Deserialize a JSON value to a defined CLR type.
+            /// </summary>
+            /// <param name="serializer">The serializer to utilize when deserializing nested objects.</param>
+            /// <param name="type">The CLR type to deserialize the JSON value to.</param>
+            /// <param name="jsonValue">The JSON value to deserialize.</param>
+            /// <returns>The object that represents the CLR version of the given JSON value.</returns>
+            object IJsonConverter.DeserializeValue(IJsonSerializer serializer, Type type, JsonValue jsonValue)
+            {
+                // this will never get called under this context
+                throw new NotImplementedException();
+            }
+
+            /// <summary>
+            /// Returns a value indicating whether or not the converter can convert the given type.
+            /// </summary>
+            /// <param name="type">The type to convert.</param>
+            /// <returns>true if the type can be converted by this converter, false if not.</returns>
+            bool IJsonConverter.CanConvert(Type type)
+            {
+                return _contractResolver.CanResolve(type);
             }
         }
 
