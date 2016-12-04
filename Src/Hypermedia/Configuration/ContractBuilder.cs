@@ -113,9 +113,15 @@ namespace Hypermedia.Configuration
         /// </summary>
         /// <param name="name">The name of the relationship to return.</param>
         /// <returns>The relationship builder build the relationship.</returns>
-        public RelationshipBuilder<T> BelongsTo<TOther>(string name)
+        public BelongsToRelationshipBuilder<T> BelongsTo<TOther>(string name)
         {
-            return Relationship<TOther>(name, RelationshipType.BelongsTo);
+            RuntimeField field;
+            if (TryFindField(name, out field))
+            {
+                return new BelongsToRelationshipBuilder<T>(this, PromoteRelationship<TOther>(RelationshipType.BelongsTo, field));
+            }
+
+            return new BelongsToRelationshipBuilder<T>(this, CreateRelationship<TOther>(name, RelationshipType.BelongsTo));
         }
 
         /// <summary>
@@ -123,9 +129,15 @@ namespace Hypermedia.Configuration
         /// </summary>
         /// <param name="name">The name of the relationship to return.</param>
         /// <returns>The relationship builder build the relationship.</returns>
-        public RelationshipBuilder<T> HasMany<TOther>(string name)
+        public HasManyRelationshipBuilder<T> HasMany<TOther>(string name)
         {
-            return Relationship<TOther>(name, RelationshipType.HasMany);
+            RuntimeField field;
+            if (TryFindField(name, out field))
+            {
+                return new HasManyRelationshipBuilder<T>(this, PromoteRelationship<TOther>(RelationshipType.HasMany, field));
+            }
+
+            return new HasManyRelationshipBuilder<T>(this, CreateRelationship<TOther>(name, RelationshipType.HasMany));
         }
 
         /// <summary>
@@ -160,24 +172,6 @@ namespace Hypermedia.Configuration
             _fields.Add(relationship);
 
             return relationship;
-        }
-
-        /// <summary>
-        /// Returns a relationship.
-        /// </summary>
-        /// <param name="name">The name of the relationship to return.</param>
-        /// <param name="type">The type of relationship.</param>
-        /// <returns>The relationship builder build the relationship.</returns>
-        RelationshipBuilder<T> Relationship<TOther>(string name, RelationshipType type)
-        {
-            RuntimeField field;
-            if (TryFindField(name, out field))
-            {
-                // promote the field to a relationship
-                return new RelationshipBuilder<T>(this, PromoteRelationship<TOther>(type, field));
-            }
-
-            return new RelationshipBuilder<T>(this, CreateRelationship<TOther>(name, type));
         }
     }
 }

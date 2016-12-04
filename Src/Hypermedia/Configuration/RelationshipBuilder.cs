@@ -4,7 +4,7 @@ using Hypermedia.Metadata.Runtime;
 
 namespace Hypermedia.Configuration
 {
-    public class RelationshipBuilder<T> : DelegatingContractBuilder<T>
+    public abstract class RelationshipBuilder<T> : DelegatingContractBuilder<T>
     {
         /// <summary>
         /// Constructor.

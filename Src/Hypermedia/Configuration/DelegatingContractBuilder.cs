@@ -48,7 +48,7 @@ namespace Hypermedia.Configuration
         /// </summary>
         /// <param name="name">The name of the relationship to return.</param>
         /// <returns>The relationship builder build the relationship.</returns>
-        public RelationshipBuilder<T> BelongsTo<TOther>(string name)
+        public BelongsToRelationshipBuilder<T> BelongsTo<TOther>(string name)
         {
             return Builder.BelongsTo<TOther>(name);
         }
@@ -58,7 +58,7 @@ namespace Hypermedia.Configuration
         /// </summary>
         /// <param name="name">The name of the relationship to return.</param>
         /// <returns>The relationship builder build the relationship.</returns>
-        public RelationshipBuilder<T> HasMany<TOther>(string name)
+        public HasManyRelationshipBuilder<T> HasMany<TOther>(string name)
         {
             return Builder.HasMany<TOther>(name);
         }

@@ -34,9 +34,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Configuration\BelongsToRelationshipBuilder.cs" />
     <Compile Include="Configuration\Builder.cs" />
     <Compile Include="Configuration\DelegatingContractBuilder.cs" />
     <Compile Include="Configuration\EmptyTypeDiscovery.cs" />
+    <Compile Include="Configuration\HasManyRelationshipBuilder.cs" />
     <Compile Include="Configuration\RelationshipDeserializationBuilder.cs" />
     <Compile Include="Configuration\RelationshipSerializationBuilder.cs" />
     <Compile Include="Json\Converters\EnumConverter.cs" />

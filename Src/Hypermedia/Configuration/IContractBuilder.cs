@@ -26,14 +26,14 @@ namespace Hypermedia.Configuration
         /// </summary>
         /// <param name="name">The name of the relationship to return.</param>
         /// <returns>The relationship builder build the relationship.</returns>
-        RelationshipBuilder<T> BelongsTo<TOther>(string name);
+        BelongsToRelationshipBuilder<T> BelongsTo<TOther>(string name);
 
         /// <summary>
         /// Returns a HasMany relationship.
         /// </summary>
         /// <param name="name">The name of the relationship to return.</param>
         /// <returns>The relationship builder build the relationship.</returns>
-        RelationshipBuilder<T> HasMany<TOther>(string name);
+        HasManyRelationshipBuilder<T> HasMany<TOther>(string name);
     }
 
     public static class ContractBuilderExtensions
