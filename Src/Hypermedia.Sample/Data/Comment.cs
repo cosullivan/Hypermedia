@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Hypermedia.Sample.Data
+﻿namespace Hypermedia.Sample.Data
 {
     public class Comment : Entity
     {

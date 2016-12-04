@@ -51,6 +51,8 @@ namespace Hypermedia.Sample.Client
                     .BelongsTo<UserResource>(nameof(PostResource.OwnerUser))
                         .BackingField(nameof(PostResource.OwnerUserId))
                     .HasMany<CommentResource>(nameof(PostResource.Comments))
+                        .Deserialization()
+                            .Embedded()
                 .With<CommentResource>("comments")
                     .Id(nameof(CommentResource.Id))
                     .BelongsTo<UserResource>(nameof(CommentResource.User))

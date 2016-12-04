@@ -711,7 +711,7 @@ namespace Hypermedia.JsonApi
 
         #region Deserializer
 
-        class Deserializer
+        class Deserializer : IJsonConverter
         {
             readonly JsonObject _rootObject;
             readonly IContractResolver _contractResolver;
@@ -730,7 +730,7 @@ namespace Hypermedia.JsonApi
                 _rootObject = rootObject;
                 _contractResolver = contractResolver;
                 _instanceCache = instanceCache;
-                _jsonSerializer = new JsonSerializer(new JsonConverterFactory(), fieldNamingStrategy);
+                _jsonSerializer = new JsonSerializer(new JsonConverterFactory(this), fieldNamingStrategy);
             }
 
             /// <summary>
@@ -1090,6 +1090,41 @@ namespace Hypermedia.JsonApi
             static bool ShouldDeserialize(IRelationship relationship)
             {
                 return relationship.Is(FieldOptions.Relationship | FieldOptions.Deserializable) && relationship.IsNot(FieldOptions.DeserializeAsEmbedded);
+            }
+
+            /// <summary>
+            /// Serialize the value.
+            /// </summary>
+            /// <param name="serializer">The serializer to utilize when serializing nested objects.</param>
+            /// <param name="type">The CLR type of the value to serialize.</param>
+            /// <param name="value">The value to serialize.</param>
+            /// <returns>The JSON value that represents the given CLR value.</returns>
+            JsonValue IJsonConverter.SerializeValue(IJsonSerializer serializer, Type type, object value)
+            {
+                // this should never get called under this context.
+                throw new NotImplementedException();
+            }
+
+            /// <summary>
+            /// Deserialize a JSON value to a defined CLR type.
+            /// </summary>
+            /// <param name="serializer">The serializer to utilize when deserializing nested objects.</param>
+            /// <param name="type">The CLR type to deserialize the JSON value to.</param>
+            /// <param name="jsonValue">The JSON value to deserialize.</param>
+            /// <returns>The object that represents the CLR version of the given JSON value.</returns>
+            object IJsonConverter.DeserializeValue(IJsonSerializer serializer, Type type, JsonValue jsonValue)
+            {
+                throw new NotImplementedException();
+            }
+
+            /// <summary>
+            /// Returns a value indicating whether or not the converter can convert the given type.
+            /// </summary>
+            /// <param name="type">The type to convert.</param>
+            /// <returns>true if the type can be converted by this converter, false if not.</returns>
+            bool IJsonConverter.CanConvert(Type type)
+            {
+                return _contractResolver.CanResolve(type);
             }
         }
 

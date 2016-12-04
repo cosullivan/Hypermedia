@@ -35,6 +35,11 @@ namespace TestApp
                 Console.WriteLine(post.ViewCount);
                 Console.WriteLine(post.OwnerUserId);
                 Console.WriteLine(post.OwnerUser.DisplayName);
+
+                foreach (var comment in post.Comments)
+                {
+                    Console.WriteLine(comment);
+                }
             }
         }
     }
