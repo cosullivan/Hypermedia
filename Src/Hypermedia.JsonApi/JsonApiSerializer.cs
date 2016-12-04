@@ -292,19 +292,19 @@ namespace Hypermedia.JsonApi
             /// <returns>The JSON member which represents the given field on the entity.</returns>
             JsonMember SerializeField(IField field, object entity)
             {
-                if (field.Is(FieldOptions.Relationship | FieldOptions.Embedded))
-                {
-                    var relationship = (IRelationship)field;
+                //if (field.Is(FieldOptions.Relationship | FieldOptions.Embedded))
+                //{
+                //    var relationship = (IRelationship)field;
 
-                    IContract contract;
-                    if (_contractResolver.TryResolve(relationship.RelatedTo, out contract) == false)
-                    {
-                        throw new JsonApiException(
-                            "Could not find the related type '{0}' for the relationship '{1}'.", relationship.RelatedTo, relationship.Name);
-                    }
-                    
-                    return new JsonMember(_jsonSerializer.FieldNamingStrategy.GetName(field.Name), SerializeEntity(contract, entity));
-                }
+                //    IContract contract;
+                //    if (_contractResolver.TryResolve(relationship.RelatedTo, out contract) == false)
+                //    {
+                //        throw new JsonApiException(
+                //            "Could not find the related type '{0}' for the relationship '{1}'.", relationship.RelatedTo, relationship.Name);
+                //    }
+
+                //    return new JsonMember(_jsonSerializer.FieldNamingStrategy.GetName(field.Name), SerializeEntity(contract, entity));
+                //}
 
                 return new JsonMember(_jsonSerializer.FieldNamingStrategy.GetName(field.Name), _jsonSerializer.SerializeValue(field.GetValue(entity)));
             }
@@ -870,7 +870,7 @@ namespace Hypermedia.JsonApi
                 var attributes = jsonObject["attributes"] as JsonObject;
                 if (attributes != null)
                 {
-                    DeserializeFields(contract.Fields(f => ShouldDeserialize(contract, f)).ToList(), attributes.Members, entity);
+                    DeserializeFields(contract.Fields(ShouldDeserialize).ToList(), attributes.Members, entity);
                 }
 
                 var relationships = jsonObject["relationships"] as JsonObject;
@@ -964,8 +964,6 @@ namespace Hypermedia.JsonApi
             /// <param name="entity">The entity to set the value on.</param>
             void DeserializeBelongsTo(IRelationship relationship, JsonObject value, object entity)
             {
-                throw new NotImplementedException();
-
                 //if (relationship.BackingField != null)
                 //{
                 //    var member = value["id"];
@@ -976,14 +974,14 @@ namespace Hypermedia.JsonApi
                 //    }
                 //}
 
-                //if (relationship.Field != null)
-                //{
-                //    object related;
-                //    if (TryResolve(value, out related))
-                //    {
-                //        relationship.Field.SetValue(entity, related);
-                //    }
-                //}
+                if (relationship.Accessor != null && relationship.Accessor.CanWrite)
+                {
+                    object related;
+                    if (TryResolve(value, out related))
+                    {
+                        relationship.SetValue(entity, related);
+                    }
+                }
             }
 
             /// <summary>
@@ -994,31 +992,29 @@ namespace Hypermedia.JsonApi
             /// <param name="entity">The entity to set the value on.</param>
             void DeserializeHasMany(IRelationship relationship, JsonArray value, object entity)
             {
-                throw new NotImplementedException();
+                if (relationship.Accessor == null || relationship.Accessor.CanWrite == false)
+                {
+                    return;
+                }
 
-                //if (relationship.Field == null)
-                //{
-                //    return;
-                //}
+                var collection = CreateListInstance(relationship.Accessor.ValueType);
 
-                //var collection = CreateListInstance(relationship.Field.ClrType);
+                if (collection == null)
+                {
+                    throw new JsonApiException(
+                        $"Can not deserialize the related collection as an appropriate IList instance could not be created for '{relationship.Accessor.ValueType}'.");
+                }
 
-                //if (collection == null)
-                //{
-                //    throw new JsonApiException(
-                //        $"Can not deserialize the related collection as an appropriate IList instance could not be created for '{relationship.Field.ClrType}'.");
-                //}
+                foreach (var jsonObject in value.OfType<JsonObject>())
+                {
+                    object related;
+                    if (TryResolve(jsonObject, out related))
+                    {
+                        collection.Add(related);
+                    }
+                }
 
-                //foreach (var jsonObject in value.OfType<JsonObject>())
-                //{
-                //    object related;
-                //    if (TryResolve(jsonObject, out related))
-                //    {
-                //        collection.Add(related);
-                //    }
-                //}
-
-                //relationship.Field.SetValue(entity, collection);
+                relationship.Accessor.SetValue(entity, collection);
             }
 
             /// <summary>
@@ -1051,18 +1047,11 @@ namespace Hypermedia.JsonApi
             /// <summary>
             /// Returns a value indicating whether or not the given field should be included when deserializing.
             /// </summary>
-            /// <param name="contract">The contract that the field belongs to.</param>
             /// <param name="field">The field to determine whether or not it should be included.</param>
             /// <returns>true if the field should be included, false if not.</returns>
-            static bool ShouldDeserialize(IContract contract, IField field)
+            static bool ShouldDeserialize(IField field)
             {
-                throw new NotImplementedException();
-                //if (contract.Relationships.Any(relationship => relationship.Field == field))
-                //{
-                //    return false;
-                //}
-
-                //return field.Is(FieldOptions.Id) == false && field.Is(FieldOptions.Deserializable);
+                return field.IsNot(FieldOptions.Id | FieldOptions.Relationship) && field.Is(FieldOptions.Deserializable);
             }
 
             /// <summary>
@@ -1072,13 +1061,7 @@ namespace Hypermedia.JsonApi
             /// <returns>true if the relationship should be included, false if not.</returns>
             static bool ShouldDeserialize(IRelationship relationship)
             {
-                throw new NotImplementedException();
-                //if (relationship.BackingField != null && relationship.BackingField.Is(FieldOptions.Deserializable))
-                //{
-                //    return true;
-                //}
-
-                //return relationship.Field != null && relationship.Field.Is(FieldOptions.Deserializable);
+                return relationship.Is(FieldOptions.Relationship | FieldOptions.Deserializable) && relationship.IsNot(FieldOptions.Embedded);
             }
         }
 

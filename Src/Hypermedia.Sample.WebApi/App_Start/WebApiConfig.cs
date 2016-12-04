@@ -74,7 +74,6 @@ namespace Hypermedia.Sample.WebApi
                         .BackingField(nameof(PostResource.OwnerUserId))
                         .Template("/v1/users/{id}", "id", resource => resource.OwnerUserId)
                     .HasMany<CommentResource>(nameof(PostResource.Comments))
-                        .Embedded()
                         .Template("/v1/posts/{id}/comments", "id", resource => resource.Id)
                 .With<CommentResource>("comments")
                     .Id(nameof(CommentResource.Id))
