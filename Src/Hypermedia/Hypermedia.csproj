@@ -35,6 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Configuration\Builder.cs" />
+    <Compile Include="Configuration\DelegatingContractBuilder.cs" />
     <Compile Include="Configuration\EmptyTypeDiscovery.cs" />
     <Compile Include="Json\Converters\EnumConverter.cs" />
     <Compile Include="Json\Converters\EnumerableConverter.cs" />

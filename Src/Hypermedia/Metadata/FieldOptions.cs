@@ -31,9 +31,14 @@ namespace Hypermedia.Metadata
         Relationship = 0x08,
 
         /// <summary>
-        /// The relationship should be embedded.
+        /// The relationship should be embedded when serialized.
         /// </summary>
-        Embedded = 0x10,
+        SerializeAsEmbedded = 0x10,
+
+        /// <summary>
+        /// The relationship should be embedded when deserialized.
+        /// </summary>
+        DeserializeAsEmbedded = 0x20,
 
         /// <summary>
         /// The default set of options.

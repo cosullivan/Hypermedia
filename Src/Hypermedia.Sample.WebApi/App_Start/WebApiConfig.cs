@@ -7,7 +7,6 @@ using Hypermedia.Json;
 using Hypermedia.JsonApi.WebApi;
 using Hypermedia.Metadata;
 using Hypermedia.Sample.Resources;
-using Hypermedia.Sample.WebApi.Resources;
 using Hypermedia.WebApi;
 using Hypermedia.WebApi.Json;
 using ExceptionLogger = Hypermedia.Sample.WebApi.Services.ExceptionLogger;
@@ -71,17 +70,22 @@ namespace Hypermedia.Sample.WebApi
                 .With<PostResource>("posts")
                     .Id(nameof(PostResource.Id))
                     .BelongsTo<UserResource>(nameof(PostResource.OwnerUser))
-                        .BackingField(nameof(PostResource.OwnerUserId))
+                        .Deserialization()
+                            .BackingField(nameof(PostResource.OwnerUserId))
                         .Template("/v1/users/{id}", "id", resource => resource.OwnerUserId)
                     .HasMany<CommentResource>(nameof(PostResource.Comments))
+                        .Serialization()
+                            .Embedded()
                         .Template("/v1/posts/{id}/comments", "id", resource => resource.Id)
                 .With<CommentResource>("comments")
                     .Id(nameof(CommentResource.Id))
                     .BelongsTo<UserResource>(nameof(CommentResource.User))
-                        .BackingField(nameof(CommentResource.UserId))
+                        .Deserialization()
+                            .BackingField(nameof(CommentResource.UserId))
                         .Template("/v1/users/{id}", "id", resource => resource.UserId)
                     .BelongsTo<PostResource>(nameof(CommentResource.Post))
-                        .BackingField(nameof(CommentResource.PostId))
+                        .Deserialization()
+                            .BackingField(nameof(CommentResource.PostId))
                         .Template("/v1/posts/{id}", "id", resource => resource.PostId)
                 .Build();
         }

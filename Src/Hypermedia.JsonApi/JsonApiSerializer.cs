@@ -292,7 +292,7 @@ namespace Hypermedia.JsonApi
             /// <returns>The JSON member which represents the given field on the entity.</returns>
             JsonMember SerializeField(IField field, object entity)
             {
-                //if (field.Is(FieldOptions.Relationship | FieldOptions.Embedded))
+                //if (field.Is(FieldOptions.Relationship | FieldOptions.SerializeAsEmbedded))
                 //{
                 //    var relationship = (IRelationship)field;
 
@@ -640,7 +640,7 @@ namespace Hypermedia.JsonApi
                     return field.IsNot(FieldOptions.Id) && field.Is(FieldOptions.Serializable);
                 }
 
-                return field.Is(FieldOptions.Embedded);
+                return field.Is(FieldOptions.SerializeAsEmbedded);
             }
 
             /// <summary>
@@ -675,7 +675,7 @@ namespace Hypermedia.JsonApi
             /// <returns>true if the relationship is not embedded, false if it is.</returns>
             static bool IsNotEmbedded(IRelationship relationship)
             {
-                return relationship.IsNot(FieldOptions.Embedded);
+                return relationship.IsNot(FieldOptions.SerializeAsEmbedded);
             }
         }
 
@@ -1061,7 +1061,7 @@ namespace Hypermedia.JsonApi
             /// <returns>true if the relationship should be included, false if not.</returns>
             static bool ShouldDeserialize(IRelationship relationship)
             {
-                return relationship.Is(FieldOptions.Relationship | FieldOptions.Deserializable) && relationship.IsNot(FieldOptions.Embedded);
+                return relationship.Is(FieldOptions.Relationship | FieldOptions.Deserializable) && relationship.IsNot(FieldOptions.DeserializeAsEmbedded);
             }
         }
 

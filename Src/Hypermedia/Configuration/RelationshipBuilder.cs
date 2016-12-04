@@ -4,9 +4,63 @@ using Hypermedia.Metadata.Runtime;
 
 namespace Hypermedia.Configuration
 {
-    public sealed class RelationshipBuilder<T> : IContractBuilder<T>
+    public sealed class RelationshipSerializationBuilder<T> : RelationshipBuilder<T>
     {
-        readonly IContractBuilder<T> _builder;
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="builder">The parent builder.</param>
+        /// <param name="relationship">The relationship to build on.</param>
+        internal RelationshipSerializationBuilder(RelationshipBuilder<T> builder, RuntimeRelationship relationship) : base(builder, relationship) { }
+
+        /// <summary>
+        /// Serialize the relationship as an embedded item.
+        /// </summary>
+        /// <returns>The builder to continue building on.</returns>
+        public RelationshipSerializationBuilder<T> Embedded()
+        {
+            Options(FieldOptions.SerializeAsEmbedded);
+
+            return this;
+        }
+    }
+
+    public sealed class RelationshipDeserializationBuilder<T> : RelationshipBuilder<T>
+    {
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="builder">The parent builder.</param>
+        /// <param name="relationship">The relationship to build on.</param>
+        internal RelationshipDeserializationBuilder(RelationshipBuilder<T> builder, RuntimeRelationship relationship) : base(builder, relationship) { }
+
+        /// <summary>
+        /// Serialize the relationship as an embedded item.
+        /// </summary>
+        /// <returns>The builder to continue building on.</returns>
+        public RelationshipDeserializationBuilder<T> Embedded()
+        {
+            Options(FieldOptions.DeserializeAsEmbedded);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the field that the relationship link is stored through.
+        /// </summary>
+        /// <param name="field">The field that links the relationship.</param>
+        /// <returns>The relationship builder build the relationship.</returns>
+        public RelationshipDeserializationBuilder<T> BackingField(string field)
+        {
+            //_builder.Field(field);
+            //_field = field;
+
+            return this;
+        }
+    }
+
+    public class RelationshipBuilder<T> : DelegatingContractBuilder<T>
+    {
         readonly RuntimeRelationship _relationship;
 
         /// <summary>
@@ -14,67 +68,16 @@ namespace Hypermedia.Configuration
         /// </summary>
         /// <param name="builder">The parent builder.</param>
         /// <param name="relationship">The relationship to build on.</param>
-        internal RelationshipBuilder(IContractBuilder<T> builder, RuntimeRelationship relationship)
+        internal RelationshipBuilder(IContractBuilder<T> builder, RuntimeRelationship relationship) : base(builder)
         {
-            _builder = builder;
             _relationship = relationship;
-        }
-
-        /// <summary>
-        /// Build a resource contract resolver with the known types.
-        /// </summary>
-        /// <returns>The resource contract resolver that is aware of the types that were configured through the builder.</returns>
-        public IContractResolver Build()
-        {
-            return _builder.Build();
-        }
-
-        /// <summary>
-        /// Returns a Resource Builder for a resource type.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of the resource to return the builder for.</typeparam>
-        /// <param name="discovery">The type discovery mechanism.</param>
-        /// <returns>The resource builder to configure.</returns>
-        public ContractBuilder<TEntity> With<TEntity>(ITypeDiscovery discovery)
-        {
-            return _builder.With<TEntity>(discovery);
-        }
-
-        /// <summary>
-        /// Returns a field.
-        /// </summary>
-        /// <param name="name">The name of the field to return.</param>
-        /// <returns>The field builder build the field.</returns>
-        public FieldBuilder<T> Field(string name)
-        {
-            return _builder.Field(name);
-        }
-
-        /// <summary>
-        /// Returns a BelongsTo relationship.
-        /// </summary>
-        /// <param name="name">The name of the relationship to return.</param>
-        /// <returns>The relationship builder build the relationship.</returns>
-        public RelationshipBuilder<T> BelongsTo<TOther>(string name)
-        {
-            return _builder.BelongsTo<TOther>(name);
-        }
-
-        /// <summary>
-        /// Returns a HasMany relationship.
-        /// </summary>
-        /// <param name="name">The name of the relationship to return.</param>
-        /// <returns>The relationship builder build the relationship.</returns>
-        public RelationshipBuilder<T> HasMany<TOther>(string name)
-        {
-            return _builder.HasMany<TOther>(name);
         }
 
         /// <summary>
         /// Sets the field accessor for the given field.
         /// </summary>
         /// <param name="accessor">The field accessor for the given field.</param>
-        /// <returns>The field builder to continue building on.</returns>
+        /// <returns>The builder to continue building on.</returns>
         public RelationshipBuilder<T> Accessor(IFieldAccessor accessor)
         {
             _relationship.Accessor = accessor;
@@ -105,25 +108,12 @@ namespace Hypermedia.Configuration
         }
 
         /// <summary>
-        /// Sets the field that the relationship link is stored through.
-        /// </summary>
-        /// <param name="field">The field that links the relationship.</param>
-        /// <returns>The relationship builder build the relationship.</returns>
-        public RelationshipBuilder<T> BackingField(string field)
-        {
-            //_builder.Field(field);
-            //_field = field;
-
-            return this;
-        }
-
-        /// <summary>
         /// Sets the given options for the field.
         /// </summary>
         /// <param name="options">The list of options to set.</param>
         /// <param name="setOptionOn">true if the options are to be set, false if not.</param>
         /// <returns>The field builder to continue building on.</returns>
-        RelationshipBuilder<T> Options(FieldOptions options, bool setOptionOn = true)
+        protected RelationshipBuilder<T> Options(FieldOptions options, bool setOptionOn = true)
         {
             if (setOptionOn)
             {
@@ -138,12 +128,21 @@ namespace Hypermedia.Configuration
         }
 
         /// <summary>
-        /// Defines the relationship as being readonly.
+        /// Returns a serialization builder to provide fine grain control over serialization.
         /// </summary>
         /// <returns>The relationship builder to continue building on.</returns>
-        public RelationshipBuilder<T> Embedded()
+        public RelationshipSerializationBuilder<T> Serialization()
         {
-            return Options(FieldOptions.Embedded);
+            return new RelationshipSerializationBuilder<T>(this, _relationship);
+        }
+
+        /// <summary>
+        /// Returns a deserialization builder to provide fine grain control over deserialization.
+        /// </summary>
+        /// <returns>The relationship builder to continue building on.</returns>
+        public RelationshipDeserializationBuilder<T> Deserialization()
+        {
+            return new RelationshipDeserializationBuilder<T>(this, _relationship);
         }
 
         /// <summary>
@@ -173,7 +172,7 @@ namespace Hypermedia.Configuration
         {
             _relationship.UriTemplate = new UriTemplate(format);
 
-            return new UriTemplateBuilder<T>(_builder, _relationship.UriTemplate);
+            return new UriTemplateBuilder<T>(Builder, _relationship.UriTemplate);
         }
 
         /// <summary>
