@@ -37,6 +37,8 @@
     <Compile Include="Configuration\Builder.cs" />
     <Compile Include="Configuration\DelegatingContractBuilder.cs" />
     <Compile Include="Configuration\EmptyTypeDiscovery.cs" />
+    <Compile Include="Configuration\RelationshipDeserializationBuilder.cs" />
+    <Compile Include="Configuration\RelationshipSerializationBuilder.cs" />
     <Compile Include="Json\Converters\EnumConverter.cs" />
     <Compile Include="Json\Converters\EnumerableConverter.cs" />
     <Compile Include="Json\DasherizedFieldNamingStrategy.cs" />

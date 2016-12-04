@@ -49,14 +49,17 @@ namespace Hypermedia.Sample.Client
                 .With<PostResource>("posts")
                     .Id(nameof(PostResource.Id))
                     .BelongsTo<UserResource>(nameof(PostResource.OwnerUser))
-                        .BackingField(nameof(PostResource.OwnerUserId))
+                        .Deserialization()
+                            .BackingField(nameof(PostResource.OwnerUserId))
                     .HasMany<CommentResource>(nameof(PostResource.Comments))
                 .With<CommentResource>("comments")
                     .Id(nameof(CommentResource.Id))
                     .BelongsTo<UserResource>(nameof(CommentResource.User))
-                        .BackingField(nameof(CommentResource.UserId))
+                        .Deserialization()
+                            .BackingField(nameof(CommentResource.UserId))
                     .BelongsTo<PostResource>(nameof(CommentResource.Post))
-                        .BackingField(nameof(CommentResource.PostId))
+                        .Deserialization()
+                            .BackingField(nameof(CommentResource.PostId))
                 .Build();
         }
 

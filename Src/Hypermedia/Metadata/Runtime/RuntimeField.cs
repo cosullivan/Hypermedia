@@ -48,7 +48,7 @@ namespace Hypermedia.Metadata.Runtime
         /// <returns>The field options for the given property info.</returns>
         internal static FieldOptions CreateDefaultOptions(PropertyInfo propertyInfo)
         {
-            var options = FieldOptions.Default;
+            var options = FieldOptions.None;
 
             if (propertyInfo.CanRead == false)
             {

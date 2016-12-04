@@ -38,11 +38,6 @@ namespace Hypermedia.Metadata
         /// <summary>
         /// The relationship should be embedded when deserialized.
         /// </summary>
-        DeserializeAsEmbedded = 0x20,
-
-        /// <summary>
-        /// The default set of options.
-        /// </summary>
-        Default = Serializable | Deserializable
+        DeserializeAsEmbedded = 0x20
     }
 }

@@ -4,65 +4,8 @@ using Hypermedia.Metadata.Runtime;
 
 namespace Hypermedia.Configuration
 {
-    public sealed class RelationshipSerializationBuilder<T> : RelationshipBuilder<T>
-    {
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="builder">The parent builder.</param>
-        /// <param name="relationship">The relationship to build on.</param>
-        internal RelationshipSerializationBuilder(RelationshipBuilder<T> builder, RuntimeRelationship relationship) : base(builder, relationship) { }
-
-        /// <summary>
-        /// Serialize the relationship as an embedded item.
-        /// </summary>
-        /// <returns>The builder to continue building on.</returns>
-        public RelationshipSerializationBuilder<T> Embedded()
-        {
-            Options(FieldOptions.SerializeAsEmbedded);
-
-            return this;
-        }
-    }
-
-    public sealed class RelationshipDeserializationBuilder<T> : RelationshipBuilder<T>
-    {
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="builder">The parent builder.</param>
-        /// <param name="relationship">The relationship to build on.</param>
-        internal RelationshipDeserializationBuilder(RelationshipBuilder<T> builder, RuntimeRelationship relationship) : base(builder, relationship) { }
-
-        /// <summary>
-        /// Serialize the relationship as an embedded item.
-        /// </summary>
-        /// <returns>The builder to continue building on.</returns>
-        public RelationshipDeserializationBuilder<T> Embedded()
-        {
-            Options(FieldOptions.DeserializeAsEmbedded);
-
-            return this;
-        }
-
-        /// <summary>
-        /// Sets the field that the relationship link is stored through.
-        /// </summary>
-        /// <param name="field">The field that links the relationship.</param>
-        /// <returns>The relationship builder build the relationship.</returns>
-        public RelationshipDeserializationBuilder<T> BackingField(string field)
-        {
-            //_builder.Field(field);
-            //_field = field;
-
-            return this;
-        }
-    }
-
     public class RelationshipBuilder<T> : DelegatingContractBuilder<T>
     {
-        readonly RuntimeRelationship _relationship;
-
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -70,7 +13,7 @@ namespace Hypermedia.Configuration
         /// <param name="relationship">The relationship to build on.</param>
         internal RelationshipBuilder(IContractBuilder<T> builder, RuntimeRelationship relationship) : base(builder)
         {
-            _relationship = relationship;
+            Instance = relationship;
         }
 
         /// <summary>
@@ -80,14 +23,14 @@ namespace Hypermedia.Configuration
         /// <returns>The builder to continue building on.</returns>
         public RelationshipBuilder<T> Accessor(IFieldAccessor accessor)
         {
-            _relationship.Accessor = accessor;
+            Instance.Accessor = accessor;
 
-            if (_relationship.Accessor.CanRead)
+            if (Instance.Accessor.CanRead)
             {
                 Options(FieldOptions.Serializable);
             }
 
-            if (_relationship.Accessor.CanWrite)
+            if (Instance.Accessor.CanWrite)
             {
                 Options(FieldOptions.Deserializable);
             }
@@ -102,7 +45,7 @@ namespace Hypermedia.Configuration
         /// <returns>The field builder to continue building on.</returns>
         public RelationshipBuilder<T> From(string property)
         {
-            _relationship.Accessor = RuntimeFieldAccessor.From<T>(property);
+            Instance.Accessor = RuntimeFieldAccessor.From<T>(property);
 
             return this;
         }
@@ -117,11 +60,11 @@ namespace Hypermedia.Configuration
         {
             if (setOptionOn)
             {
-                _relationship.Options |= options;
+                Instance.Options |= options;
             }
             else
             {
-                _relationship.Options &= ~(options);
+                Instance.Options &= ~(options);
             }
 
             return this;
@@ -133,7 +76,7 @@ namespace Hypermedia.Configuration
         /// <returns>The relationship builder to continue building on.</returns>
         public RelationshipSerializationBuilder<T> Serialization()
         {
-            return new RelationshipSerializationBuilder<T>(this, _relationship);
+            return new RelationshipSerializationBuilder<T>(this, Instance);
         }
 
         /// <summary>
@@ -142,7 +85,7 @@ namespace Hypermedia.Configuration
         /// <returns>The relationship builder to continue building on.</returns>
         public RelationshipDeserializationBuilder<T> Deserialization()
         {
-            return new RelationshipDeserializationBuilder<T>(this, _relationship);
+            return new RelationshipDeserializationBuilder<T>(this, Instance);
         }
 
         /// <summary>
@@ -170,9 +113,9 @@ namespace Hypermedia.Configuration
         /// <returns>The template builder instance.</returns>
         public UriTemplateBuilder<T> Template(string format)
         {
-            _relationship.UriTemplate = new UriTemplate(format);
+            Instance.UriTemplate = new UriTemplate(format);
 
-            return new UriTemplateBuilder<T>(Builder, _relationship.UriTemplate);
+            return new UriTemplateBuilder<T>(Builder, Instance.UriTemplate);
         }
 
         /// <summary>
@@ -186,5 +129,10 @@ namespace Hypermedia.Configuration
         {
             return Template(format).Parameter(parameter, selector);
         }
+
+        /// <summary>
+        /// The instance that is being built upon.
+        /// </summary>
+        internal RuntimeRelationship Instance { get; }
     }
 }

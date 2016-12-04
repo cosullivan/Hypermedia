@@ -5,8 +5,6 @@ namespace Hypermedia.Configuration
 {
     public sealed class FieldBuilder<T> : DelegatingContractBuilder<T>
     {
-        readonly RuntimeField _field;
-
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -14,11 +12,11 @@ namespace Hypermedia.Configuration
         /// <param name="field">The field to build on.</param>
         internal FieldBuilder(IContractBuilder<T> builder, RuntimeField field) : base(builder)
         {
-            _field = field;
+            Instance = field;
 
-            if (_field.Accessor == null)
+            if (Instance.Accessor == null)
             {
-                _field.Accessor = RuntimeFieldAccessor.From<T>(_field.Name);
+                Instance.Accessor = RuntimeFieldAccessor.From<T>(Instance.Name);
             }
         }
 
@@ -29,14 +27,14 @@ namespace Hypermedia.Configuration
         /// <returns>The field builder to continue building on.</returns>
         public FieldBuilder<T> Accessor(IFieldAccessor accessor)
         {
-            _field.Accessor = accessor;
+            Instance.Accessor = accessor;
 
-            if (_field.Accessor.CanRead)
+            if (Instance.Accessor.CanRead)
             {
                 Options(FieldOptions.Serializable);
             }
 
-            if (_field.Accessor.CanWrite)
+            if (Instance.Accessor.CanWrite)
             {
                 Options(FieldOptions.Deserializable);
             }
@@ -51,7 +49,7 @@ namespace Hypermedia.Configuration
         /// <returns>The field builder to continue building on.</returns>
         public FieldBuilder<T> From(string property)
         {
-            _field.Accessor = RuntimeFieldAccessor.From<T>(property);
+            Instance.Accessor = RuntimeFieldAccessor.From<T>(property);
 
             return this;
         }
@@ -65,12 +63,12 @@ namespace Hypermedia.Configuration
         /// as the mapping property and then the new name is applied.</remarks>
         public FieldBuilder<T> Rename(string name)
         {
-            if (_field.Accessor == null)
+            if (Instance.Accessor == null)
             {
-                Accessor(RuntimeFieldAccessor.From<T>(_field.Name));
+                Accessor(RuntimeFieldAccessor.From<T>(Instance.Name));
             }
 
-            _field.Name = name;
+            Instance.Name = name;
 
             return this;
         }
@@ -85,11 +83,11 @@ namespace Hypermedia.Configuration
         {
             if (setOptionOn)
             {
-                _field.Options |= options;
+                Instance.Options |= options;
             }
             else
             {
-                _field.Options &= ~(options);
+                Instance.Options &= ~(options);
             }
 
             return this;
@@ -132,5 +130,10 @@ namespace Hypermedia.Configuration
         {
             return Options(FieldOptions.Serializable, false).Options(FieldOptions.Deserializable, true);
         }
+
+        /// <summary>
+        /// The instance that is being built.
+        /// </summary>
+        internal RuntimeField Instance { get; }
     }
 }
