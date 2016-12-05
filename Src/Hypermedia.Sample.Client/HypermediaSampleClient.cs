@@ -5,7 +5,6 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Hypermedia.Configuration;
-using Hypermedia.Json;
 using Hypermedia.JsonApi;
 using Hypermedia.JsonApi.Client;
 using Hypermedia.Metadata;

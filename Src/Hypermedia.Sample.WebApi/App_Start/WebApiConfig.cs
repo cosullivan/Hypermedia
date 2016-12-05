@@ -73,17 +73,14 @@ namespace Hypermedia.Sample.WebApi
                         .BackingField(nameof(PostResource.OwnerUserId))
                         .Template("/v1/users/{id}", "id", resource => resource.OwnerUserId)
                     .HasMany<CommentResource>(nameof(PostResource.Comments))
-                        .Serialization()
-                            .Embedded()
                         .Template("/v1/posts/{id}/comments", "id", resource => resource.Id)
                 .With<CommentResource>("comments")
                     .Id(nameof(CommentResource.Id))
                     .BelongsTo<UserResource>(nameof(CommentResource.User))
                         .BackingField(nameof(CommentResource.UserId))
-                        .Serialization()
-                            .Ignore()
                         .Template("/v1/users/{id}", "id", resource => resource.UserId)
                     .BelongsTo<PostResource>(nameof(CommentResource.Post))
+                        .BackingField(nameof(CommentResource.PostId))
                         .Template("/v1/posts/{id}", "id", resource => resource.PostId)
                 .Build();
         }
