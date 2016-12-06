@@ -3,7 +3,49 @@ using Hypermedia.Metadata.Runtime;
 
 namespace Hypermedia.Configuration
 {
-    public sealed class FieldBuilder<T> : DelegatingContractBuilder<T>
+    public sealed class FieldSerializationBuilder<T> : FieldBuilder<T>
+    {
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="builder">The parent builder.</param>
+        /// <param name="field">The field to build on.</param>
+        internal FieldSerializationBuilder(FieldBuilder<T> builder, RuntimeField field) : base(builder, field) { }
+
+        /// <summary>
+        /// Ignore the field when serializing.
+        /// </summary>
+        /// <returns>The builder to continue building on.</returns>
+        public FieldSerializationBuilder<T> Ignore()
+        {
+            Options(FieldOptions.Serializable, false);
+
+            return this;
+        }
+    }
+
+    public sealed class FieldDeserializationBuilder<T> : FieldBuilder<T>
+    {
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="builder">The parent builder.</param>
+        /// <param name="field">The field to build on.</param>
+        internal FieldDeserializationBuilder(FieldBuilder<T> builder, RuntimeField field) : base(builder, field) { }
+
+        /// <summary>
+        /// Ignore the field when deserializing.
+        /// </summary>
+        /// <returns>The builder to continue building on.</returns>
+        public FieldDeserializationBuilder<T> Ignore()
+        {
+            Options(FieldOptions.Serializable, false);
+
+            return this;
+        }
+    }
+
+    public class FieldBuilder<T> : DelegatingContractBuilder<T>
     {
         /// <summary>
         /// Constructor.
@@ -94,6 +136,24 @@ namespace Hypermedia.Configuration
         }
 
         /// <summary>
+        /// Returns a serialization builder to provide fine grain control over serialization.
+        /// </summary>
+        /// <returns>The field builder to continue building on.</returns>
+        public FieldSerializationBuilder<T> Serialization()
+        {
+            return new FieldSerializationBuilder<T>(this, Instance);
+        }
+
+        /// <summary>
+        /// Returns a deserialization builder to provide fine grain control over deserialization.
+        /// </summary>
+        /// <returns>The field builder to continue building on.</returns>
+        public FieldDeserializationBuilder<T> Deserialization()
+        {
+            return new FieldDeserializationBuilder<T>(this, Instance);
+        }
+
+        /// <summary>
         /// Defines whether the given field is the primary ID field.
         /// </summary>
         /// <param name="value">true if the field is the primary ID field, false if not.</param>
@@ -111,24 +171,6 @@ namespace Hypermedia.Configuration
         public FieldBuilder<T> Ignore(bool value = true)
         {
             return Options(FieldOptions.Serializable, value == false).Options(FieldOptions.Deserializable, value == false);
-        }
-
-        /// <summary>
-        /// Defines the field as being readonly.
-        /// </summary>
-        /// <returns>The field builder to continue building on.</returns>
-        public FieldBuilder<T> ReadOnly()
-        {
-            return Options(FieldOptions.Serializable, true).Options(FieldOptions.Deserializable, false);
-        }
-
-        /// <summary>
-        /// Defines the field as being write-only.
-        /// </summary>
-        /// <returns>The field builder to continue building on.</returns>
-        public FieldBuilder<T> WriteOnly()
-        {
-            return Options(FieldOptions.Serializable, false).Options(FieldOptions.Deserializable, true);
         }
 
         /// <summary>

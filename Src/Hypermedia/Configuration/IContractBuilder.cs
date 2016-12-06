@@ -71,39 +71,5 @@ namespace Hypermedia.Configuration
 
             return builder.Field(name).Ignore();
         }
-
-        /// <summary>
-        /// Sets the given field as being read only.
-        /// </summary>
-        /// <typeparam name="TEntity">The entity type.</typeparam>
-        /// <param name="builder">The builder to perform the operation on.</param>
-        /// <param name="name">The name of the field to set as read only.</param>
-        /// <returns>The field builder to continue building on.</returns>
-        public static FieldBuilder<TEntity> ReadOnly<TEntity>(this IContractBuilder<TEntity> builder, string name)
-        {
-            if (builder == null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
-
-            return builder.Field(name).ReadOnly();
-        }
-
-        /// <summary>
-        /// Sets the given field as being write-only.
-        /// </summary>
-        /// <typeparam name="TEntity">The entity type.</typeparam>
-        /// <param name="builder">The builder to perform the operation on.</param>
-        /// <param name="name">The name of the field to set as write-only.</param>
-        /// <returns>The field builder to continue building on.</returns>
-        public static FieldBuilder<TEntity> WriteOnly<TEntity>(this IContractBuilder<TEntity> builder, string name)
-        {
-            if (builder == null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
-
-            return builder.Field(name).WriteOnly();
-        }
     }
 }
