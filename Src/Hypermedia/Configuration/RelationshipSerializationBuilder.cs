@@ -13,6 +13,17 @@ namespace Hypermedia.Configuration
         internal RelationshipSerializationBuilder(RelationshipBuilder<T> builder, RuntimeRelationship relationship) : base(builder, relationship) { }
 
         /// <summary>
+        /// Include the relationship when serializing.
+        /// </summary>
+        /// <returns>The builder to continue building on.</returns>
+        public RelationshipSerializationBuilder<T> Include()
+        {
+            Options(FieldOptions.Serializable, true);
+
+            return this;
+        }
+
+        /// <summary>
         /// Ignore the relationship when serializing.
         /// </summary>
         /// <returns>The builder to continue building on.</returns>
