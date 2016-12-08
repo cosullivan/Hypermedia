@@ -38,7 +38,7 @@ namespace TestApp
 
                 foreach (var comment in post.Comments)
                 {
-                    Console.WriteLine(comment.Id);
+                    Console.WriteLine("{0}: {1}", comment.Id, comment.Text);
                 }
             }
         }

@@ -209,10 +209,10 @@ namespace Hypermedia.JsonApi
 
                     if (HasVisited(jsonObject) == false)
                     {
+                        Visit(jsonObject);
+
                         yield return jsonObject;
                     }
-
-                    Visit(jsonObject);
                 }
             }
 
@@ -539,48 +539,10 @@ namespace Hypermedia.JsonApi
                         throw new JsonApiException("Could not find the entity type for the CLR type of '{0}'.", entity.GetType());
                     }
 
-                    included.AddRange(SerializeIncluded(contract.Relationships(IsNotEmbedded), entity));
+                    included.AddRange(SerializeIncluded(contract.Relationships(), entity));
                 }
 
                 return included;
-            }
-
-            /// <summary>
-            /// Serialize the list of included entities starting from the top level.
-            /// </summary>
-            /// <param name="contract">The contract for the entities in the collection.</param>
-            /// <param name="collection">The collection of entities to serialize the included items from.</param>
-            /// <returns>The list of JSON objects that represent the included fields.</returns>
-            IEnumerable<JsonObject> SerializeIncluded(IContract contract, IEnumerable collection)
-            {
-                var included = new List<JsonObject>();
-
-                foreach (var entity in collection)
-                {
-                    included.AddRange(SerializeIncluded(contract, entity));
-                }
-
-                return included;
-            }
-
-            /// <summary>
-            /// Serialize the entity as an included type.
-            /// </summary>
-            /// <param name="contract">The resource contract.</param>
-            /// <param name="entity">The entity to serialize as an included type.</param>
-            /// <returns>The list of types to included for the entity.</returns>
-            IEnumerable<JsonObject> SerializeIncluded(IContract contract, object entity)
-            {
-                var jsonObject = SerializeEntity(contract, entity);
-
-                if (HasVisited(jsonObject))
-                {
-                    return new JsonObject[0];
-                }
-
-                Visit(jsonObject);
-
-                return new[] { jsonObject }.Union(SerializeIncluded(contract.Relationships(IsNotEmbedded), entity));
             }
 
             /// <summary>
@@ -645,6 +607,18 @@ namespace Hypermedia.JsonApi
                     throw new JsonApiException("Can not serialize a HasMany relationship from type that doesnt support IEnumerable.");
                 }
 
+                if (relationship.Is(FieldOptions.SerializeAsEmbedded))
+                {
+                    var items = new List<JsonObject>();
+
+                    foreach (var e in (IEnumerable) collection)
+                    {
+                        items.AddRange(SerializeIncluded(contract.Relationships(), e));
+                    }
+
+                    return items;
+                }
+
                 return SerializeIncluded(contract, (IEnumerable)collection);
             }
 
@@ -669,7 +643,50 @@ namespace Hypermedia.JsonApi
                     return new JsonObject[0];
                 }
 
+                if (relationship.Is(FieldOptions.SerializeAsEmbedded))
+                {
+                    return SerializeIncluded(contract.Relationships(), value);
+                }
+
                 return SerializeIncluded(contract, value);
+            }
+
+            /// <summary>
+            /// Serialize the list of included entities starting from the top level.
+            /// </summary>
+            /// <param name="contract">The contract for the entities in the collection.</param>
+            /// <param name="collection">The collection of entities to serialize the included items from.</param>
+            /// <returns>The list of JSON objects that represent the included fields.</returns>
+            IEnumerable<JsonObject> SerializeIncluded(IContract contract, IEnumerable collection)
+            {
+                var included = new List<JsonObject>();
+
+                foreach (var entity in collection)
+                {
+                    included.AddRange(SerializeIncluded(contract, entity));
+                }
+
+                return included;
+            }
+
+            /// <summary>
+            /// Serialize the entity as an included type.
+            /// </summary>
+            /// <param name="contract">The resource contract.</param>
+            /// <param name="entity">The entity to serialize as an included type.</param>
+            /// <returns>The list of types to included for the entity.</returns>
+            IEnumerable<JsonObject> SerializeIncluded(IContract contract, object entity)
+            {
+                var jsonObject = SerializeEntity(contract, entity);
+
+                if (HasVisited(jsonObject))
+                {
+                    return new JsonObject[0];
+                }
+
+                Visit(jsonObject);
+
+                return new[] { jsonObject }.Union(SerializeIncluded(contract.Relationships(), entity));
             }
 
             /// <summary>
@@ -727,16 +744,6 @@ namespace Hypermedia.JsonApi
             static bool IsNotNull(JsonValue jsonValue)
             {
                 return jsonValue != null && jsonValue.GetType() != typeof(JsonNull);
-            }
-
-            /// <summary>
-            /// Returns a value indicating if the relationship is not embedded.
-            /// </summary>
-            /// <param name="relationship">The relationship to test.</param>
-            /// <returns>true if the relationship is not embedded, false if it is.</returns>
-            static bool IsNotEmbedded(IRelationship relationship)
-            {
-                return relationship.IsNot(FieldOptions.SerializeAsEmbedded);
             }
 
             /// <summary>

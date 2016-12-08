@@ -113,6 +113,15 @@ namespace Hypermedia.Configuration
         }
 
         /// <summary>
+        /// Marks the relationship as an embedded relationship.
+        /// </summary>
+        /// <returns>The relationship builder to continue building on.</returns>
+        public RelationshipBuilder<T> Embedded()
+        {
+            return Serialization().Embedded().Deserialization().Embedded();
+        }
+
+        /// <summary>
         /// The instance that is being built upon.
         /// </summary>
         internal RuntimeRelationship Instance { get; }

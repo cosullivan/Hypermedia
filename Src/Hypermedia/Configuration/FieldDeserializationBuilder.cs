@@ -29,7 +29,7 @@ namespace Hypermedia.Configuration
         /// <returns>The builder to continue building on.</returns>
         public FieldDeserializationBuilder<T> Ignore()
         {
-            Options(FieldOptions.Serializable, false);
+            Options(FieldOptions.Deserializable, false);
 
             return this;
         }
