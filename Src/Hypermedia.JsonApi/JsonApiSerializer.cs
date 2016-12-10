@@ -417,7 +417,7 @@ namespace Hypermedia.JsonApi
 
                 if (value == null)
                 {
-                    return null;
+                    return SerializeBelongsToBackingField(relationship, contract, entity);
                 }
 
                 return new JsonObject(SerializeResourceKey(contract, value));
@@ -432,7 +432,7 @@ namespace Hypermedia.JsonApi
             /// <returns>The value that represents the data node for the relationship.</returns>
             JsonValue SerializeBelongsToBackingField(IBelongsToRelationship relationship, IContract contract, object entity)
             {
-                var value = relationship.BackingField.GetValue(entity);
+                var value = relationship.BackingField?.GetValue(entity);
 
                 if (value == null)
                 {
