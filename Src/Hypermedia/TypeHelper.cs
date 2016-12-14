@@ -19,6 +19,16 @@ namespace Hypermedia
         }
 
         /// <summary>
+        /// Returns a value indicating whether or not the type is an ICollection.
+        /// </summary>
+        /// <param name="type">The type to test against.</param>
+        /// <returns>true if the type is an ICollection, false if not.</returns>
+        public static bool IsCollection(Type type)
+        {
+            return GetCollectionType(type.GetTypeInfo()) != null;
+        }
+
+        /// <summary>
         /// Gets the underlying ICollection type.
         /// </summary>
         /// <param name="type">The type to extract the underlying collection type (if any).</param>

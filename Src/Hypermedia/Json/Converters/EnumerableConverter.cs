@@ -46,67 +46,72 @@ namespace Hypermedia.Json.Converters
         /// <returns>The object that represents the CLR version of the given JSON value.</returns>
         public object DeserializeValue(IJsonSerializer serializer, Type type, JsonValue jsonValue)
         {
-            return DeserializeArray(serializer, type, (JsonArray)jsonValue);
+            var jsonArray = (JsonArray) jsonValue;
+
+            if (type.IsArray)
+            {
+                return DeserializeArray(serializer, type, jsonArray);
+            }
+
+            if (TypeHelper.IsCollection(type))
+            {
+                return DeserializeCollection(serializer, type, jsonArray);
+            }
+
+            if (type.GetTypeInfo().IsGenericType && type.GetTypeInfo().GetGenericTypeDefinition() == typeof(IReadOnlyList<>))
+            {
+                type = typeof(List<>).MakeGenericType(type.GenericTypeArguments[0]);
+
+                return DeserializeValue(serializer, type, jsonArray);
+            }
+
+            throw new NotSupportedException();
         }
 
-        ///// <summary>
-        ///// Deserialize a JSON array.
-        ///// </summary>
-        ///// <param name="serializer">The serializer to utilize when deserializing nested objects.</param>
-        ///// <param name="type">The type of the collection to deserialize to.</param>
-        ///// <param name="jsonArray">The JSON array to deserialize from.</param>
-        ///// <returns>The collection that represents the JSON array.</returns>
-        //static ICollection DeserializeArray(IJsonSerializer serializer, Type type, JsonArray jsonArray)
-        //{
-        //    Type collectionType;
-        //    if (TypeHelper.TryGetCollectionType(type, out collectionType) == false)
-        //    {
-        //        if (TypeHelper.IsEnumerable(type) == false)
-        //        {
-        //            throw new JsonException("Can not deserialize a JSON array to a type that doesnt support ICollection<T>.");
-        //        }
-
-        //        type = typeof(List<>).MakeGenericType(type.GenericTypeArguments[0]);
-        //        collectionType = type;
-        //    }
-
-        //    var method = collectionType
-        //        .GetTypeInfo()
-        //            .DeclaredMethods
-        //                .FirstOrDefault(m => m.DeclaringType == collectionType && m.Name == "Add");
-
-        //    var elementType = collectionType.GenericTypeArguments[0];
-
-        //    var collection = Activator.CreateInstance(type) as ICollection;
-
-        //    foreach (var jsonValue in jsonArray)
-        //    {
-        //        var value = serializer.DeserializeValue(elementType, jsonValue);
-
-        //        method.Invoke(collection, new[] { value });
-        //    }
-
-        //    return collection;
-        //}
-
         /// <summary>
-        /// Deserialize a JSON array.
+        /// Deserialize a JSON array into an array.
         /// </summary>
         /// <param name="serializer">The serializer to utilize when deserializing nested objects.</param>
-        /// <param name="type">The type of the collection to deserialize to.</param>
+        /// <param name="type">The type of the array.</param>
         /// <param name="jsonArray">The JSON array to deserialize from.</param>
         /// <returns>The collection that represents the JSON array.</returns>
-        static ICollection DeserializeArray(IJsonSerializer serializer, Type type, JsonArray jsonArray)
+        static Array DeserializeArray(IJsonSerializer serializer, Type type, JsonArray jsonArray)
         {
-            // TODO: the collection access should be converted to a dynamically compiled delegate
-            Type elementType;
-            MethodInfo method;
-            if (TryGetCollectionType(type, out type, out elementType, out method) == false)
+            var array = Array.CreateInstance(type.GetElementType(), jsonArray.Count);
+
+            for (var i = 0; i < jsonArray.Count; i++)
+            {
+                var value = serializer.DeserializeValue(type.GetElementType(), jsonArray[i]);
+
+                array.SetValue(value, i);
+            }
+
+            return array;
+        }
+
+        /// <summary>
+        /// Deserialize a JSON array into a collection.
+        /// </summary>
+        /// <param name="serializer">The serializer to utilize when deserializing nested objects.</param>
+        /// <param name="type">The type of the collection to create.</param>
+        /// <param name="jsonArray">The JSON array to deserialize from.</param>
+        /// <returns>The collection that represents the JSON array.</returns>
+        static ICollection DeserializeCollection(IJsonSerializer serializer, Type type, JsonArray jsonArray)
+        {
+            Type collectionType;
+            if (TypeHelper.TryGetCollectionType(type, out collectionType) == false)
             {
                 throw new JsonException("Can not deserialize a JSON array to a type that doesnt support ICollection<T>.");
             }
 
-            var collection = Activator.CreateInstance(type) as ICollection;
+            var method = collectionType
+                .GetTypeInfo()
+                    .DeclaredMethods
+                        .FirstOrDefault(m => m.DeclaringType == collectionType && m.Name == "Add");
+
+            var elementType = collectionType.GenericTypeArguments[0];
+
+            var collection = (ICollection)Activator.CreateInstance(type);
 
             foreach (var jsonValue in jsonArray)
             {
@@ -116,45 +121,6 @@ namespace Hypermedia.Json.Converters
             }
 
             return collection;
-        }
-
-        /// <summary>
-        /// Extract the relevant information such that the collection type can be used dynamically.
-        /// </summary>
-        /// <param name="type">The property type to deserialize into.</param>
-        /// <param name="collectionType">The collection type to create.</param>
-        /// <param name="elementType">The element type of the collection.</param>
-        /// <param name="method">The add method that can be used to dynamically add the items to the collection.</param>
-        /// <returns>true if the collection information could be found for the type, false if not.</returns>
-        static bool TryGetCollectionType(Type type, out Type collectionType, out Type elementType, out MethodInfo method)
-        {
-            method = null;
-            elementType = null;
-
-            if (TypeHelper.TryGetCollectionType(type, out collectionType))
-            {
-                var t = collectionType;
-
-                method = collectionType
-                    .GetTypeInfo()
-                        .DeclaredMethods
-                            .FirstOrDefault(m => m.DeclaringType == t && m.Name == "Add");
-
-                elementType = collectionType.GenericTypeArguments[0];
-
-                return elementType != null && method != null;
-            }
-
-            if (type.GetTypeInfo().IsGenericType && type.GetTypeInfo().GetGenericTypeDefinition() == typeof(IReadOnlyList<>))
-            {
-                elementType = type.GenericTypeArguments[0];
-                collectionType = typeof(List<>).MakeGenericType(elementType);
-                method = collectionType.GetRuntimeMethod("Add", new [] { elementType });
-
-                return elementType != null && collectionType != null && method != null;
-            }
-
-            return false;
         }
 
         /// <summary>

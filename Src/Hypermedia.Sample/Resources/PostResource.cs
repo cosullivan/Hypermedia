@@ -13,6 +13,6 @@ namespace Hypermedia.Sample.Resources
         /// <summary>
         /// Gets or sets the list of comments for the post.
         /// </summary>
-        public IReadOnlyList<CommentResource> Comments { get; set; }
+        public List<CommentResource> Comments { get; set; }
     }
 }
