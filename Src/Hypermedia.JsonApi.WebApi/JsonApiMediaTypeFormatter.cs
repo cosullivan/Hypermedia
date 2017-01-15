@@ -96,7 +96,7 @@ namespace Hypermedia.JsonApi.WebApi
             var constructor = patch.GetConstructor(new[] { typeof(IContractResolver), typeof(IFieldNamingStrategy), typeof(JsonObject) });
             Debug.Assert(constructor != null);
 
-            return (IPatch)constructor.Invoke(new object[] { ContractResolver, jsonValue });
+            return (IPatch)constructor.Invoke(new object[] { ContractResolver, _fieldNamingStratgey, jsonValue });
         }
 
         /// <summary>
