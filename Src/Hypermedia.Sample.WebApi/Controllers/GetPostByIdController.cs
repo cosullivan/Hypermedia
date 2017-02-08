@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using Hypermedia.Sample.Data;
@@ -36,6 +37,9 @@ namespace Hypermedia.Sample.WebApi.Controllers
             {
                 return NotFound();
             }
+
+            // testing the error handling
+            post = null;
 
             return Ok(post.Populate(_database));
         }

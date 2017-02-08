@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
+using System.Web.Http;
 using Hypermedia.Json;
 using Hypermedia.Metadata;
 using Hypermedia.WebApi;
@@ -14,10 +15,11 @@ namespace Hypermedia.JsonApi.WebApi
 {
     public class JsonApiMediaTypeFormatter : Hypermedia.WebApi.Json.JsonMediaTypeFormatter
     {
-        readonly IFieldNamingStrategy _fieldNamingStratgey;
         const string Name = "jsonapi";
         const string MediaTypeName = "application/vnd.api+json";
         const string FieldNamingStrategyParameterName = "$fieldnamingstrategy";
+
+        readonly IFieldNamingStrategy _fieldNamingStratgey;
 
         /// <summary>
         /// Constructor.
@@ -131,6 +133,11 @@ namespace Hypermedia.JsonApi.WebApi
         /// <returns>The JSON object that represents the serialized value.</returns>
         protected override JsonValue SerializeValue(Type type, object value)
         {
+            if (typeof(HttpError).IsAssignableFrom(type))
+            {
+                return SerializeHttpError((HttpError) value);
+            }
+
             var serializer = new JsonApiSerializer(ContractResolver, _fieldNamingStratgey);
 
             if (TypeHelper.IsEnumerable(type))
@@ -139,6 +146,26 @@ namespace Hypermedia.JsonApi.WebApi
             }
 
             return serializer.SerializeEntity(value);
+        }
+
+        JsonValue SerializeHttpError(HttpError error)
+        {
+            HERE: probably needs support in two ways, one being the unhandled exception, and the other the ability
+             to create a JsonApiError() instance ? Perhaps I should just convert the unhandled exception to a JsonApiError
+             and then only serialize that ?
+
+
+            return null;
+        }
+
+        /// <summary>
+        /// Queries whether this <see cref="T:System.Net.Http.Formatting.MediaTypeFormatter"/> can serializean object of the specified type.
+        /// </summary>
+        /// <param name="type">The type to serialize.</param>
+        /// <returns>true if the <see cref="T:System.Net.Http.Formatting.MediaTypeFormatter"/> can serialize the type; otherwise, false.</returns>
+        public override bool CanWriteType(Type type)
+        {
+            return type == typeof(HttpError) || base.CanWriteType(type);
         }
 
         /// <summary>

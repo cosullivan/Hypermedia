@@ -47,7 +47,7 @@ namespace Hypermedia.WebApi
         /// <returns>true if the <see cref="T:System.Net.Http.Formatting.MediaTypeFormatter"/> can serialize the type; otherwise, false.</returns>
         public override bool CanWriteType(Type type)
         {
-            return type == typeof(HttpError) || CanReadOrWrite(type);
+            return CanReadOrWrite(type);
         }
 
         /// <summary>
