@@ -42,8 +42,8 @@ namespace Hypermedia.Sample.WebApi
 
             var resolver = CreateResolver();
 
-            configuration.Formatters.Add(new JsonMediaTypeFormatter(resolver));
-            configuration.Formatters.Add(new JsonApiMediaTypeFormatter(resolver, new DasherizedFieldNamingStrategy()));
+            configuration.Formatters.Add(new JsonMediaTypeFormatter(resolver, DefaultFieldNamingStrategy.Instance));
+            configuration.Formatters.Add(new JsonApiMediaTypeFormatter(resolver, DasherizedFieldNamingStrategy.Instance));
 
             configuration.ParameterBindingRules.Add(p =>
             {

@@ -25,7 +25,7 @@ namespace Hypermedia.WebApi.Json
         /// Constructor.
         /// </summary>
         /// <param name="contractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
-        public JsonMediaTypeFormatter(IContractResolver contractResolver) : this(contractResolver, SnakeCaseNamingStrategy.Instance, DefaultJsonOutputFormatter.Instance) { }
+        public JsonMediaTypeFormatter(IContractResolver contractResolver) : this(contractResolver, DefaultFieldNamingStrategy.Instance, DefaultJsonOutputFormatter.Instance) { }
 
         /// <summary>
         /// Constructor.
@@ -41,7 +41,7 @@ namespace Hypermedia.WebApi.Json
         /// <param name="outputFormatter">The output formatter to apply when writing the output.</param>
         public JsonMediaTypeFormatter(
             IContractResolver contractResolver,
-            IJsonOutputFormatter outputFormatter) : this(contractResolver, SnakeCaseNamingStrategy.Instance, outputFormatter) { }
+            IJsonOutputFormatter outputFormatter) : this(contractResolver, DefaultFieldNamingStrategy.Instance, outputFormatter) { }
 
         /// <summary>
         /// Constructor.
@@ -182,7 +182,7 @@ namespace Hypermedia.WebApi.Json
         {
             var patch = typeof(JsonPatch<>).MakeGenericType(type.GenericTypeArguments[0]);
 
-            var constructor = patch.GetConstructor(new[] { typeof(IContractResolver), typeof(JsonObject) });
+            var constructor = patch.GetConstructor(new[] { typeof(IContractResolver), typeof(IFieldNamingStrategy), typeof(JsonObject) });
             Debug.Assert(constructor != null);
 
             return (IPatch)constructor.Invoke(new object[] { ContractResolver, jsonValue });
@@ -195,7 +195,7 @@ namespace Hypermedia.WebApi.Json
         /// <param name="jsonValue">The JSON value that represents the object to deserialize.</param>
         protected virtual object DeserializeValue(Type type, JsonValue jsonValue)
         {
-            var serializer = new JsonSerializer(new JsonConverterFactory(new ContractConverter(ContractResolver)), new DefaultFieldNamingStrategy());
+            var serializer = new JsonSerializer(new JsonConverterFactory(new ContractConverter(ContractResolver)), FieldNamingStrategy);
 
             return serializer.DeserializeValue(type, jsonValue);
         }
@@ -230,7 +230,7 @@ namespace Hypermedia.WebApi.Json
         /// <returns>The JSON object that represents the serialized value.</returns>
         protected virtual JsonValue SerializeValue(Type type, object value)
         {
-            var serializer = new JsonSerializer(new JsonConverterFactory(new ContractConverter(ContractResolver)), new DefaultFieldNamingStrategy());
+            var serializer = new JsonSerializer(new JsonConverterFactory(new ContractConverter(ContractResolver)), FieldNamingStrategy);
 
             return serializer.SerializeValue(value);
         }

@@ -6,16 +6,20 @@ namespace Hypermedia.WebApi.Json
 {
     public sealed class JsonPatch<T> : IPatch<T>
     {
+        readonly IFieldNamingStrategy _fieldNamingStratgey;
         readonly JsonValue _jsonValue;
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="contractResolver">The contractor resolver.</param>
+        /// <param name="fieldNamingStratgey">The field naming strategy that is in use.</param>
         /// <param name="jsonValue">The root document node.</param>
-        public JsonPatch(IContractResolver contractResolver, JsonValue jsonValue)
+        public JsonPatch(IContractResolver contractResolver, IFieldNamingStrategy fieldNamingStratgey, JsonValue jsonValue)
         {
+            _fieldNamingStratgey = fieldNamingStratgey;
             _jsonValue = jsonValue;
+
             ContractResolver = contractResolver;
         }
 
@@ -35,7 +39,7 @@ namespace Hypermedia.WebApi.Json
                     return false;
                 }
 
-                var serializer = new JsonSerializer(new JsonConverterFactory(new ContractConverter(ContractResolver)));
+                var serializer = new JsonSerializer(new JsonConverterFactory(new ContractConverter(ContractResolver)), _fieldNamingStratgey);
 
                 var converter = new ContractConverter(contractResolver);
                 converter.DeserializeObject(serializer, (JsonObject)_jsonValue, contract, entity);
