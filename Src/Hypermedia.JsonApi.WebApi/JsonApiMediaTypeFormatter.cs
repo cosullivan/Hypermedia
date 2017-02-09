@@ -1,47 +1,47 @@
 ﻿using System;
 using System.Collections;
 using System.Diagnostics;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using Hypermedia.Json;
 using Hypermedia.Metadata;
 using Hypermedia.WebApi;
+using Hypermedia.WebApi.Json;
 using JsonLite.Ast;
 
 namespace Hypermedia.JsonApi.WebApi
 {
     public class JsonApiMediaTypeFormatter : Hypermedia.WebApi.Json.JsonMediaTypeFormatter
     {
-        readonly IFieldNamingStrategy _fieldNamingStratgey;
         const string Name = "jsonapi";
         const string MediaTypeName = "application/vnd.api+json";
-        const string FieldNamingStrategyParameterName = "$fieldnamingstrategy";
-
+        
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="contractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
-        public JsonApiMediaTypeFormatter(IContractResolver contractResolver) : this(contractResolver, new DasherizedFieldNamingStrategy(), false) { }
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="contractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
-        /// <param name="fieldNamingStratgey">The field naming strategy to use.</param>
-        public JsonApiMediaTypeFormatter(IContractResolver contractResolver, IFieldNamingStrategy fieldNamingStratgey) : this(contractResolver, fieldNamingStratgey, false) { }
+        public JsonApiMediaTypeFormatter(IContractResolver contractResolver) : this(contractResolver, DasherizedFieldNamingStrategy.Instance, DefaultJsonOutputFormatter.Instance) { }
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="contractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
         /// <param name="fieldNamingStratgey">The field naming strategy to use.</param>
-        /// <param name="prettify">A value which indicates whether the output should be prettified.</param>
-        JsonApiMediaTypeFormatter(IContractResolver contractResolver, IFieldNamingStrategy fieldNamingStratgey, bool prettify) : base(Name, MediaTypeName, contractResolver, prettify)
-        {
-            _fieldNamingStratgey = fieldNamingStratgey;
-        }
+        public JsonApiMediaTypeFormatter(
+            IContractResolver contractResolver, 
+            IFieldNamingStrategy fieldNamingStratgey) : this(contractResolver, fieldNamingStratgey, DefaultJsonOutputFormatter.Instance) { }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="contractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
+        /// <param name="fieldNamingStratgey">The field naming strategy to use.</param>
+        /// <param name="outputFormatter">The output formatter to apply when writing the output.</param>
+        JsonApiMediaTypeFormatter(
+            IContractResolver contractResolver, 
+            IFieldNamingStrategy fieldNamingStratgey, 
+            IJsonOutputFormatter outputFormatter) : base(Name, MediaTypeName, contractResolver, fieldNamingStratgey, outputFormatter) { }
 
         /// <summary>
         /// Returns a specialized instance of the <see cref="T:System.Net.Http.Formatting.MediaTypeFormatter"/> that can format a response for the given parameters.
@@ -52,34 +52,7 @@ namespace Hypermedia.JsonApi.WebApi
         /// <returns>Returns <see cref="T:System.Net.Http.Formatting.MediaTypeFormatter"/>.</returns>
         public override MediaTypeFormatter GetPerRequestFormatterInstance(Type type, HttpRequestMessage request, MediaTypeHeaderValue mediaType)
         {
-            var parameters = request.RequestUri.ParseQueryString();
-
-            var prettify = false;
-            if (parameters[PrettifyParameterName] != null)
-            {
-                prettify = new[] { "yes", "1", "true" }.Contains(parameters[PrettifyParameterName], StringComparer.OrdinalIgnoreCase);
-            }
-            
-            var fieldNamingStratgey = _fieldNamingStratgey;
-            if (parameters[FieldNamingStrategyParameterName] != null)
-            {
-                switch (parameters[FieldNamingStrategyParameterName])
-                {
-                    case "none":
-                        fieldNamingStratgey = new DefaultFieldNamingStrategy();
-                        break;
-
-                    case "dash":
-                        fieldNamingStratgey = new DasherizedFieldNamingStrategy();
-                        break;
-
-                    case "snake":
-                        fieldNamingStratgey = new SnakeCaseNamingStrategy();
-                        break;
-                }
-            }
-
-            return new JsonApiMediaTypeFormatter(ContractResolver, fieldNamingStratgey, prettify);
+            return new JsonApiMediaTypeFormatter(ContractResolver, GetPerRequestFieldNamingStrategy(request), GetPerRequestOutputFormatter(request));
         }
 
         /// <summary>
@@ -96,7 +69,7 @@ namespace Hypermedia.JsonApi.WebApi
             var constructor = patch.GetConstructor(new[] { typeof(IContractResolver), typeof(IFieldNamingStrategy), typeof(JsonObject) });
             Debug.Assert(constructor != null);
 
-            return (IPatch)constructor.Invoke(new object[] { ContractResolver, _fieldNamingStratgey, jsonValue });
+            return (IPatch)constructor.Invoke(new object[] { ContractResolver, FieldNamingStrategy, jsonValue });
         }
 
         /// <summary>
@@ -113,7 +86,7 @@ namespace Hypermedia.JsonApi.WebApi
                 throw new HypermediaWebApiException("The top level JSON value must be an Object.");
             }
 
-            var serializer = new JsonApiSerializer(ContractResolver, _fieldNamingStratgey);
+            var serializer = new JsonApiSerializer(ContractResolver, FieldNamingStrategy);
 
             if (TypeHelper.IsEnumerable(type))
             {
@@ -131,7 +104,7 @@ namespace Hypermedia.JsonApi.WebApi
         /// <returns>The JSON object that represents the serialized value.</returns>
         protected override JsonValue SerializeValue(Type type, object value)
         {
-            var serializer = new JsonApiSerializer(ContractResolver, _fieldNamingStratgey);
+            var serializer = new JsonApiSerializer(ContractResolver, FieldNamingStrategy);
 
             if (TypeHelper.IsEnumerable(type))
             {

@@ -2,6 +2,8 @@
 {
     public sealed class DefaultFieldNamingStrategy : IFieldNamingStrategy
     {
+        public static readonly IFieldNamingStrategy Instance = new DefaultFieldNamingStrategy();
+
         /// <summary>
         /// Returns the name as to how it is represented for this strategy.
         /// </summary>

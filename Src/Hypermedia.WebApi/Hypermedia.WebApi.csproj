@@ -58,8 +58,11 @@
     <Compile Include="HypermediaWebApiException.cs" />
     <Compile Include="IRequestMetadata.cs" />
     <Compile Include="Json\ContractConverter.cs" />
+    <Compile Include="Json\DefaultJsonOutputFormatter.cs" />
+    <Compile Include="Json\IJsonOutputFormatter.cs" />
     <Compile Include="Json\JsonPatch.cs" />
     <Compile Include="Json\JsonMediaTypeFormatter.cs" />
+    <Compile Include="Json\PrettyJsonOutputFormatter.cs" />
     <Compile Include="MemberPath.cs" />
     <Compile Include="MemberSortPath.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
