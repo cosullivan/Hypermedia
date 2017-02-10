@@ -34,7 +34,7 @@ namespace Hypermedia.JsonApi.Client
         {
             var serializer = new JsonApiSerializer(contractResolver, new DasherizedFieldNamingStrategy());
 
-            return serializer.Serialize(entity).Stringify();
+            return serializer.SerializeEntity(entity).Stringify();
         }
 
         /// <summary>

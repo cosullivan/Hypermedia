@@ -1,6 +1,4 @@
-﻿using Hypermedia.Metadata;
-
-namespace Hypermedia.JsonApi
+﻿namespace Hypermedia.JsonApi
 {
     public sealed class JsonApiError
     {

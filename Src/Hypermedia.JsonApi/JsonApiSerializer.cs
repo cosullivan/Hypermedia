@@ -9,7 +9,7 @@ using JsonLite.Ast;
 
 namespace Hypermedia.JsonApi
 {
-    public sealed class JsonApiSerializer : IJsonApiSerializer
+    public sealed class JsonApiSerializer
     {
         readonly IContractResolver _contractResolver;
         readonly IFieldNamingStrategy _fieldNamingStrategy;
@@ -72,14 +72,14 @@ namespace Hypermedia.JsonApi
         /// <typeparam name="TEntity">The type of instance to serialize.</typeparam>
         /// <param name="entity">The entity to serialize.</param>
         /// <returns>The JSON object that represents the serialized entity.</returns>
-        public JsonObject Serialize<TEntity>(TEntity entity)
+        public JsonObject SerializeEntity<TEntity>(TEntity entity)
         {
             if (entity == null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
 
-            return Serialize((object)entity);
+            return SerializeEntity((object)entity);
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace Hypermedia.JsonApi
         /// </summary>
         /// <param name="entity">The entity to serialize.</param>
         /// <returns>The JSON object that represents the serialized entity.</returns>
-        public JsonObject Serialize(object entity)
+        public JsonObject SerializeEntity(object entity)
         {
             if (entity == null)
             {

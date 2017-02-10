@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
@@ -105,34 +106,84 @@ namespace Hypermedia.JsonApi.WebApi
         /// <returns>The JSON object that represents the serialized value.</returns>
         protected override JsonValue SerializeValue(Type type, object value)
         {
-            var serializer = CreateSerializer(type);
+            if (ContractResolver.CanResolve(TypeHelper.GetUnderlyingType(type)))
+            {
+                return SerializeContract(type, value);
+            }
+
+            if (TypeHelper.GetUnderlyingType(type) == typeof(JsonApiError))
+            {
+                return SerializeJsonApiError(type, value);
+            }
+
+            return SerializeHttpError((HttpError)value);
+        }
+
+        /// <summary>
+        /// Serialize the value into an JSON AST.
+        /// </summary>
+        /// <param name="type">The type to serialize from.</param>
+        /// <param name="value">The value to serialize.</param>
+        /// <returns>The JSON object that represents the serialized value.</returns>
+        JsonValue SerializeContract(Type type, object value)
+        {
+            var serializer = new JsonApiSerializer(ContractResolver, FieldNamingStrategy);
 
             if (TypeHelper.IsEnumerable(type))
             {
                 return serializer.SerializeMany((IEnumerable)value);
             }
 
-            return serializer.Serialize(value);
+            return serializer.SerializeEntity(value);
         }
 
         /// <summary>
-        /// Create the appropriate serializer instance.
+        /// Serialize the value into an JSON AST.
         /// </summary>
-        /// <param name="type">The element type that is to be serialized.</param>
-        /// <returns>The serializer to use for the given type.</returns>
-        IJsonApiSerializer CreateSerializer(Type type)
+        /// <param name="type">The type to serialize from.</param>
+        /// <param name="value">The value to serialize.</param>
+        /// <returns>The JSON object that represents the serialized value.</returns>
+        JsonValue SerializeJsonApiError(Type type, object value)
         {
-            if (ContractResolver.CanResolve(TypeHelper.GetUnderlyingType(type)))
+            if (TypeHelper.IsEnumerable(type))
             {
-                return new JsonApiSerializer(ContractResolver, FieldNamingStrategy);
+                return JsonApiErrorSerializer.Instance.SerializeMany(((IEnumerable)value).OfType<JsonApiError>());
             }
 
-            if (TypeHelper.GetUnderlyingType(type) == typeof(JsonApiError))
+            return JsonApiErrorSerializer.Instance.Serialize((JsonApiError)value);
+        }
+
+        /// <summary>
+        /// Serialize the HttpError into an JSON AST error format.
+        /// </summary>
+        /// <param name="value">The value to serialize.</param>
+        /// <returns>The JSON object that represents the serialized value.</returns>
+        JsonValue SerializeHttpError(HttpError value)
+        {
+            return JsonApiErrorSerializer.Instance.Serialize(Map(value));
+        }
+
+        /// <summary>
+        /// Map the HTTP error to a JsonApiError.
+        /// </summary>
+        /// <param name="httpError">The HTTP error to map.</param>
+        /// <returns>The JSON API error that was mapped from the HTTP Error.</returns>
+        static JsonApiError Map(HttpError httpError)
+        {
+            var error = new JsonApiError { Status = "500", Code = "500" };
+
+            object value;
+            if (httpError.TryGetValue("Message", out value))
             {
-                return JsonApiErrorSerializer.Instance;
+                error.Title = value.ToString();
             }
 
-            return JsonApiHttpErrorSerializer.Instance;
+            if (httpError.TryGetValue("ExceptionMessage", out value))
+            {
+                error.Detail = value.ToString();
+            }
+
+            return error;
         }
 
         /// <summary>
