@@ -9,24 +9,7 @@ using JsonLite.Ast;
 
 namespace Hypermedia.JsonApi
 {
-    public interface IJsonApiSerializer
-    {
-        /// <summary>
-        /// Serialize a list of entities.
-        /// </summary>
-        /// <param name="entities">The list of entities to serialize.</param>
-        /// <returns>The JSON object that represents the serialized entity.</returns>
-        JsonObject SerializeMany(IEnumerable entities);
-
-        /// <summary>
-        /// Serialize the an entity.
-        /// </summary>
-        /// <param name="entity">The entity to serialize.</param>
-        /// <returns>The JSON object that represents the serialized entity.</returns>
-        JsonObject Serialize(object entity);
-    }
-
-    public sealed class JsonApiSerializer
+    public sealed class JsonApiSerializer : IJsonApiSerializer
     {
         readonly IContractResolver _contractResolver;
         readonly IFieldNamingStrategy _fieldNamingStrategy;
@@ -89,14 +72,14 @@ namespace Hypermedia.JsonApi
         /// <typeparam name="TEntity">The type of instance to serialize.</typeparam>
         /// <param name="entity">The entity to serialize.</param>
         /// <returns>The JSON object that represents the serialized entity.</returns>
-        public JsonObject SerializeEntity<TEntity>(TEntity entity)
+        public JsonObject Serialize<TEntity>(TEntity entity)
         {
             if (entity == null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
 
-            return SerializeEntity((object)entity);
+            return Serialize((object)entity);
         }
 
         /// <summary>
@@ -104,7 +87,7 @@ namespace Hypermedia.JsonApi
         /// </summary>
         /// <param name="entity">The entity to serialize.</param>
         /// <returns>The JSON object that represents the serialized entity.</returns>
-        public JsonObject SerializeEntity(object entity)
+        public JsonObject Serialize(object entity)
         {
             if (entity == null)
             {
@@ -157,9 +140,9 @@ namespace Hypermedia.JsonApi
         /// </summary>
         /// <param name="jsonObject">The top level JSON object to deserialize into a CLR type.</param>
         /// <returns>The instance that was created.</returns>
-        public object DeserializeEntity(JsonObject jsonObject)
+        public object Deserialize(JsonObject jsonObject)
         {
-            return DeserializeEntity(jsonObject, new JsonApiEntityCache());
+            return Deserialize(jsonObject, new JsonApiEntityCache());
         }
 
         /// <summary>
@@ -168,7 +151,7 @@ namespace Hypermedia.JsonApi
         /// <param name="jsonObject">The top level JSON object to deserialize into a CLR type.</param>
         /// <param name="cache">The entity cache to use for resolving existing instances in the object graph.</param>
         /// <returns>The instance that was created.</returns>
-        public object DeserializeEntity(JsonObject jsonObject, IJsonApiEntityCache cache)
+        public object Deserialize(JsonObject jsonObject, IJsonApiEntityCache cache)
         {
             var deserializer = new Deserializer(jsonObject, _contractResolver, _fieldNamingStrategy, cache);
 

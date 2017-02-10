@@ -56,6 +56,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JsonApiHttpErrorSerializer.cs" />
     <Compile Include="JsonApiMediaTypeFormatter.cs" />
     <Compile Include="JsonApiPatch.cs" />
     <Compile Include="JsonApiRequestMetadata.cs" />

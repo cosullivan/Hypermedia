@@ -94,7 +94,7 @@ namespace Hypermedia.JsonApi.WebApi
                 return serializer.DeserializeMany(jsonObject);
             }
 
-            return serializer.DeserializeEntity(jsonObject);
+            return serializer.Deserialize(jsonObject);
         }
 
         /// <summary>
@@ -105,27 +105,34 @@ namespace Hypermedia.JsonApi.WebApi
         /// <returns>The JSON object that represents the serialized value.</returns>
         protected override JsonValue SerializeValue(Type type, object value)
         {
-            var serializer = new JsonApiSerializer(ContractResolver, FieldNamingStrategy);
+            var serializer = CreateSerializer(type);
 
             if (TypeHelper.IsEnumerable(type))
             {
                 return serializer.SerializeMany((IEnumerable)value);
             }
 
-            return serializer.SerializeEntity(value);
+            return serializer.Serialize(value);
         }
 
-        JsonValue SerializeError(HttpError error)
+        /// <summary>
+        /// Create the appropriate serializer instance.
+        /// </summary>
+        /// <param name="type">The element type that is to be serialized.</param>
+        /// <returns>The serializer to use for the given type.</returns>
+        IJsonApiSerializer CreateSerializer(Type type)
         {
-            HERE: can I make the IJsonApiSerializer into an interface such that the error serializer can also implement it?
-             IJsonApiSerializer.Serialize & SerializeMany
-        }
+            if (ContractResolver.CanResolve(TypeHelper.GetUnderlyingType(type)))
+            {
+                return new JsonApiSerializer(ContractResolver, FieldNamingStrategy);
+            }
 
-        JsonValue SerializeError(JsonApiError error)
-        {
-            var serializer = new JsonApiErrorSerializer();
+            if (TypeHelper.GetUnderlyingType(type) == typeof(JsonApiError))
+            {
+                return JsonApiErrorSerializer.Instance;
+            }
 
-            return serializer.Serialize(error);
+            return JsonApiHttpErrorSerializer.Instance;
         }
 
         /// <summary>
@@ -135,11 +142,9 @@ namespace Hypermedia.JsonApi.WebApi
         /// <returns>true if the given type has a mapping, false if not.</returns>
         protected override bool CanReadOrWrite(Type type)
         {
-            TODO: this should handle a collection of JsonApiErrors
-
-            return type == typeof(HttpError) 
-                || type == typeof(JsonApiError)
-                || ContractResolver.CanResolve(TypeHelper.GetUnderlyingType(type));
+            return ContractResolver.CanResolve(TypeHelper.GetUnderlyingType(type))
+                || TypeHelper.GetUnderlyingType(type) == typeof(JsonApiError)
+                || type == typeof(HttpError);
         }
     }
 }

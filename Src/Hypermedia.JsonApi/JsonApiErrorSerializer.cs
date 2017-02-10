@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Hypermedia.Json;
@@ -6,43 +7,48 @@ using JsonLite.Ast;
 
 namespace Hypermedia.JsonApi
 {
-    public sealed class JsonApiErrorSerializer
+    public sealed class JsonApiErrorSerializer : IJsonApiSerializer
     {
-        /// <summary>
-        /// Serialize a list of errors as an error response.
-        /// </summary>
-        /// <param name="errors">The list of errors to serialize as an error response.</param>
-        /// <returns>The JSON object that represents the serialized error response.</returns>
-        public JsonObject Serialize(params JsonApiError[] errors)
-        {
-            return Serialize((IEnumerable<JsonApiError>)errors);
-        }
+        public static readonly IJsonApiSerializer Instance = new JsonApiErrorSerializer();
 
         /// <summary>
         /// Serialize a list of errors as an error response.
         /// </summary>
         /// <param name="errors">The list of errors to serialize as an error response.</param>
         /// <returns>The JSON object that represents the serialized error response.</returns>
-        public JsonObject Serialize(IEnumerable<JsonApiError> errors)
+        public JsonObject SerializeMany(IEnumerable<JsonApiError> errors)
         {
             if (errors == null)
             {
                 throw new ArgumentNullException(nameof(errors));
             }
 
-            return new JsonObject(new JsonMember("errors", new JsonArray(errors.Select(SerializeError).ToList())));
+            var serializer = new JsonSerializer(new JsonConverterFactory());
+
+            return new JsonObject(
+                new JsonMember(
+                    "errors", 
+                    new JsonArray(errors.Select(error => new JsonObject(SerializeMembers(serializer, error).ToList())).ToList())));
         }
 
         /// <summary>
-        /// Serialize an error.
+        /// Serialize a list of entities.
         /// </summary>
-        /// <param name="error">The error to serialize.</param>
-        /// <returns>The JSON object that represents the serialized error.</returns>
-        JsonObject SerializeError(JsonApiError error)
+        /// <param name="entities">The list of entities to serialize.</param>
+        /// <returns>The JSON object that represents the serialized entity.</returns>
+        JsonObject IJsonApiSerializer.SerializeMany(IEnumerable entities)
         {
-            var serializer = new JsonSerializer(new JsonConverterFactory());
+            return SerializeMany(entities.OfType<JsonApiError>());
+        }
 
-            return new JsonObject(SerializeMembers(serializer, error).ToList());
+        /// <summary>
+        /// Serialize the an entity.
+        /// </summary>
+        /// <param name="entity">The entity to serialize.</param>
+        /// <returns>The JSON object that represents the serialized entity.</returns>
+        JsonObject IJsonApiSerializer.Serialize(object entity)
+        {
+            return SerializeMany(new[] { (JsonApiError)entity });
         }
 
         /// <summary>

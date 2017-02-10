@@ -35,6 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="IJsonApiEntityCache.cs" />
+    <Compile Include="IJsonApiSerializer.cs" />
     <Compile Include="JsonApiEntityCache.cs" />
     <Compile Include="JsonApiEntityKeyEqualityComparer.cs" />
     <Compile Include="JsonApiError.cs" />

@@ -22,20 +22,20 @@ namespace TestApp
 
         static void Main(string[] args)
         {
-            var json = new JsonApiErrorSerializer().Serialize(
-                new JsonApiError
-                {
-                    Code = "1"   
-                },
-                new JsonApiError
-                {
-                    Status = "2"
-                },
-                new JsonApiError
-                {
-                    Title = "3"
-                });
-            Console.WriteLine(json.Stringify(true));
+            //var json = new JsonApiErrorSerializer().Serialize(
+            //    new JsonApiError
+            //    {
+            //        Code = "1"   
+            //    },
+            //    new JsonApiError
+            //    {
+            //        Status = "2"
+            //    },
+            //    new JsonApiError
+            //    {
+            //        Title = "3"
+            //    });
+            //Console.WriteLine(json.Stringify(true));
 
             //const string Endpoint = "http://hypermedia.cainosullivan.com";
             ////const string Endpoint = "http://localhost:59074/";

@@ -63,7 +63,7 @@ namespace Hypermedia.JsonApi.Client
         /// <returns>The list of JSON API entities.</returns>
         public TEntity Get<TEntity>(JsonApiSerializer serializer, IJsonApiEntityCache cache)
         {
-            return (TEntity)serializer.DeserializeEntity(_jsonObject, cache);
+            return (TEntity)serializer.Deserialize(_jsonObject, cache);
         }
 
         /// <summary>
