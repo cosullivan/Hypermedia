@@ -49,7 +49,7 @@ namespace Hypermedia.WebApi.Json
         {
             foreach (var field in contract.Fields.Where(ShouldSerializeField))
             {
-                yield return new JsonMember(field.Name, serializer.SerializeValue(field.GetValue(value)));
+                yield return new JsonMember(serializer.FieldNamingStrategy.GetName(field.Name), serializer.SerializeValue(field.GetValue(value)));
             }
         }
 
@@ -110,7 +110,7 @@ namespace Hypermedia.WebApi.Json
         {
             foreach (var member in jsonObject.Members)
             {
-                var field = fields.SingleOrDefault(f => String.Equals(f.Name, member.Name, StringComparison.OrdinalIgnoreCase));
+                var field = fields.SingleOrDefault(f => String.Equals(f.Name, serializer.FieldNamingStrategy.ResolveName(member.Name), StringComparison.OrdinalIgnoreCase));
 
                 field?.SetValue(instance, serializer.DeserializeValue(field.Accessor.ValueType, member.Value));
             }

@@ -4,6 +4,8 @@ namespace Hypermedia.Json
 {
     public sealed class SnakeCaseNamingStrategy : IFieldNamingStrategy
     {
+        public static readonly IFieldNamingStrategy Instance = new SnakeCaseNamingStrategy();
+
         /// <summary>
         /// Returns the name as to how it is represented for this strategy.
         /// </summary>

@@ -4,6 +4,8 @@ namespace Hypermedia.Json
 {
     public sealed class DasherizedFieldNamingStrategy : IFieldNamingStrategy
     {
+        public static readonly IFieldNamingStrategy Instance = new DasherizedFieldNamingStrategy();
+
         /// <summary>
         /// Returns the name as to how it is represented for this strategy.
         /// </summary>

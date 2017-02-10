@@ -18,22 +18,41 @@ namespace Hypermedia.WebApi.Json
     {
         const string Name = "json";
         const string MediaTypeName = "application/json";
-        protected const string PrettifyParameterName = "$prettify";
-
-        readonly bool _prettify;
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="contractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
-        public JsonMediaTypeFormatter(IContractResolver contractResolver) : this(Name, MediaTypeName, contractResolver, false) { }
+        const string FieldNamingStrategyParameterName = "$fieldnamingstrategy";
+        const string PrettifyParameterName = "$prettify";
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="contractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
-        /// <param name="prettify">Indicates whether the output should formatted in a readable way.</param>
-        public JsonMediaTypeFormatter(IContractResolver contractResolver, bool prettify) : this(Name, MediaTypeName, contractResolver, prettify) { }
+        public JsonMediaTypeFormatter(IContractResolver contractResolver) : this(contractResolver, DefaultFieldNamingStrategy.Instance, DefaultJsonOutputFormatter.Instance) { }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="contractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
+        /// <param name="fieldNamingStratgey">The field naming strategy to use.</param>
+        public JsonMediaTypeFormatter(IContractResolver contractResolver, IFieldNamingStrategy fieldNamingStratgey) : this(Name, MediaTypeName, contractResolver, fieldNamingStratgey, DefaultJsonOutputFormatter.Instance) { }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="contractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
+        /// <param name="outputFormatter">The output formatter to apply when writing the output.</param>
+        public JsonMediaTypeFormatter(
+            IContractResolver contractResolver,
+            IJsonOutputFormatter outputFormatter) : this(contractResolver, DefaultFieldNamingStrategy.Instance, outputFormatter) { }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="contractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
+        /// <param name="fieldNamingStratgey">The field naming strategy to use.</param>
+        /// <param name="outputFormatter">The output formatter to apply when writing the output.</param>
+        public JsonMediaTypeFormatter(
+            IContractResolver contractResolver, 
+            IFieldNamingStrategy fieldNamingStratgey, 
+            IJsonOutputFormatter outputFormatter) : this(Name, MediaTypeName, contractResolver, fieldNamingStratgey, outputFormatter) { }
 
         /// <summary>
         /// Constructor.
@@ -41,10 +60,17 @@ namespace Hypermedia.WebApi.Json
         /// <param name="name">The friendly name of the format.</param>
         /// <param name="mediaTypeName">The correct media type name for content negotiation.</param>
         /// <param name="contractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
-        /// <param name="prettify">Indicates whether the output should formatted in a readable way.</param>
-        protected JsonMediaTypeFormatter(string name, string mediaTypeName, IContractResolver contractResolver, bool prettify) : base(name, mediaTypeName, contractResolver)
+        /// <param name="fieldNamingStratgey">The field naming strategy to use.</param>
+        /// <param name="outputFormatter">The output formatter to apply when writing the output.</param>
+        protected JsonMediaTypeFormatter(
+            string name, 
+            string mediaTypeName, 
+            IContractResolver contractResolver, 
+            IFieldNamingStrategy fieldNamingStratgey, 
+            IJsonOutputFormatter outputFormatter) : base(name, mediaTypeName, contractResolver)
         {
-            _prettify = prettify;
+            FieldNamingStrategy = fieldNamingStratgey;
+            OutputFormatter = outputFormatter;
         }
 
         /// <summary>
@@ -56,16 +82,56 @@ namespace Hypermedia.WebApi.Json
         /// <returns>Returns <see cref="T:System.Net.Http.Formatting.MediaTypeFormatter"/>.</returns>
         public override MediaTypeFormatter GetPerRequestFormatterInstance(Type type, HttpRequestMessage request, MediaTypeHeaderValue mediaType)
         {
+            return new JsonMediaTypeFormatter(ContractResolver, GetPerRequestFieldNamingStrategy(request), GetPerRequestOutputFormatter(request));
+        }
+
+        /// <summary>
+        /// Returns a per-request JSON output formatter.
+        /// </summary>
+        /// <param name="request">The request information that is to be used to determine the output formatter to use.</param>
+        /// <returns>The per-request output formatter to use.</returns>
+        protected virtual IJsonOutputFormatter GetPerRequestOutputFormatter(HttpRequestMessage request)
+        {
             var parameters = request.RequestUri.ParseQueryString();
 
             if (parameters[PrettifyParameterName] != null)
             {
                 var prettify = new[] { "yes", "1", "true" }.Contains(parameters[PrettifyParameterName], StringComparer.OrdinalIgnoreCase);
 
-                return new JsonMediaTypeFormatter(ContractResolver, prettify);
+                if (prettify)
+                {
+                    return PrettyJsonOutputFormatter.Instance;
+                }
             }
 
-            return base.GetPerRequestFormatterInstance(type, request, mediaType);
+            return OutputFormatter;
+        }
+
+        /// <summary>
+        /// Returns the field naming strategy, taking into account the possibility that it could be overridden.
+        /// </summary>
+        /// <param name="request">The request information that is to be used to determine the field naming strategy to use.</param>
+        /// <returns>The per-request field naming strategy to use.</returns>
+        protected virtual IFieldNamingStrategy GetPerRequestFieldNamingStrategy(HttpRequestMessage request)
+        {
+            var parameters = request.RequestUri.ParseQueryString();
+
+            if (parameters[FieldNamingStrategyParameterName] != null)
+            {
+                switch (parameters[FieldNamingStrategyParameterName])
+                {
+                    case "none":
+                        return DefaultFieldNamingStrategy.Instance;
+
+                    case "dash":
+                        return DasherizedFieldNamingStrategy.Instance;
+
+                    case "snake":
+                        return SnakeCaseNamingStrategy.Instance;
+                }
+            }
+
+            return FieldNamingStrategy;
         }
 
         /// <summary>
@@ -116,7 +182,7 @@ namespace Hypermedia.WebApi.Json
         {
             var patch = typeof(JsonPatch<>).MakeGenericType(type.GenericTypeArguments[0]);
 
-            var constructor = patch.GetConstructor(new[] { typeof(IContractResolver), typeof(JsonObject) });
+            var constructor = patch.GetConstructor(new[] { typeof(IContractResolver), typeof(IFieldNamingStrategy), typeof(JsonObject) });
             Debug.Assert(constructor != null);
 
             return (IPatch)constructor.Invoke(new object[] { ContractResolver, jsonValue });
@@ -129,7 +195,7 @@ namespace Hypermedia.WebApi.Json
         /// <param name="jsonValue">The JSON value that represents the object to deserialize.</param>
         protected virtual object DeserializeValue(Type type, JsonValue jsonValue)
         {
-            var serializer = new JsonSerializer(new JsonConverterFactory(new ContractConverter(ContractResolver)), new DefaultFieldNamingStrategy());
+            var serializer = new JsonSerializer(new JsonConverterFactory(new ContractConverter(ContractResolver)), FieldNamingStrategy);
 
             return serializer.DeserializeValue(type, jsonValue);
         }
@@ -148,7 +214,7 @@ namespace Hypermedia.WebApi.Json
         {
             using (var writer = new StreamWriter(writeStream, Encoding.ASCII, 1024, leaveOpen: true))
             {
-                writer.WriteLine(SerializeValue(type, value).Stringify(_prettify));
+                OutputFormatter.Write(writer, SerializeValue(type, value));
             }
 
             writeStream.Flush();
@@ -164,7 +230,7 @@ namespace Hypermedia.WebApi.Json
         /// <returns>The JSON object that represents the serialized value.</returns>
         protected virtual JsonValue SerializeValue(Type type, object value)
         {
-            var serializer = new JsonSerializer(new JsonConverterFactory(new ContractConverter(ContractResolver)), new DefaultFieldNamingStrategy());
+            var serializer = new JsonSerializer(new JsonConverterFactory(new ContractConverter(ContractResolver)), FieldNamingStrategy);
 
             return serializer.SerializeValue(value);
         }
@@ -178,5 +244,15 @@ namespace Hypermedia.WebApi.Json
         {
             return true;
         }
+
+        /// <summary>
+        /// The field naming strategy to use.
+        /// </summary>
+        public IFieldNamingStrategy FieldNamingStrategy { get; }
+
+        /// <summary>
+        /// The output formatter to use.
+        /// </summary>
+        public IJsonOutputFormatter OutputFormatter { get; }
     }
 }
