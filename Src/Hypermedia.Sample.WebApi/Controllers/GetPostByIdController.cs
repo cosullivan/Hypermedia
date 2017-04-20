@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using Hypermedia.JsonApi;
 using Hypermedia.Sample.Data;
 using Hypermedia.Sample.Resources;
 using Hypermedia.Sample.WebApi.Resources;

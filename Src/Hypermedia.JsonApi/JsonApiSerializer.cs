@@ -140,9 +140,9 @@ namespace Hypermedia.JsonApi
         /// </summary>
         /// <param name="jsonObject">The top level JSON object to deserialize into a CLR type.</param>
         /// <returns>The instance that was created.</returns>
-        public object DeserializeEntity(JsonObject jsonObject)
+        public object Deserialize(JsonObject jsonObject)
         {
-            return DeserializeEntity(jsonObject, new JsonApiEntityCache());
+            return Deserialize(jsonObject, new JsonApiEntityCache());
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace Hypermedia.JsonApi
         /// <param name="jsonObject">The top level JSON object to deserialize into a CLR type.</param>
         /// <param name="cache">The entity cache to use for resolving existing instances in the object graph.</param>
         /// <returns>The instance that was created.</returns>
-        public object DeserializeEntity(JsonObject jsonObject, IJsonApiEntityCache cache)
+        public object Deserialize(JsonObject jsonObject, IJsonApiEntityCache cache)
         {
             var deserializer = new Deserializer(jsonObject, _contractResolver, _fieldNamingStrategy, cache);
 

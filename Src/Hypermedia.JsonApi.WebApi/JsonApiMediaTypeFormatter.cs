@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
+using System.Web.Http;
 using Hypermedia.Json;
 using Hypermedia.Metadata;
 using Hypermedia.WebApi;
@@ -93,7 +95,7 @@ namespace Hypermedia.JsonApi.WebApi
                 return serializer.DeserializeMany(jsonObject);
             }
 
-            return serializer.DeserializeEntity(jsonObject);
+            return serializer.Deserialize(jsonObject);
         }
 
         /// <summary>
@@ -103,6 +105,27 @@ namespace Hypermedia.JsonApi.WebApi
         /// <param name="value">The value to serialize.</param>
         /// <returns>The JSON object that represents the serialized value.</returns>
         protected override JsonValue SerializeValue(Type type, object value)
+        {
+            if (ContractResolver.CanResolve(TypeHelper.GetUnderlyingType(type)))
+            {
+                return SerializeContract(type, value);
+            }
+
+            if (TypeHelper.GetUnderlyingType(type) == typeof(JsonApiError))
+            {
+                return SerializeJsonApiError(type, value);
+            }
+
+            return SerializeHttpError((HttpError)value);
+        }
+
+        /// <summary>
+        /// Serialize the value into an JSON AST.
+        /// </summary>
+        /// <param name="type">The type to serialize from.</param>
+        /// <param name="value">The value to serialize.</param>
+        /// <returns>The JSON object that represents the serialized value.</returns>
+        JsonValue SerializeContract(Type type, object value)
         {
             var serializer = new JsonApiSerializer(ContractResolver, FieldNamingStrategy);
 
@@ -115,13 +138,64 @@ namespace Hypermedia.JsonApi.WebApi
         }
 
         /// <summary>
+        /// Serialize the value into an JSON AST.
+        /// </summary>
+        /// <param name="type">The type to serialize from.</param>
+        /// <param name="value">The value to serialize.</param>
+        /// <returns>The JSON object that represents the serialized value.</returns>
+        JsonValue SerializeJsonApiError(Type type, object value)
+        {
+            if (TypeHelper.IsEnumerable(type))
+            {
+                return JsonApiErrorSerializer.Instance.SerializeMany(((IEnumerable)value).OfType<JsonApiError>());
+            }
+
+            return JsonApiErrorSerializer.Instance.Serialize((JsonApiError)value);
+        }
+
+        /// <summary>
+        /// Serialize the HttpError into an JSON AST error format.
+        /// </summary>
+        /// <param name="value">The value to serialize.</param>
+        /// <returns>The JSON object that represents the serialized value.</returns>
+        JsonValue SerializeHttpError(HttpError value)
+        {
+            return JsonApiErrorSerializer.Instance.Serialize(Map(value));
+        }
+
+        /// <summary>
+        /// Map the HTTP error to a JsonApiError.
+        /// </summary>
+        /// <param name="httpError">The HTTP error to map.</param>
+        /// <returns>The JSON API error that was mapped from the HTTP Error.</returns>
+        static JsonApiError Map(HttpError httpError)
+        {
+            var error = new JsonApiError { Status = "500", Code = "500" };
+
+            object value;
+            if (httpError.TryGetValue("Message", out value))
+            {
+                error.Title = value.ToString();
+            }
+
+            if (httpError.TryGetValue("ExceptionMessage", out value))
+            {
+                error.Detail = value.ToString();
+            }
+
+            return error;
+        }
+
+        /// <summary>
         /// Returns a value indicating whether or not the dictionary has a metadata mapping for the given type.
         /// </summary>
         /// <param name="type">The element type to test for a mapping.</param>
         /// <returns>true if the given type has a mapping, false if not.</returns>
         protected override bool CanReadOrWrite(Type type)
         {
-            return ContractResolver.CanResolve(TypeHelper.GetUnderlyingType(type));
+            return ContractResolver.CanResolve(TypeHelper.GetUnderlyingType(type))
+                || TypeHelper.GetUnderlyingType(type) == typeof(JsonApiError)
+                || type == typeof(HttpError);
         }
     }
 }

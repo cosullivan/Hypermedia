@@ -96,7 +96,7 @@ namespace Hypermedia.WebApi.Json
 
             if (parameters[PrettifyParameterName] != null)
             {
-                var prettify = new[] {"yes", "1", "true"}.Contains(parameters[PrettifyParameterName], StringComparer.OrdinalIgnoreCase);
+                var prettify = new[] { "yes", "1", "true" }.Contains(parameters[PrettifyParameterName], StringComparer.OrdinalIgnoreCase);
 
                 if (prettify)
                 {
