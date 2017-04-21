@@ -50,14 +50,14 @@ namespace Hypermedia.Metadata.Runtime
         {
             var options = FieldOptions.None;
 
-            if (propertyInfo.CanRead == false)
+            if (propertyInfo.CanRead)
             {
-                options = options & ~FieldOptions.Serializable;
+                options = options | FieldOptions.Serializable;
             }
 
-            if (propertyInfo.CanWrite == false)
+            if (propertyInfo.CanWrite)
             {
-                options = options & ~FieldOptions.Deserializable;
+                options = options | FieldOptions.Deserializable;
             }
 
             return options;
