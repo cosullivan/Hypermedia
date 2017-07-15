@@ -1054,6 +1054,12 @@ namespace Hypermedia.JsonApi
 
                     var data = ((JsonObject)member.Value)["data"];
 
+                    if (data == JsonNull.Instance)
+                    {
+                        DeserializeEmptyRelationship(relationship, entity);
+                        continue;
+                    }
+
                     if (relationship.Type == RelationshipType.HasMany)
                     {
                         DeserializeHasMany((IHasManyRelationship)relationship, (JsonArray)data, entity);
@@ -1074,6 +1080,19 @@ namespace Hypermedia.JsonApi
                 var jsonObject = jsonMember.Value as JsonObject;
 
                 return jsonObject?["data"] != null;
+            }
+
+            /// <summary>
+            /// Deserialize an empty relationship into a CLR null.
+            /// </summary>
+            /// <param name="relationship">The relationship to deserialize.</param>
+            /// <param name="entity">The entity value to deserialize the null value to.</param>
+            void DeserializeEmptyRelationship(IRelationship relationship, object entity)
+            {
+                if (relationship.Accessor?.CanWrite == true)
+                {
+                    relationship.SetValue(entity, null);
+                }
             }
 
             /// <summary>
@@ -1127,8 +1146,7 @@ namespace Hypermedia.JsonApi
 
                 foreach (var jsonObject in value.OfType<JsonObject>())
                 {
-                    object related;
-                    if (TryResolve(jsonObject, out related))
+                    if (TryResolve(jsonObject, out object related))
                     {
                         collection.Add(related);
                     }

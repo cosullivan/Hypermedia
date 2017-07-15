@@ -39,7 +39,7 @@ namespace Hypermedia.Sample.Client
         /// Returns the resource contract resolver for the known types.
         /// </summary>
         /// <returns>The resource contract resolver to use when serializing the types.</returns>
-        static IContractResolver CreateResolver()
+        public static IContractResolver CreateResolver()
         {
             return new Builder()
                 .With<UserResource>("users")
@@ -50,7 +50,6 @@ namespace Hypermedia.Sample.Client
                     .BelongsTo<UserResource>(nameof(PostResource.OwnerUser))
                         .BackingField(nameof(PostResource.OwnerUserId))
                     .HasMany<CommentResource>(nameof(PostResource.Comments))
-                        //.Embedded()
                 .With<CommentResource>("comments")
                     .Id(nameof(CommentResource.Id))
                     .BelongsTo<UserResource>(nameof(CommentResource.User))

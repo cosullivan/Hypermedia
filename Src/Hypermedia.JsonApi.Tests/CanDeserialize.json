@@ -1,0 +1,97 @@
+﻿{
+  "jsonapi": {
+    "version": "1.0"
+  },
+  "data": {
+    "type": "posts",
+    "id": 2,
+    "attributes": {
+      "post-type": "Questions",
+      "title": "Did the Greeks build temples for all of the children of Cronus?",
+      "body": "<p>I know that the Ancient Greeks built temples for a lot of the major children of Cronus, such as the <a href=\"http://en.wikipedia.org/wiki/Temple_of_Zeus,_Olympia\" rel=\"nofollow\">Temple of Zeus</a> and the <a href=\"http://en.wikipedia.org/wiki/Temple_of_Hera,_Olympia\" rel=\"nofollow\">Temple of Hera</a>. Were temples built for all of the children of Cronus, or were they only built for the major ones? If some were left out, is there any indication of why?</p>\n",
+      "score": 14,
+      "view-count": 176,
+      "answer-count": 0,
+      "comment-count": 1,
+      "favorite-count": 1,
+      "creation-date": "2015-04-28T15:57:27Z"
+    },
+    "relationships": {
+      "owner-user": {
+        "links": {
+          "related": "/v1/users/13"
+        },
+        "data": {
+          "type": "users",
+          "id": 13
+        }
+      },
+      "comments": {
+        "links": {
+          "related": "/v1/posts/2/comments"
+        },
+        "data": [
+          {
+            "type": "comments",
+            "id": 11
+          }
+        ]
+      }
+    }
+  },
+  "included": [
+    {
+      "type": "users",
+      "id": 13,
+      "attributes": {
+        "display-name": "kuwaly",
+        "reputation": 272,
+        "up-votes": 8,
+        "down-votes": 0,
+        "profile-image-url": "https://www.gravatar.com/avatar/2daacf43128ed0124292c5805e1e53f2?s=128&d=identicon&r=PG",
+        "creation-date": "2015-04-28T15:53:37Z"
+      }
+    },
+    {
+      "type": "comments",
+      "id": 11,
+      "attributes": {
+        "score": 0,
+        "text": "Did Cronus have children other than Zeus, Hera, Poseidon, Hades, Hestia, Demeter, and Chiron?",
+        "creation-date": "2015-04-28T17:31:19Z"
+      },
+      "relationships": {
+        "user": {
+          "links": {
+            "related": "/v1/users/43"
+          },
+          "data": {
+            "type": "users",
+            "id": 43
+          }
+        },
+        "post": {
+          "links": {
+            "related": "/v1/posts/2"
+          },
+          "data": {
+            "type": "posts",
+            "id": 2
+          }
+        }
+      }
+    },
+    {
+      "type": "users",
+      "id": 43,
+      "attributes": {
+        "display-name": "Mr. Bultitude",
+        "reputation": 422,
+        "up-votes": 43,
+        "down-votes": 2,
+        "profile-image-url": "https://i.stack.imgur.com/iHVqm.jpg",
+        "creation-date": "2015-04-28T16:49:00Z"
+      }
+    }
+  ]
+}

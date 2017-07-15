@@ -1,0 +1,20 @@
+﻿{
+  "jsonapi": {
+    "version": "1.0"
+  },
+  "data": {
+    "type": "posts",
+    "id": 2,
+    "attributes": {
+      "title": "Did the Greeks build temples for all of the children of Cronus?"
+    },
+    "relationships": {
+      "comments": {
+        "links": {
+          "related": "/v1/posts/2/comments"
+        },
+        "data": null
+      }
+    }
+  }
+}
