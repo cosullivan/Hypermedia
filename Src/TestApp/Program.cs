@@ -27,15 +27,23 @@ namespace TestApp
                 //    Console.WriteLine(post.ViewCount);
                 //}
 
-                var post = client.GetPostByIdAsync(38).Result;
-                Console.WriteLine(post.ViewCount);
-                Console.WriteLine(post.OwnerUserId);
-                Console.WriteLine(post.OwnerUser.DisplayName);
+                //var post = client.GetPostByIdAsync(38).Result;
+                //Console.WriteLine(post.ViewCount);
+                //Console.WriteLine(post.OwnerUserId);
+                //Console.WriteLine(post.OwnerUser.DisplayName);
 
-                foreach (var comment in post.Comments)
+                //foreach (var comment in post.Comments)
+                //{
+                //    Console.WriteLine("{0}: {1}", comment.Id, comment.Text);
+                //}
+
+                var comment = new CommentResource
                 {
-                    Console.WriteLine("{0}: {1}", comment.Id, comment.Text);
-                }
+                    Text = "Hello World!"
+                };
+
+                comment = client.CreateAsync(comment).Result;
+                Console.WriteLine(comment.Id);
             }
         }
     }

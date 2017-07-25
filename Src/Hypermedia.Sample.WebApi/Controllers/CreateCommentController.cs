@@ -1,5 +1,4 @@
-﻿using System;
-using System.Web.Http;
+﻿using System.Web.Http;
 using Hypermedia.Sample.Data;
 using Hypermedia.Sample.Resources;
 
@@ -25,7 +24,9 @@ namespace Hypermedia.Sample.WebApi.Controllers
         [HttpOptions, HttpPost, Route("v1/comments")]
         public IHttpActionResult Execute([FromBody] CommentResource comment)
         {
-            throw new NotImplementedException();
+            comment.Id = 123;
+
+            return Created("v1/comments/123", comment);
         }
     }
 }
