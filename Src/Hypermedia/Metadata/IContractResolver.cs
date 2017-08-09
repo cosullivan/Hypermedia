@@ -36,8 +36,7 @@ namespace Hypermedia.Metadata
                 throw new ArgumentNullException(nameof(resolver));
             }
 
-            IContract resourceContract;
-            return resolver.TryResolve(type, out resourceContract);
+            return resolver.TryResolve(type, out IContract resourceContract);
         }
     }
 }

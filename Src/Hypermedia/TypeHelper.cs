@@ -45,8 +45,7 @@ namespace Hypermedia
         /// <returns>The underlying collection type.</returns>
         public static Type GetCollectionType(TypeInfo type)
         {
-            Type collectionType;
-            if (TryGetCollectionType(type, out collectionType))
+            if (TryGetCollectionType(type, out Type collectionType))
             {
                 return collectionType;
             }
@@ -127,8 +126,7 @@ namespace Hypermedia
         /// <returns>The underlying enumerable type.</returns>
         static Type GetEnumerableType(TypeInfo type)
         {
-            Type enumerableType;
-            if (TryGetEnumerableType(type, out enumerableType))
+            if (TryGetEnumerableType(type, out Type enumerableType))
             {
                 return enumerableType;
             }
@@ -190,8 +188,7 @@ namespace Hypermedia
                 return type.AsType();
             }
 
-            Type enumerableType;
-            if (TryGetEnumerableType(type, out enumerableType))
+            if (TryGetEnumerableType(type, out Type enumerableType))
             {
                 return enumerableType.GetTypeInfo().GenericTypeArguments[0]; ;
             }

@@ -4,8 +4,6 @@ namespace Hypermedia.Json
 {
     public sealed class JsonConverterAttribute : Attribute
     {
-        readonly Type _converterType;
-
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -17,15 +15,12 @@ namespace Hypermedia.Json
                 throw new ArgumentNullException(nameof(converterType));
             }
 
-            _converterType = converterType;
+            ConverterType = converterType;
         }
 
         /// <summary>
         /// Gets the converter type.
         /// </summary>
-        public Type ConverterType
-        {
-            get { return _converterType; }
-        }
+        public Type ConverterType { get; }
     }
 }

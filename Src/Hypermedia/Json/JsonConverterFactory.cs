@@ -49,8 +49,7 @@ namespace Hypermedia.Json
 
             try
             {
-                IJsonConverter converter;
-                if (_resolvedConverters.TryGetValue(type, out converter))
+                if (_resolvedConverters.TryGetValue(type, out IJsonConverter converter))
                 {
                     return converter;
                 }

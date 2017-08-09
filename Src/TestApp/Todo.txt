@@ -1,1 +1,0 @@
-﻿* when serializing a BelongsTo, include the actual data item

@@ -14,8 +14,7 @@ namespace Hypermedia.Metadata.Runtime
         /// <returns>The plural of the given singular word.</returns>
         public string Pluralize(string word)
         {
-            string plural;
-            if (KnownPlurals.TryGetValue(word, out plural))
+            if (KnownPlurals.TryGetValue(word, out string plural))
             {
                 return plural;
             }

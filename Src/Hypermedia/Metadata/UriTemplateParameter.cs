@@ -4,9 +4,6 @@ namespace Hypermedia.Metadata
 {
     public sealed class UriTemplateParameter
     {
-        readonly string _name;
-        readonly Func<object, object> _accessor;
-
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -14,24 +11,18 @@ namespace Hypermedia.Metadata
         /// <param name="accessor">The accessor function to return the parameter from the instance.</param>
         public UriTemplateParameter(string name, Func<object, object> accessor)
         {
-            _name = name;
-            _accessor = accessor;
+            Name = name;
+            Accessor = accessor;
         }
 
         /// <summary>
         /// Gets the name of the parameter.
         /// </summary>
-        public string Name
-        {
-            get { return _name; }
-        }
+        public string Name { get; }
 
         /// <summary>
         /// Gets the accessor function that returns the parameter from the instance.
         /// </summary>
-        public Func<object, object> Accessor
-        {
-            get { return _accessor; }
-        }
+        public Func<object, object> Accessor { get; }
     }
 }

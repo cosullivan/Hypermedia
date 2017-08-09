@@ -1,72 +1,16 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2B0660CD-FF64-47BD-BB96-04F80F845963}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Hypermedia.JsonApi.Client</RootNamespace>
-    <AssemblyName>Hypermedia.JsonApi.Client</AssemblyName>
-    <DefaultLanguage>en-US</DefaultLanguage>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworks>net45;netstandard1.4</TargetFrameworks>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="HttpContentExtensions.cs" />
-    <Compile Include="JsonApiContent.cs" />
-    <Compile Include="JsonApiResponse.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <PackageReference Include="System.Net.Http" Version="4.3.2" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="Hypermedia.JsonApi.Client.nuspec">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\Hypermedia.JsonApi\Hypermedia.JsonApi.csproj" />
+    <ProjectReference Include="..\Hypermedia\Hypermedia.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Hypermedia.JsonApi\Hypermedia.JsonApi.csproj">
-      <Project>{2ce482c3-8e6b-4df2-ac46-6193dead7259}</Project>
-      <Name>Hypermedia.JsonApi</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Hypermedia\Hypermedia.csproj">
-      <Project>{a1f1f9f5-caf8-48b1-9a4a-ae87ab0f092e}</Project>
-      <Name>Hypermedia</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="JsonLite, Version=1.3.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Json.Lite.1.3.2\lib\Portable-Net45+NetCore45+WP8+WPA81\JsonLite.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-  </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

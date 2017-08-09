@@ -99,8 +99,7 @@ namespace Hypermedia.Configuration
         /// <returns>The field builder build the field.</returns>
         public FieldBuilder<T> Field(string name)
         {
-            RuntimeField field;
-            if (TryFindField(name, out field))
+            if (TryFindField(name, out RuntimeField field))
             {
                 return new FieldBuilder<T>(this, field);
             }

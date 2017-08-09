@@ -62,25 +62,16 @@ namespace Hypermedia.Metadata.Runtime
         /// <summary>
         /// Gets the value type.
         /// </summary>
-        public Type ValueType
-        {
-            get { return _memberInfo.PropertyType; }
-        }
+        public Type ValueType => _memberInfo.PropertyType;
 
         /// <summary>
         /// Indicates whether the value accessor gives the ability to read from the underlying instance.
         /// </summary>
-        public bool CanRead
-        {
-            get { return _memberInfo.CanRead; }
-        }
+        public bool CanRead => _memberInfo.CanRead;
 
         /// <summary>
         /// Indicates whether the value accessor gives the ability to write to the underlying instance.
         /// </summary>
-        public bool CanWrite
-        {
-            get { return _memberInfo.CanWrite; }
-        }
+        public bool CanWrite => _memberInfo.CanWrite;
     }
 }

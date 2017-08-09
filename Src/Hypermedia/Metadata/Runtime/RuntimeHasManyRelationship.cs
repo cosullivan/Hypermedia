@@ -20,9 +20,6 @@ namespace Hypermedia.Metadata.Runtime
         /// <summary>
         /// Gets the relationship type.
         /// </summary>
-        public override RelationshipType Type
-        {
-            get { return RelationshipType.HasMany; }
-        }
+        public override RelationshipType Type => RelationshipType.HasMany;
     }
 }
