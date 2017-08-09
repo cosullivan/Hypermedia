@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
-using System.Web.Http;
 using Hypermedia.Metadata;
 
 namespace Hypermedia.WebApi
