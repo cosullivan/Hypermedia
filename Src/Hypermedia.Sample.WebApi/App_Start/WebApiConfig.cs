@@ -7,6 +7,7 @@ using Hypermedia.Json;
 using Hypermedia.JsonApi.WebApi;
 using Hypermedia.Metadata;
 using Hypermedia.Sample.Resources;
+using Hypermedia.Sample.WebApi.Services;
 using Hypermedia.WebApi;
 using Hypermedia.WebApi.Json;
 using ExceptionLogger = Hypermedia.Sample.WebApi.Services.ExceptionLogger;
@@ -43,7 +44,7 @@ namespace Hypermedia.Sample.WebApi
             var resolver = CreateResolver();
 
             configuration.Formatters.Add(new JsonMediaTypeFormatter(resolver, DefaultFieldNamingStrategy.Instance));
-            configuration.Formatters.Add(new JsonApiMediaTypeFormatter(resolver, DasherizedFieldNamingStrategy.Instance));
+            configuration.Formatters.Add(new JsonApiMetadataMediaTypeFormatter(resolver));
 
             configuration.ParameterBindingRules.Add(p =>
             {
@@ -62,28 +63,35 @@ namespace Hypermedia.Sample.WebApi
         /// <returns>The resource contract resolver for the configured model.</returns>
         internal static IContractResolver CreateResolver()
         {
-            return new Builder()
-                .With<UserResource>("users")
-                    .Id(nameof(UserResource.Id))
-                    .HasMany<PostResource>("posts")
-                        .Template("/v1/users/{id}/posts", "id", resource => resource.Id)
-                .With<PostResource>("posts")
-                    .Id(nameof(PostResource.Id))
-                    .BelongsTo<UserResource>(nameof(PostResource.OwnerUser))
-                        .BackingField(nameof(PostResource.OwnerUserId))
-                        .Template("/v1/users/{id}", "id", resource => resource.OwnerUserId)
-                    .HasMany<CommentResource>(nameof(PostResource.Comments))
-                        //.Embedded()
-                        .Template("/v1/posts/{id}/comments", "id", resource => resource.Id)
-                .With<CommentResource>("comments")
-                    .Id(nameof(CommentResource.Id))
-                    .BelongsTo<UserResource>(nameof(CommentResource.User))
-                        .BackingField(nameof(CommentResource.UserId))
-                        .Template("/v1/users/{id}", "id", resource => resource.UserId)
-                    .BelongsTo<PostResource>(nameof(CommentResource.Post))
-                        .BackingField(nameof(CommentResource.PostId))
-                        .Template("/v1/posts/{id}", "id", resource => resource.PostId)
-                .Build();
+            var builder = new Builder();
+
+            builder.With<UserResource>("users")
+                .Id(nameof(UserResource.Id))
+                .HasMany<PostResource>("posts")
+                    .Template("/v1/users/{id}/posts", "id", resource => resource.Id);
+
+            builder.With<PostResource>("posts")
+                .Id(nameof(PostResource.Id))
+                .BelongsTo<UserResource>(nameof(PostResource.OwnerUser))
+                    .BackingField(nameof(PostResource.OwnerUserId))
+                    .Template("/v1/users/{id}", "id", resource => resource.OwnerUserId)
+                .BelongsTo<UserResource>(nameof(PostResource.ApproverUser), resource => resource.ApproverId.HasValue)
+                    .BackingField(nameof(PostResource.ApproverId))
+                    .Template("/v1/users/{id}", "id", resource => resource.ApproverId)
+                .HasMany<CommentResource>(nameof(PostResource.Comments))
+                    //.Embedded()
+                    .Template("/v1/posts/{id}/comments", "id", resource => resource.Id);
+
+            builder.With<CommentResource>("comments")
+                .Id(nameof(CommentResource.Id))
+                .BelongsTo<UserResource>(nameof(CommentResource.User))
+                    .BackingField(nameof(CommentResource.UserId))
+                    .Template("/v1/users/{id}", "id", resource => resource.UserId)
+                .BelongsTo<PostResource>(nameof(CommentResource.Post))
+                    .BackingField(nameof(CommentResource.PostId))
+                    .Template("/v1/posts/{id}", "id", resource => resource.PostId);
+
+            return builder.Build();
         }
     }
 }

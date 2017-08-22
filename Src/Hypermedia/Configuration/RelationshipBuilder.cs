@@ -42,7 +42,7 @@ namespace Hypermedia.Configuration
         /// Sets the property that the field is to be mapped to.
         /// </summary>
         /// <param name="property">The name of the property that the field is mapped to.</param>
-        /// <returns>The field builder to continue building on.</returns>
+        /// <returns>The relationship builder to continue building on.</returns>
         public RelationshipBuilder<T> From(string property)
         {
             Instance.Accessor = RuntimeFieldAccessor.From<T>(property);
@@ -55,7 +55,7 @@ namespace Hypermedia.Configuration
         /// </summary>
         /// <param name="options">The list of options to set.</param>
         /// <param name="setOptionOn">true if the options are to be set, false if not.</param>
-        /// <returns>The field builder to continue building on.</returns>
+        /// <returns>The relationship builder to continue building on.</returns>
         protected RelationshipBuilder<T> Options(FieldOptions options, bool setOptionOn = true)
         {
             if (setOptionOn)

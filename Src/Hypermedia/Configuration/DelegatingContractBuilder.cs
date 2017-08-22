@@ -1,4 +1,5 @@
-﻿using Hypermedia.Metadata;
+﻿using System;
+using Hypermedia.Metadata;
 
 namespace Hypermedia.Configuration
 {
@@ -54,6 +55,17 @@ namespace Hypermedia.Configuration
         }
 
         /// <summary>
+        /// Returns a BelongsTo relationship.
+        /// </summary>
+        /// <param name="name">The name of the relationship to return.</param>
+        /// <param name="predicate">The predicate to apply to determine if the relationship is active.</param>
+        /// <returns>The relationship builder build the relationship.</returns>
+        public BelongsToRelationshipBuilder<T> BelongsTo<TOther>(string name, Func<T, bool> predicate)
+        {
+            return Builder.BelongsTo<TOther>(name, predicate);
+        }
+
+        /// <summary>
         /// Returns a HasMany relationship.
         /// </summary>
         /// <param name="name">The name of the relationship to return.</param>
@@ -61,6 +73,17 @@ namespace Hypermedia.Configuration
         public HasManyRelationshipBuilder<T> HasMany<TOther>(string name)
         {
             return Builder.HasMany<TOther>(name);
+        }
+
+        /// <summary>
+        /// Returns a HasMany relationship.
+        /// </summary>
+        /// <param name="name">The name of the relationship to return.</param>
+        /// <param name="predicate">The predicate to apply to determine if the relationship is active.</param>
+        /// <returns>The relationship builder build the relationship.</returns>
+        public HasManyRelationshipBuilder<T> HasMany<TOther>(string name, Func<T, bool> predicate)
+        {
+            return Builder.HasMany<TOther>(name, predicate);
         }
 
         /// <summary>

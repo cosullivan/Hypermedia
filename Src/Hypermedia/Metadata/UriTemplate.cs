@@ -9,8 +9,7 @@ namespace Hypermedia.Metadata
         /// Constructor.
         /// </summary>
         /// <param name="format">The format of the URI template.</param>
-        /// <param name="parameters">The list of parameters for the template.</param>
-        public UriTemplate(string format, params UriTemplateParameter[] parameters)
+        public UriTemplate(string format)
         {
             if (format == null)
             {

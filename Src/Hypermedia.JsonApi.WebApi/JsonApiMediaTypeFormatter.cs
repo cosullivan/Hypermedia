@@ -40,7 +40,7 @@ namespace Hypermedia.JsonApi.WebApi
         /// <param name="contractResolver">The resource contract resolver used to resolve the contracts at runtime.</param>
         /// <param name="fieldNamingStratgey">The field naming strategy to use.</param>
         /// <param name="outputFormatter">The output formatter to apply when writing the output.</param>
-        JsonApiMediaTypeFormatter(
+        public JsonApiMediaTypeFormatter(
             IContractResolver contractResolver, 
             IFieldNamingStrategy fieldNamingStratgey, 
             IJsonOutputFormatter outputFormatter) : base(Name, MediaTypeName, contractResolver, fieldNamingStratgey, outputFormatter) { }
@@ -172,8 +172,7 @@ namespace Hypermedia.JsonApi.WebApi
         {
             var error = new JsonApiError { Status = "500", Code = "500" };
 
-            object value;
-            if (httpError.TryGetValue("Message", out value))
+            if (httpError.TryGetValue("Message", out object value))
             {
                 error.Title = value.ToString();
             }

@@ -127,19 +127,37 @@ namespace Hypermedia.Configuration
         /// <returns>The relationship builder build the relationship.</returns>
         public BelongsToRelationshipBuilder<T> BelongsTo<TOther>(string name)
         {
-            RuntimeField field;
-            if (TryFindField(name, out field))
+            return BelongsTo<TOther>(name, resource => true);
+        }
+
+        /// <summary>
+        /// Returns a BelongsTo relationship.
+        /// </summary>
+        /// <param name="name">The name of the relationship to return.</param>
+        /// <param name="predicate">The predicate to apply to determine if the relationship is active.</param>
+        /// <returns>The relationship builder build the relationship.</returns>
+        public BelongsToRelationshipBuilder<T> BelongsTo<TOther>(string name, Func<T, bool> predicate)
+        {
+            if (TryFindField(name, out RuntimeField field))
             {
                 _fields.Remove(field);
 
                 return new BelongsToRelationshipBuilder<T>(
                     this,
-                    Add(new RuntimeBelongsToRelationship(field) { RelatedTo = typeof(TOther) }));
+                    Add(new RuntimeBelongsToRelationship(field)
+                    {
+                        Exists = resource => predicate((T)resource),
+                        RelatedTo = typeof(TOther)
+                    }));
             }
 
             return new BelongsToRelationshipBuilder<T>(
                 this,
-                Add(new RuntimeBelongsToRelationship(name) { RelatedTo = typeof(TOther) }));
+                Add(new RuntimeBelongsToRelationship(name)
+                {
+                    Exists = resource => predicate((T)resource),
+                    RelatedTo = typeof(TOther)
+                }));
         }
 
         /// <summary>
@@ -149,19 +167,37 @@ namespace Hypermedia.Configuration
         /// <returns>The relationship builder build the relationship.</returns>
         public HasManyRelationshipBuilder<T> HasMany<TOther>(string name)
         {
-            RuntimeField field;
-            if (TryFindField(name, out field))
+            return HasMany<TOther>(name, resource => true);
+        }
+
+        /// <summary>
+        /// Returns a HasMany relationship.
+        /// </summary>
+        /// <param name="name">The name of the relationship to return.</param>
+        /// <param name="predicate">The predicate to apply to determine if the relationship is active.</param>
+        /// <returns>The relationship builder build the relationship.</returns>
+        public HasManyRelationshipBuilder<T> HasMany<TOther>(string name, Func<T, bool> predicate)
+        {
+            if (TryFindField(name, out RuntimeField field))
             {
                 _fields.Remove(field);
 
                 return new HasManyRelationshipBuilder<T>(
-                    this, 
-                    Add(new RuntimeHasManyRelationship(field) { RelatedTo = typeof(TOther) }));
+                    this,
+                    Add(new RuntimeHasManyRelationship(field)
+                    {
+                        Exists = resource => predicate((T)resource),
+                        RelatedTo = typeof(TOther)
+                    }));
             }
 
             return new HasManyRelationshipBuilder<T>(
-                this, 
-                Add(new RuntimeHasManyRelationship(name) { RelatedTo = typeof(TOther) }));
+                this,
+                Add(new RuntimeHasManyRelationship(name)
+                {
+                    Exists = resource => predicate((T)resource),
+                    RelatedTo = typeof(TOther)
+                }));
         }
     }
 }

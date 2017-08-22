@@ -326,9 +326,7 @@ namespace Hypermedia.JsonApi
             {
                 var members = relationships.Select(relationship => SerializeRelationship(relationship, entity));
 
-                members = members.Where(member => ((JsonObject)member.Value).Members.Count > 0);
-
-                return members.ToList();
+                return members.Where(member => member != null).ToList();
             }
 
             /// <summary>
@@ -339,6 +337,11 @@ namespace Hypermedia.JsonApi
             /// <returns>The member that represents the relationship for the given entity.</returns>
             JsonMember SerializeRelationship(IRelationship relationship, object entity)
             {
+                if (relationship.Exists(entity) == false)
+                {
+                    return null;
+                }
+
                 var members = new List<JsonMember>();
 
                 if (relationship.UriTemplate != null)
@@ -361,7 +364,9 @@ namespace Hypermedia.JsonApi
                     }
                 }
 
-                return new JsonMember(_jsonSerializer.FieldNamingStrategy.GetName(relationship.Name), new JsonObject(members));
+                return members.Count == 0 
+                    ? null
+                    : new JsonMember(_jsonSerializer.FieldNamingStrategy.GetName(relationship.Name), new JsonObject(members));
             }
 
             /// <summary>
@@ -372,8 +377,7 @@ namespace Hypermedia.JsonApi
             /// <returns>The JSON value that represents the actual relationship data, or null if no data link can be created.</returns>
             JsonValue SerializeRelationshipData(IRelationship relationship, object entity)
             {
-                IContract contract;
-                if (_contractResolver.TryResolve(relationship.RelatedTo, out contract) == false)
+                if (_contractResolver.TryResolve(relationship.RelatedTo, out IContract contract) == false)
                 {
                     throw new JsonApiException(
                         "Could not find the related type '{0}' for the relationship '{1}'.", relationship.RelatedTo, relationship.Name);
@@ -1224,8 +1228,7 @@ namespace Hypermedia.JsonApi
             /// <returns>The object that represents the CLR version of the given JSON value.</returns>
             object IJsonConverter.DeserializeValue(IJsonSerializer serializer, Type type, JsonValue jsonValue)
             {
-                IContract contract;
-                if (_contractResolver.TryResolve(type, out contract) == false)
+                if (_contractResolver.TryResolve(type, out IContract contract) == false)
                 {
                     throw new JsonApiException("Could not resolve the contract with the CLR type of '{0}'.", type);
                 }

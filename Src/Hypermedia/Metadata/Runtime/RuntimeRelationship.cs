@@ -29,7 +29,12 @@ namespace Hypermedia.Metadata.Runtime
         /// Gets the relationship type.
         /// </summary>
         public abstract RelationshipType Type { get; }
-        
+
+        /// <summary>
+        /// A predicate to determine if the relationship exists.
+        /// </summary>
+        public Func<object, bool> Exists { get; internal set; }
+
         /// <summary>
         /// Gets the URI template that defines the location of the relationship.
         /// </summary>

@@ -51,6 +51,7 @@
       <HintPath>..\packages\AutoMapper.4.2.0\lib\net45\AutoMapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="JsonLite, Version=2.0.2.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
@@ -63,7 +64,21 @@
     <Reference Include="System.IdentityModel.Tokens.Jwt">
       <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.4.0.0\lib\net45\System.IdentityModel.Tokens.Jwt.dll</HintPath>
     </Reference>
-    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http, Version=4.1.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Net.Http.4.3.2\lib\net46\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Algorithms, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.0\lib\net461\System.Security.Cryptography.Algorithms.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Encoding, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.X509Certificates.4.3.0\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Cors, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Cors.5.2.3\lib\net45\System.Web.Cors.dll</HintPath>
       <Private>True</Private>
@@ -86,7 +101,32 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Hypermedia.JsonApi.WebApi\Hypermedia.JsonApi.WebApi.csproj">
+      <Project>{0b2cbd5a-413f-4bcb-824d-580ccd2bcc82}</Project>
+      <Name>Hypermedia.JsonApi.WebApi</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Hypermedia.JsonApi\Hypermedia.JsonApi.csproj">
+      <Project>{ad404ceb-4657-49a2-bc81-1eb73b5f60fa}</Project>
+      <Name>Hypermedia.JsonApi</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Hypermedia.Sample.Client\Hypermedia.Sample.Client.csproj">
+      <Project>{78e99ddd-2fe3-45a6-89b4-4c755ddea873}</Project>
+      <Name>Hypermedia.Sample.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Hypermedia.Sample\Hypermedia.Sample.csproj">
+      <Project>{138b5d8c-040d-404d-818e-57904fb06a67}</Project>
+      <Name>Hypermedia.Sample</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Hypermedia.WebApi\Hypermedia.WebApi.csproj">
+      <Project>{f641c27c-4047-4c9e-b34a-99121a755a06}</Project>
+      <Name>Hypermedia.WebApi</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Hypermedia\Hypermedia.csproj">
+      <Project>{8c917c08-b890-40c6-a60f-8af23fe6c335}</Project>
+      <Name>Hypermedia</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WebActivatorEx">
@@ -137,6 +177,7 @@
     <Compile Include="Resources\CommentResourceExtensions.cs" />
     <Compile Include="Resources\PostResourceExtensions.cs" />
     <Compile Include="Resources\Resource.cs" />
+    <Compile Include="Services\JsonApiMetadataMediaTypeFormatter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\PublishProfiles\hypermediasamplewebapi - Web Deploy %282%29.pubxml" />
@@ -147,28 +188,6 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Hypermedia.JsonApi.WebApi\Hypermedia.JsonApi.WebApi.csproj">
-      <Project>{0b2cbd5a-413f-4bcb-824d-580ccd2bcc82}</Project>
-      <Name>Hypermedia.JsonApi.WebApi</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Hypermedia.JsonApi\Hypermedia.JsonApi.csproj">
-      <Project>{2ce482c3-8e6b-4df2-ac46-6193dead7259}</Project>
-      <Name>Hypermedia.JsonApi</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Hypermedia.Sample\Hypermedia.Sample.csproj">
-      <Project>{138b5d8c-040d-404d-818e-57904fb06a67}</Project>
-      <Name>Hypermedia.Sample</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Hypermedia.WebApi\Hypermedia.WebApi.csproj">
-      <Project>{f641c27c-4047-4c9e-b34a-99121a755a06}</Project>
-      <Name>Hypermedia.WebApi</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Hypermedia\Hypermedia.csproj">
-      <Project>{a1f1f9f5-caf8-48b1-9a4a-ae87ab0f092e}</Project>
-      <Name>Hypermedia</Name>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

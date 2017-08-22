@@ -11,6 +11,11 @@ namespace Hypermedia.Sample.Resources
         public UserResource OwnerUser { get; set; }
 
         /// <summary>
+        /// The user that could optionally approve the post.
+        /// </summary>
+        public UserResource ApproverUser { get; set; }
+
+        /// <summary>
         /// Gets or sets the list of comments for the post.
         /// </summary>
         public List<CommentResource> Comments { get; set; }

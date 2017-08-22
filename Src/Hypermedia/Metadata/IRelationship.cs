@@ -8,7 +8,12 @@ namespace Hypermedia.Metadata
         /// Gets the relationship type.
         /// </summary>
         RelationshipType Type { get; }
-        
+
+        /// <summary>
+        /// A predicate to determine if the relationship exists.
+        /// </summary>
+        Func<object, bool> Exists { get; }
+
         /// <summary>
         /// Gets the URI template that defines the location of the relationship.
         /// </summary>

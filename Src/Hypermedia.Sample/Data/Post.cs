@@ -48,5 +48,10 @@ namespace Hypermedia.Sample.Data
         /// The ID of the user that owns/created the post.
         /// </summary>
         public int OwnerUserId { get; set; }
+
+        /// <summary>
+        /// The ID of the user that could optionally approve the port.
+        /// </summary>
+        public int? ApproverId { get; set; }
     }
 }
