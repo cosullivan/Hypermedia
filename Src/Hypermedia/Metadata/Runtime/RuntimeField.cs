@@ -14,9 +14,11 @@ namespace Hypermedia.Metadata.Runtime
         /// <summary>
         /// The name of the field.
         /// </summary>
+        /// <param name="contract">The contract that the field belongs to.</param>
         /// <param name="name">The name of the field.</param>
-        internal RuntimeField(string name)
+        internal RuntimeField(RuntimeContract contract, string name)
         {
+            Contract = contract;
             Name = name;
         }
 
@@ -62,6 +64,11 @@ namespace Hypermedia.Metadata.Runtime
 
             return options;
         }
+
+        /// <summary>
+        /// The contract that the field belongs to.
+        /// </summary>
+        public IContract Contract { get; }
 
         /// <summary>
         /// Gets the name of the member.

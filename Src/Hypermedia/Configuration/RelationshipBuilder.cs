@@ -89,6 +89,18 @@ namespace Hypermedia.Configuration
         }
 
         /// <summary>
+        /// Sets the name of the member on the inverse relationship.
+        /// </summary>
+        /// <param name="name">The name of the member for the inverse.</param>
+        /// <returns>The relationship builder to continue building on.</returns>
+        public RelationshipBuilder<T> Inverse(string name)
+        {
+            Instance.InverseName = name;
+
+            return this;
+        }
+
+        /// <summary>
         /// Returns a template builder for the relationship.
         /// </summary>
         /// <param name="format">The format of the template.</param>

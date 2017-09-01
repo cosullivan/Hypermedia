@@ -23,5 +23,34 @@ namespace Hypermedia.Metadata
         /// Gets the entity type that the relationship is related to.
         /// </summary>
         Type RelatedTo { get; }
+
+        /// <summary>
+        /// The name of the relationship on the other side.
+        /// </summary>
+        string InverseName { get; }
+    }
+
+    public static class RelationshipExtensions
+    {
+        /// <summary>
+        /// Resolve the inverse relationship.
+        /// </summary>
+        /// <param name="relationship">The relationship to resolve the inverse from.</param>
+        /// <param name="contractResolver">The contract resolver that contains the nessessary contracts for resolution.</param>
+        /// <returns>The inverse relationship.</returns>
+        public static IRelationship Inverse(this IRelationship relationship, IContractResolver contractResolver)
+        {
+            if (relationship == null)
+            {
+                throw new ArgumentNullException(nameof(relationship));
+            }
+
+            if (String.IsNullOrWhiteSpace(relationship.InverseName) || contractResolver.TryResolve(relationship.RelatedTo, out IContract other) == false)
+            {
+                return null;
+            }
+
+            return other.Relationship(relationship.InverseName);
+        }
     }
 }

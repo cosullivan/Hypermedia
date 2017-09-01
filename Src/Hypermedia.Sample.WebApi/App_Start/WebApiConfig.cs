@@ -61,19 +61,21 @@ namespace Hypermedia.Sample.WebApi
         /// Creates an instance of the resource contract resolver for the configured model.
         /// </summary>
         /// <returns>The resource contract resolver for the configured model.</returns>
-        internal static IContractResolver CreateResolver()
+        public static IContractResolver CreateResolver()
         {
             var builder = new Builder();
 
             builder.With<UserResource>("users")
                 .Id(nameof(UserResource.Id))
                 .HasMany<PostResource>("posts")
+                    //.Inverse(nameof(PostResource.OwnerUser))
                     .Template("/v1/users/{id}/posts", "id", resource => resource.Id);
 
             builder.With<PostResource>("posts")
                 .Id(nameof(PostResource.Id))
                 .BelongsTo<UserResource>(nameof(PostResource.OwnerUser))
                     .BackingField(nameof(PostResource.OwnerUserId))
+                    //.Inverse(nameof(UserResource.Posts))
                     .Template("/v1/users/{id}", "id", resource => resource.OwnerUserId)
                 .BelongsTo<UserResource>(nameof(PostResource.ApproverUser), resource => resource.ApproverId.HasValue)
                     .BackingField(nameof(PostResource.ApproverId))
@@ -90,6 +92,8 @@ namespace Hypermedia.Sample.WebApi
                 .BelongsTo<PostResource>(nameof(CommentResource.Post))
                     .BackingField(nameof(CommentResource.PostId))
                     .Template("/v1/posts/{id}", "id", resource => resource.PostId);
+
+            //TODO: maybe at the point in which it is built is the best place to link the inversions?
 
             return builder.Build();
         }

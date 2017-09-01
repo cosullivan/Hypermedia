@@ -41,8 +41,7 @@ namespace Hypermedia.JsonApi.WebApi
                 return new MemberPath[0];
             }
 
-            List<MemberPath> memberPaths;
-            if (TryResolveInclude(_parameters["include"], out memberPaths) == false)
+            if (TryResolveInclude(_parameters["include"], out List<MemberPath> memberPaths) == false)
             {
                 return new MemberPath[0];
             }
@@ -64,8 +63,7 @@ namespace Hypermedia.JsonApi.WebApi
 
             foreach (var part in path.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
             {
-                MemberPath memberPath;
-                if (resolver.TryResolve(part.Trim(), out memberPath) == false)
+                if (resolver.TryResolve(part.Trim(), out MemberPath memberPath) == false)
                 {
                     return false;
                 }
@@ -92,10 +90,7 @@ namespace Hypermedia.JsonApi.WebApi
         /// <summary>
         /// The list of properties to include in the request.
         /// </summary>
-        public IReadOnlyList<MemberPath> Include
-        {
-            get { return _include.Value; }
-        }
+        public IReadOnlyList<MemberPath> Include => _include.Value;
 
         /// <summary>
         /// The list of members to sort the response by.

@@ -5,6 +5,11 @@ namespace Hypermedia.Metadata
     public interface IField : IMember
     {
         /// <summary>
+        /// The contract that the field belongs to.
+        /// </summary>
+        IContract Contract { get; }
+
+        /// <summary>
         /// Gets the list of options for the field.
         /// </summary>
         FieldOptions Options { get; }

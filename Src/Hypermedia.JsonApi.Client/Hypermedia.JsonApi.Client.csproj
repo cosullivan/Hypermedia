@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard1.4</TargetFrameworks>
-    <Version>2.2.0-Beta1</Version>
+    <Version>2.2.0-Beta2</Version>
   </PropertyGroup>
 
   <ItemGroup>

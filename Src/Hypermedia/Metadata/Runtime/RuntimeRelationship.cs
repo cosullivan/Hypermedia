@@ -44,5 +44,10 @@ namespace Hypermedia.Metadata.Runtime
         /// Gets the entity type that the relationship is related to.
         /// </summary>
         public Type RelatedTo { get; internal set; }
+
+        /// <summary>
+        /// The name of the relationship on the other side.
+        /// </summary>
+        public string InverseName { get; internal set; }
     }
 }

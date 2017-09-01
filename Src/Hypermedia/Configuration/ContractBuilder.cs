@@ -85,7 +85,7 @@ namespace Hypermedia.Configuration
         /// <returns>The field that was created.</returns>
         RuntimeField CreateField(string name)
         {
-            var field = new RuntimeField(name);
+            var field = new RuntimeField(_contract, name);
 
             _fields.Add(field);
 
