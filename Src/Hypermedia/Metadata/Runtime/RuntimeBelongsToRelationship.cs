@@ -8,8 +8,9 @@ namespace Hypermedia.Metadata.Runtime
         /// <summary>
         /// Constructor.
         /// </summary>
+        /// <param name="contract">The contract that the field belongs to.</param>
         /// <param name="name">The name of the relationship.</param>
-        internal RuntimeBelongsToRelationship(string name) : base(name) { }
+        internal RuntimeBelongsToRelationship(IContract contract, string name) : base(contract, name) { }
 
         /// <summary>
         /// Constructor.

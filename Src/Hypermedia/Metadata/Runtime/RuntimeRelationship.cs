@@ -7,10 +7,10 @@ namespace Hypermedia.Metadata.Runtime
         /// <summary>
         /// Constructor.
         /// </summary>
+        /// <param name="contract">The contract that the field belongs to.</param>
         /// <param name="name">The name of the relationship.</param>
-        protected RuntimeRelationship(string name)
+        protected RuntimeRelationship(IContract contract, string name) : base(contract, name)
         {
-            Name = name;
             Options = FieldOptions.Relationship;
         }
 
@@ -18,9 +18,8 @@ namespace Hypermedia.Metadata.Runtime
         /// Constructor.
         /// </summary>
         /// <param name="field">The field to initialize the relationship from.</param>
-        protected RuntimeRelationship(RuntimeField field)
+        protected RuntimeRelationship(RuntimeField field) : this(field.Contract, field.Name)
         {
-            Name = field.Name;
             Options = field.Options | FieldOptions.Relationship;
             Accessor = field.Accessor;
         }

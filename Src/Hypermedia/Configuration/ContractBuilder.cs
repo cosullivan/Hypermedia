@@ -153,7 +153,7 @@ namespace Hypermedia.Configuration
 
             return new BelongsToRelationshipBuilder<T>(
                 this,
-                Add(new RuntimeBelongsToRelationship(name)
+                Add(new RuntimeBelongsToRelationship(_contract, name)
                 {
                     Exists = resource => predicate((T)resource),
                     RelatedTo = typeof(TOther)
@@ -193,7 +193,7 @@ namespace Hypermedia.Configuration
 
             return new HasManyRelationshipBuilder<T>(
                 this,
-                Add(new RuntimeHasManyRelationship(name)
+                Add(new RuntimeHasManyRelationship(_contract, name)
                 {
                     Exists = resource => predicate((T)resource),
                     RelatedTo = typeof(TOther)
