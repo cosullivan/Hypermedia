@@ -1,5 +1,4 @@
-﻿using System;
-using System.Web.Http;
+﻿using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.ExceptionHandling;
 using Autofac.Integration.WebApi;
