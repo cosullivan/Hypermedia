@@ -19,25 +19,16 @@ namespace Hypermedia.Sample.StackOverflow
         /// <summary>
         /// Gets an instance of the users repository.
         /// </summary>
-        public IUserRepository Users
-        {
-            get { return StackOverflowUserRepository.FromXml(Path.Combine(_folder, "users.xml")); }
-        }
+        public IUserRepository Users => StackOverflowUserRepository.FromXml(Path.Combine(_folder, "users.xml"));
 
         /// <summary>
         /// Gets an instance of the posts repository.
         /// </summary>
-        public IPostRepository Posts
-        {
-            get {  return StackOverflowPostRepository.FromXml(Path.Combine(_folder, "posts.xml")); }
-        }
+        public IPostRepository Posts => StackOverflowPostRepository.FromXml(Path.Combine(_folder, "posts.xml"));
 
         /// <summary>
         /// Gets an instance of the comments repository.
         /// </summary>
-        public ICommentRepository Comments
-        {
-            get { return StackOverflowCommentRepository.FromXml(Path.Combine(_folder, "comments.xml")); }
-        }
+        public ICommentRepository Comments => StackOverflowCommentRepository.FromXml(Path.Combine(_folder, "comments.xml"));
     }
 }

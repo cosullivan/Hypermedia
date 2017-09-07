@@ -1,6 +1,4 @@
 ﻿namespace Hypermedia.Sample.Data
 {
-    public interface IUserRepository : IRepository<User>
-    {
-    }
+    public interface IUserRepository : IRepository<User> { }
 }

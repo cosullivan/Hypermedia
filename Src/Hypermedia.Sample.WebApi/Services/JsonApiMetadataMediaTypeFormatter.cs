@@ -80,7 +80,7 @@ namespace Hypermedia.Sample.WebApi.Services
                 var metadata = new JsonMember("meta", 
                     new JsonObject(
                         new JsonMember("version", new JsonString("1.0.0.0")),
-                        new JsonMember("time", new JsonString(DateTime.Now.ToString(CultureInfo.InvariantCulture)))));
+                        new JsonMember("time", new JsonString(DateTime.Now.ToString("D")))));
 
                 var members = jsonObject.Members.Union(new[] { metadata });
 

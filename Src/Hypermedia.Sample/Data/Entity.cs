@@ -2,7 +2,7 @@
 
 namespace Hypermedia.Sample.Data
 {
-    public abstract class Entity
+    public abstract class Entity : IEntityWithId
     {
         /// <summary>
         /// Gets or sets the ID of the resource.

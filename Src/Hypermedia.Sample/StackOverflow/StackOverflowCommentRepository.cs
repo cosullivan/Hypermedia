@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 using Hypermedia.Sample.Data;
 
@@ -53,15 +55,20 @@ namespace Hypermedia.Sample.StackOverflow
                 Text = node.GetString("Text")
             };
         }
-
+        
         /// <summary>
         /// Gets the list of comments that are assigned to the given post id.
         /// </summary>
         /// <param name="postIds">The IDs of the post to return the comments for.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The list of comments that are assigned to the given list of post ids.</returns>
-        public IReadOnlyList<Comment> GetByPostId(IReadOnlyList<int> postIds)
+        public Task<IReadOnlyList<Comment>> GetByPostIdAsync(
+            IReadOnlyList<int> postIds,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
-            return Dictionary.Values.Where(post => postIds.Contains(post.PostId)).ToList();
+            var comments = Dictionary.Values.Where(post => postIds.Contains(post.PostId)).ToReadOnlyList();
+
+            return Task.FromResult(comments);
         }
     }
 }

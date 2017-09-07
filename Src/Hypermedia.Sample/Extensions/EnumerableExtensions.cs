@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Hypermedia.Sample.WebApi
+namespace Hypermedia.Sample
 {
     public static class EnumerableExtensions
     {
@@ -40,6 +40,22 @@ namespace Hypermedia.Sample.WebApi
             }
 
             return source.Select(selector).Distinct().ToList();
+        }
+
+        /// <summary>
+        /// Returns the given input as a read only list.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the elements of <paramref name="source"/>.</typeparam>
+        /// <param name="source">The sequence of elements to return as a read only list.</param>
+        /// <returns>The read only list of elements.</returns>
+        public static IReadOnlyList<TSource> ToReadOnlyList<TSource>(this IEnumerable<TSource> source)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            return source.ToList();
         }
     }
 }

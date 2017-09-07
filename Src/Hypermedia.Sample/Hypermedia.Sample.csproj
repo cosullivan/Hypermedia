@@ -43,10 +43,12 @@
     <Compile Include="Data\Comment.cs" />
     <Compile Include="Data\ICommentRepository.cs" />
     <Compile Include="Data\IDatabase.cs" />
+    <Compile Include="Data\IEntityWithId.cs" />
     <Compile Include="Data\IPostRepository.cs" />
     <Compile Include="Data\IRepository.cs" />
     <Compile Include="Data\IUserRepository.cs" />
     <Compile Include="Data\PostType.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\XmlNodeExtensions.cs" />
     <Compile Include="Extensions\EntityExtensions.cs" />
     <Compile Include="Data\Post.cs" />

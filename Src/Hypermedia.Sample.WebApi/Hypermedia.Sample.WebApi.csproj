@@ -20,6 +20,7 @@
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
     <TargetFrameworkProfile />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,9 +44,15 @@
       <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Autofac.Integration.Owin, Version=4.1.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.Owin.4.1.0\lib\net45\Autofac.Integration.Owin.dll</HintPath>
+    </Reference>
     <Reference Include="Autofac.Integration.WebApi, Version=3.4.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.WebApi2.3.4.0\lib\net45\Autofac.Integration.WebApi.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="Autofac.Integration.WebApi.Owin, Version=4.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.WebApi2.Owin.4.0.0\lib\net45\Autofac.Integration.WebApi.Owin.dll</HintPath>
     </Reference>
     <Reference Include="AutoMapper, Version=4.2.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoMapper.4.2.0\lib\net45\AutoMapper.dll</HintPath>
@@ -53,9 +60,18 @@
     </Reference>
     <Reference Include="JsonLite, Version=2.0.2.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Owin, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.3.1.0\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.3.1.0\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
     <Reference Include="Swashbuckle.Core">
       <HintPath>..\packages\Swashbuckle.Core.5.0.0\lib\net40\Swashbuckle.Core.dll</HintPath>
@@ -96,6 +112,9 @@
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Http.Owin, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Owin.5.2.3\lib\net45\System.Web.Http.Owin.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
@@ -154,30 +173,42 @@
     <Content Include="App_Data\mythology.stackexchange.com\Tags.xml" />
     <Content Include="App_Data\mythology.stackexchange.com\Users.xml" />
     <Content Include="App_Data\mythology.stackexchange.com\Votes.xml" />
-    <Content Include="Global.asax" />
     <Content Include="Web.config" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="ContainerFactory.cs" />
-    <Compile Include="Controllers\CreateCommentController.cs" />
-    <Compile Include="Controllers\GetCommentsByPostIdController.cs" />
-    <Compile Include="Controllers\GetPostByIdController.cs" />
-    <Compile Include="Controllers\GetPostByOwnerUserIdController.cs" />
-    <Compile Include="Controllers\GetPostsController.cs" />
-    <Compile Include="Controllers\GetUserByIdController.cs" />
-    <Compile Include="Controllers\GetUsersController.cs" />
+    <Compile Include="Controllers\Comments\CreateCommentController.cs" />
+    <Compile Include="Controllers\Comments\GetCommentsByPostIdController.cs" />
+    <Compile Include="Controllers\Posts\GetPostByIdController.cs" />
+    <Compile Include="Controllers\Posts\GetPostByOwnerUserIdController.cs" />
+    <Compile Include="Controllers\Posts\GetPostsController.cs" />
+    <Compile Include="Controllers\ResourceController.cs" />
+    <Compile Include="Controllers\Users\GetUserByIdController.cs" />
+    <Compile Include="Controllers\Users\GetUsersController.cs" />
+    <Compile Include="Services\Enrichment\CompositeResourceEnricherFactory.cs" />
+    <Compile Include="Services\Enrichment\DelegatingBelongsToResourceAccessor.cs" />
+    <Compile Include="Services\Enrichment\DelegatingBelongsToResourceEnricher.cs" />
+    <Compile Include="Services\Enrichment\DelegatingHasManyResourceAccessor.cs" />
+    <Compile Include="Services\Enrichment\DelegatingHasManyResourceEnricher.cs" />
+    <Compile Include="Services\Enrichment\DelegatingRepositoryAccessor.cs" />
+    <Compile Include="Services\Enrichment\IBelongsToResourceAccessor.cs" />
+    <Compile Include="Services\Enrichment\IHasManyResourceAccessor.cs" />
+    <Compile Include="Services\Enrichment\IRepositoryAccessor.cs" />
+    <Compile Include="Services\Enrichment\IRepositoryAccessorFactory.cs" />
+    <Compile Include="Services\Enrichment\IResourceAccessorFactory.cs" />
+    <Compile Include="Services\Enrichment\IResourceEnricher.cs" />
+    <Compile Include="Services\Enrichment\IResourceEnricherFactory.cs" />
+    <Compile Include="Services\Enrichment\IResourceEnrichmentService.cs" />
+    <Compile Include="Services\Enrichment\RepositoryAccessorFactory.cs" />
+    <Compile Include="Services\Enrichment\ResourceAccessorFactory.cs" />
+    <Compile Include="Services\Enrichment\ResourceEnricherFactory.cs" />
+    <Compile Include="Services\Enrichment\ResourceEnrichmentService.cs" />
     <Compile Include="Services\ExceptionLogger.cs" />
-    <Compile Include="Extensions\EnumerableExtensions.cs" />
-    <Compile Include="Global.asax.cs">
-      <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources\CommentResourceExtensions.cs" />
-    <Compile Include="Resources\PostResourceExtensions.cs" />
     <Compile Include="Resources\Resource.cs" />
     <Compile Include="Services\JsonApiMetadataMediaTypeFormatter.cs" />
+    <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\PublishProfiles\hypermediasamplewebapi - Web Deploy %282%29.pubxml" />
@@ -188,6 +219,9 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Extensions\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

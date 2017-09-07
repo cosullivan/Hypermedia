@@ -19,16 +19,6 @@ namespace Hypermedia.Sample.WebApi.Resources
         }
 
         /// <summary>
-        /// Calculate the total number of days since creation.
-        /// </summary>
-        /// <param name="entity">The entity to calculate the days since creation for.</param>
-        /// <returns>The number of days since the entity was created.</returns>
-        public static int CalculateDaysSinceCreation(Entity entity)
-        {
-            return (int)DateTimeOffset.Now.Subtract(entity.CreationDate).TotalDays;
-        }
-
-        /// <summary>
         /// Initialize the mappings.
         /// </summary>
         /// <param name="configuration">The configuration to use for initializing the mappings.</param>
@@ -73,94 +63,94 @@ namespace Hypermedia.Sample.WebApi.Resources
             return entities.SelectList(entity => Mapper.Map < TEntity, TResource>(entity));
         }
 
-        /// <summary>
-        /// Returns the user as its defined resource.
-        /// </summary>
-        /// <param name="user">The user to return as a resource.</param>
-        /// <returns>The user resouce that was mapped from the user.</returns>
-        public static UserResource AsResource(this User user)
-        {
-            if (user == null)
-            {
-                return null;
-            }
+        ///// <summary>
+        ///// Returns the user as its defined resource.
+        ///// </summary>
+        ///// <param name="user">The user to return as a resource.</param>
+        ///// <returns>The user resouce that was mapped from the user.</returns>
+        //public static UserResource AsResource(this User user)
+        //{
+        //    if (user == null)
+        //    {
+        //        return null;
+        //    }
 
-            return Map<User, UserResource>(user);
-        }
+        //    return Map<User, UserResource>(user);
+        //}
 
-        /// <summary>
-        /// Returns the list of users as resources.
-        /// </summary>
-        /// <param name="users">The list of users to return as resources.</param>
-        /// <returns>The users resouces that were mapped from the users.</returns>
-        public static IReadOnlyList<UserResource> AsResource(this IEnumerable<User> users)
-        {
-            if (users == null)
-            {
-                return null;
-            }
+        ///// <summary>
+        ///// Returns the list of users as resources.
+        ///// </summary>
+        ///// <param name="users">The list of users to return as resources.</param>
+        ///// <returns>The users resouces that were mapped from the users.</returns>
+        //public static IReadOnlyList<UserResource> AsResource(this IEnumerable<User> users)
+        //{
+        //    if (users == null)
+        //    {
+        //        return null;
+        //    }
 
-            return Map<User, UserResource>(users);
-        }
+        //    return Map<User, UserResource>(users);
+        //}
 
-        /// <summary>
-        /// Returns the post as its defined resource.
-        /// </summary>
-        /// <param name="post">The post to return as a resource.</param>
-        /// <returns>The post resouce that was mapped from the post.</returns>
-        public static PostResource AsResource(this Post post)
-        {
-            if (post == null)
-            {
-                return null;
-            }
+        ///// <summary>
+        ///// Returns the post as its defined resource.
+        ///// </summary>
+        ///// <param name="post">The post to return as a resource.</param>
+        ///// <returns>The post resouce that was mapped from the post.</returns>
+        //public static PostResource AsResource(this Post post)
+        //{
+        //    if (post == null)
+        //    {
+        //        return null;
+        //    }
 
-            return Map<Post, PostResource>(post);
-        }
+        //    return Map<Post, PostResource>(post);
+        //}
 
-        /// <summary>
-        /// Returns the list of post as resources.
-        /// </summary>
-        /// <param name="posts">The list of posts to return as resources.</param>
-        /// <returns>The post resouces that were mapped from the posts.</returns>
-        public static IReadOnlyList<PostResource> AsResource(this IEnumerable<Post> posts)
-        {
-            if (posts == null)
-            {
-                return null;
-            }
+        ///// <summary>
+        ///// Returns the list of post as resources.
+        ///// </summary>
+        ///// <param name="posts">The list of posts to return as resources.</param>
+        ///// <returns>The post resouces that were mapped from the posts.</returns>
+        //public static IReadOnlyList<PostResource> AsResource(this IEnumerable<Post> posts)
+        //{
+        //    if (posts == null)
+        //    {
+        //        return null;
+        //    }
 
-            return Map<Post, PostResource>(posts);
-        }
+        //    return Map<Post, PostResource>(posts);
+        //}
 
-        /// <summary>
-        /// Returns the comment as its defined resource.
-        /// </summary>
-        /// <param name="comment">The comment to return as a resource.</param>
-        /// <returns>The comment resouce that was mapped from the comment.</returns>
-        public static CommentResource AsResource(this Comment comment)
-        {
-            if (comment == null)
-            {
-                return null;
-            }
+        ///// <summary>
+        ///// Returns the comment as its defined resource.
+        ///// </summary>
+        ///// <param name="comment">The comment to return as a resource.</param>
+        ///// <returns>The comment resouce that was mapped from the comment.</returns>
+        //public static CommentResource AsResource(this Comment comment)
+        //{
+        //    if (comment == null)
+        //    {
+        //        return null;
+        //    }
 
-            return Map<Comment, CommentResource>(comment);
-        }
+        //    return Map<Comment, CommentResource>(comment);
+        //}
 
-        /// <summary>
-        /// Returns the list of comments as resources.
-        /// </summary>
-        /// <param name="comments">The list of comments to return as resources.</param>
-        /// <returns>The comments resouces that were mapped from the comments.</returns>
-        public static IReadOnlyList<CommentResource> AsResource(this IEnumerable<Comment> comments)
-        {
-            if (comments == null)
-            {
-                return null;
-            }
+        ///// <summary>
+        ///// Returns the list of comments as resources.
+        ///// </summary>
+        ///// <param name="comments">The list of comments to return as resources.</param>
+        ///// <returns>The comments resouces that were mapped from the comments.</returns>
+        //public static IReadOnlyList<CommentResource> AsResource(this IEnumerable<Comment> comments)
+        //{
+        //    if (comments == null)
+        //    {
+        //        return null;
+        //    }
 
-            return Map<Comment, CommentResource>(comments);
-        }
+        //    return Map<Comment, CommentResource>(comments);
+        //}
     }
 }

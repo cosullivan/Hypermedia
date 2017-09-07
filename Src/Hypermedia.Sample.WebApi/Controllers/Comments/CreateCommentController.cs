@@ -2,21 +2,10 @@
 using Hypermedia.Sample.Data;
 using Hypermedia.Sample.Resources;
 
-namespace Hypermedia.Sample.WebApi.Controllers
+namespace Hypermedia.Sample.WebApi.Controllers.Comments
 {
-    public class CreateCommentController : ApiController
+    public sealed class CreateCommentController : ResourceController<Comment, CommentResource>
     {
-        readonly IDatabase _database;
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="database">The databsae instance.</param>
-        public CreateCommentController(IDatabase database)
-        {
-            _database = database;
-        }
-
         /// <summary>
         /// Creates a comment.
         /// </summary>

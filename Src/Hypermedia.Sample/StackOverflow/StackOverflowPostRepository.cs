@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 using Hypermedia.Sample.Data;
 
@@ -71,9 +73,14 @@ namespace Hypermedia.Sample.StackOverflow
         {
             switch (value)
             {
-                case 1: return Data.PostType.Questions;
-                case 2: return Data.PostType.Answers;
-                default: return Data.PostType.Others;
+                case 1:
+                    return Data.PostType.Questions;
+
+                case 2:
+                    return Data.PostType.Answers;
+
+                default:
+                    return Data.PostType.Others;
             }
         }
 
@@ -81,10 +88,15 @@ namespace Hypermedia.Sample.StackOverflow
         /// Gets the list of posts that are assigned to the given user.
         /// </summary>
         /// <param name="userId">The ID of the user to return the posts for.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The list of posts that are assigned the given IDs.</returns>
-        public IReadOnlyList<Post> GetByOwnerUserId(int userId)
+        public Task<IReadOnlyList<Post>> GetByOwnerUserIdAsync(
+            int userId,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
-            return Dictionary.Values.Where(post => post.OwnerUserId == userId).ToList();
+            var posts = Dictionary.Values.Where(post => post.OwnerUserId == userId).ToReadOnlyList();
+
+            return Task.FromResult(posts);
         }
     }
 }

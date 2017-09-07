@@ -1,47 +1,37 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web.Http;
-using Hypermedia.JsonApi.WebApi;
 using Hypermedia.Sample.Data;
 using Hypermedia.Sample.Resources;
-using Hypermedia.Sample.WebApi.Resources;
 using Hypermedia.WebApi;
 
-namespace Hypermedia.Sample.WebApi.Controllers
+namespace Hypermedia.Sample.WebApi.Controllers.Posts
 {
-    public class GetPostsController : ApiController
+    public sealed class GetPostsController : ResourceController<Post, PostResource>
     {
-        readonly IDatabase _database;
-
         /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="database">The databsae instance.</param>
-        public GetPostsController(IDatabase database)
-        {
-            _database = database;
-        }
-
-        /// <summary>
-        /// Returns the posts from a given offset to a limit.
+        /// Returns all of the posts matching the search criteria.
         /// </summary>
         /// <param name="q">The search text to apply to the results.</param>
         /// <param name="skip">The number of items to skip.</param>
         /// <param name="take">The limit to the number of items to return.</param>
-        /// <param name="metadata">The request metadtaa.</param>
-        /// <returns>The HTTP action result that represents the posts.</returns>
+        /// <param name="requestMetadata">The request metadata.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The HTTP action result that represents the result of the action.</returns>
         [HttpGet, Route("v1/posts")]
-        public IHttpActionResult Execute(string q = null, int skip = 0, int take = 100, IRequestMetadata<PostResource> metadata = null)
+        public async Task<IHttpActionResult> ExecuteAsync(
+            string q = null, 
+            int skip = 0, 
+            int take = 100,
+            IRequestMetadata<PostResource> requestMetadata = null,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
-            var posts = _database.Posts.GetAll(Predicate(q), skip, take).AsResource();
+            var posts = await Database.Posts.GetAllAsync(Predicate(q), skip, take, cancellationToken);
 
-            foreach (var post in posts)
-            {
-                post.Populate(_database);
-            }
-
-            return Ok(posts);
+            return await OkAsync(posts, requestMetadata, cancellationToken);
         }
-
+        
         /// <summary>
         /// Returns a prediate to use for filtering the entities to return.
         /// </summary>
