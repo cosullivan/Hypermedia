@@ -23,6 +23,11 @@ namespace Hypermedia.WebApi
         /// <param name="contractResolver">The contract resolver to use.</param>
         /// <returns>true if the entity could be patched, false if not.</returns>
         bool TryPatch(T entity, IContractResolver contractResolver);
+
+        /// <summary>
+        /// The list of members that are being patched.
+        /// </summary>
+        IReadOnlyList<IMember> Members { get; }
     }
 
     public static class PatchExtensions
@@ -66,8 +71,7 @@ namespace Hypermedia.WebApi
         /// <returns>true if the entity could be patched, false if not.</returns>
         static bool TryPatchWithInclude<T>(IPatch<T> patch, T entity, IEnumerable<string> includedFields)
         {
-            IContract contract;
-            if (patch.ContractResolver.TryResolve(typeof (T), out contract) == false)
+            if (patch.ContractResolver.TryResolve(typeof (T), out IContract contract) == false)
             {
                 return false;
             }
@@ -90,8 +94,7 @@ namespace Hypermedia.WebApi
         /// <returns>true if the entity could be patched, false if not.</returns>
         static bool TryPatchWithIgnore<T>(IPatch<T> patch, T entity, IEnumerable<string> ignoredFields)
         {
-            IContract contract;
-            if (patch.ContractResolver.TryResolve(typeof(T), out contract) == false)
+            if (patch.ContractResolver.TryResolve(typeof(T), out IContract contract) == false)
             {
                 return false;
             }

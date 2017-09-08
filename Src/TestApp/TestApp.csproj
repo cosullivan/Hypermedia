@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="JsonLite, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Json.Lite.2.0.2\lib\net45\JsonLite.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -48,8 +51,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Hypermedia.JsonApi.WebApi\Hypermedia.JsonApi.WebApi.csproj">
+      <Project>{0B2CBD5A-413F-4BCB-824D-580CCD2BCC82}</Project>
+      <Name>Hypermedia.JsonApi.WebApi</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Hypermedia.JsonApi\Hypermedia.JsonApi.csproj">
       <Project>{ad404ceb-4657-49a2-bc81-1eb73b5f60fa}</Project>
       <Name>Hypermedia.JsonApi</Name>

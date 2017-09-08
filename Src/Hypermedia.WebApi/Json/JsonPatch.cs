@@ -1,4 +1,6 @@
-﻿using Hypermedia.Json;
+﻿using System;
+using System.Collections.Generic;
+using Hypermedia.Json;
 using Hypermedia.Metadata;
 using JsonLite.Ast;
 
@@ -33,8 +35,7 @@ namespace Hypermedia.WebApi.Json
         {
             try
             {
-                IContract contract;
-                if (contractResolver.TryResolve(typeof(T), out contract) == false)
+                if (contractResolver.TryResolve(typeof(T), out IContract contract) == false)
                 {
                     return false;
                 }
@@ -51,6 +52,11 @@ namespace Hypermedia.WebApi.Json
 
             return false;
         }
+
+        /// <summary>
+        /// The list of members that are being patched.
+        /// </summary>
+        public IReadOnlyList<IMember> Members => throw new NotImplementedException();
 
         /// <summary>
         /// Gets the resource contract resolver that is to be used for the patching.

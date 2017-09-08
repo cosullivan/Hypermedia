@@ -1,4 +1,6 @@
-﻿using Hypermedia.Json;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Hypermedia.Json;
 using Hypermedia.Metadata;
 using Hypermedia.WebApi;
 using JsonLite.Ast;
@@ -25,6 +27,26 @@ namespace Hypermedia.JsonApi.WebApi
         }
 
         /// <summary>
+        /// Attempt to resolve the contract that is represented in the JSON object.
+        /// </summary>
+        /// <param name="contractResolver">The contract resolver to use.</param>
+        /// <param name="jsonObject">The JSON object that contains the contract definition.</param>
+        /// <param name="contract">The contract that was resolved.</param>
+        /// <returns>true if the contract could be resolved, false if not.</returns>
+        bool TryResolveContact(IContractResolver contractResolver, JsonObject jsonObject, out IContract contract)
+        {
+            var typeAttribute = jsonObject?["type"];
+
+            if (typeAttribute == null)
+            {
+                contract = null;
+                return false;
+            }
+
+            return contractResolver.TryResolve(((JsonString) typeAttribute).Value, out contract);
+        }
+
+        /// <summary>
         /// Attempt to patch the given entity.
         /// </summary>
         /// <param name="entity">The entity to apply the patch to.</param>
@@ -36,14 +58,7 @@ namespace Hypermedia.JsonApi.WebApi
             {
                 var jsonObject = _jsonValue["data"] as JsonObject;
 
-                var typeAttribute = jsonObject?["type"];
-                if (typeAttribute == null)
-                {
-                    return false;
-                }
-
-                IContract contract;
-                if (contractResolver.TryResolve(((JsonString)typeAttribute).Value, out contract) == false)
+                if (TryResolveContact(contractResolver, jsonObject, out IContract contract) == false)
                 {
                     return false;
                 }
@@ -57,6 +72,59 @@ namespace Hypermedia.JsonApi.WebApi
             catch { }
 
             return false;
+        }
+
+        /// <summary>
+        /// Determine the members that are defined in the patch content.
+        /// </summary>
+        /// <param name="contract">The contract to use to return the members from.</param>
+        /// <param name="jsonObject">The JSON object that defines the attributes & relationships.</param>
+        /// <returns>The list of members that are defined in the patch content.</returns>
+        IEnumerable<IMember> DetermineMembers(IContract contract, JsonObject jsonObject)
+        {
+            var dictionary = contract.Fields.ToDictionary(k => _fieldNamingStratgey.GetName(k.Name));
+
+            var attributes = jsonObject["attributes"] as JsonObject;
+            if (attributes != null)
+            {
+                foreach (var attribute in attributes.Members)
+                {
+                    if (dictionary.TryGetValue(attribute.Name, out IField member))
+                    {
+                        yield return member;
+                    }
+                }
+            }
+
+            var relationships = jsonObject["relationships"] as JsonObject;
+            if (relationships != null)
+            {
+                foreach (var relationship in relationships.Members)
+                {
+                    if (dictionary.TryGetValue(relationship.Name, out IField member))
+                    {
+                        yield return member;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// The list of members that are being patched.
+        /// </summary>
+        public IReadOnlyList<IMember> Members
+        {
+            get
+            {
+                var jsonObject = _jsonValue["data"] as JsonObject;
+
+                if (TryResolveContact(ContractResolver, jsonObject, out IContract contract) == false)
+                {
+                    return new IMember[0];
+                }
+
+                return DetermineMembers(contract, jsonObject).ToList();
+            }
         }
 
         /// <summary>
