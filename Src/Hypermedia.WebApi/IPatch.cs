@@ -25,9 +25,9 @@ namespace Hypermedia.WebApi
         bool TryPatch(T entity, IContractResolver contractResolver);
 
         /// <summary>
-        /// The list of members that are being patched.
+        /// Returns the list of members that are being patched.
         /// </summary>
-        IReadOnlyList<IMember> Members { get; }
+        IReadOnlyList<IMember> Members();
     }
 
     public static class PatchExtensions

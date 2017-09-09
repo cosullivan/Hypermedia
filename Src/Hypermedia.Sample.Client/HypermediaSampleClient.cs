@@ -146,6 +146,18 @@ namespace Hypermedia.Sample.Client
         }
 
         /// <summary>
+        /// Create a comment.
+        /// </summary>
+        /// <param name="comment">The comment to create.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The comment that was returned from the server.</returns>
+        public async Task UpdateAsync(CommentResource comment, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var response = await _httpClient.PatchAsync($"v1/comments/{comment.Id}", new JsonApiContent<CommentResource>(comment, _contractResolver), cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()

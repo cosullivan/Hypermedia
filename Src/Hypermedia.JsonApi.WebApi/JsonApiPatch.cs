@@ -75,12 +75,27 @@ namespace Hypermedia.JsonApi.WebApi
         }
 
         /// <summary>
+        /// Returns the list of members that are being patched.
+        /// </summary>
+        public IReadOnlyList<IMember> Members()
+        {
+            var jsonObject = _jsonValue["data"] as JsonObject;
+
+            if (TryResolveContact(ContractResolver, jsonObject, out IContract contract) == false)
+            {
+                return new IMember[0];
+            }
+
+            return ExtractMembers(contract, jsonObject).ToList();
+        }
+
+        /// <summary>
         /// Determine the members that are defined in the patch content.
         /// </summary>
         /// <param name="contract">The contract to use to return the members from.</param>
         /// <param name="jsonObject">The JSON object that defines the attributes & relationships.</param>
         /// <returns>The list of members that are defined in the patch content.</returns>
-        IEnumerable<IMember> DetermineMembers(IContract contract, JsonObject jsonObject)
+        IEnumerable<IMember> ExtractMembers(IContract contract, JsonObject jsonObject)
         {
             var dictionary = contract.Fields.ToDictionary(k => _fieldNamingStratgey.GetName(k.Name));
 
@@ -106,24 +121,6 @@ namespace Hypermedia.JsonApi.WebApi
                         yield return member;
                     }
                 }
-            }
-        }
-
-        /// <summary>
-        /// The list of members that are being patched.
-        /// </summary>
-        public IReadOnlyList<IMember> Members
-        {
-            get
-            {
-                var jsonObject = _jsonValue["data"] as JsonObject;
-
-                if (TryResolveContact(ContractResolver, jsonObject, out IContract contract) == false)
-                {
-                    return new IMember[0];
-                }
-
-                return DetermineMembers(contract, jsonObject).ToList();
             }
         }
 

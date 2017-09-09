@@ -180,6 +180,7 @@
     <Compile Include="ContainerFactory.cs" />
     <Compile Include="Controllers\Comments\CreateCommentController.cs" />
     <Compile Include="Controllers\Comments\GetCommentsByPostIdController.cs" />
+    <Compile Include="Controllers\Comments\UpdateCommentController.cs" />
     <Compile Include="Controllers\Posts\GetPostByIdController.cs" />
     <Compile Include="Controllers\Posts\GetPostByOwnerUserIdController.cs" />
     <Compile Include="Controllers\Posts\GetPostsController.cs" />

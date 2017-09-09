@@ -4,6 +4,7 @@ using Hypermedia.Json;
 using Hypermedia.JsonApi;
 using Hypermedia.JsonApi.WebApi;
 using Hypermedia.Metadata;
+using Hypermedia.Sample.Client;
 using Hypermedia.Sample.Resources;
 using Hypermedia.Sample.WebApi;
 using JsonLite.Ast;
@@ -14,21 +15,29 @@ namespace TestApp
     {
         static void Main(string[] args)
         {
-            var json = (JsonObject)JsonLite.Json.CreateAst(System.IO.File.ReadAllText(@"C:\Dev\Hypermedia\Src\Hypermedia.JsonApi.Tests\CanDeserialize.json"));
-            json = new JsonObject(json.Members[1]);
+            //var json = (JsonObject)JsonLite.Json.CreateAst(System.IO.File.ReadAllText(@"C:\Dev\Hypermedia\Src\Hypermedia.JsonApi.Tests\CanDeserialize.json"));
+            //json = new JsonObject(json.Members[1]);
 
-            var resolver = CreateResolver();
+            //var resolver = CreateResolver();
 
-            var patch = new JsonApiPatch<PostResource>(resolver, new DasherizedFieldNamingStrategy(), json);
-            foreach (var member in patch.Members)
-            {
-                Console.WriteLine(member.Name);
-            }
+            //var patch = new JsonApiPatch<PostResource>(resolver, new DasherizedFieldNamingStrategy(), json);
+            //foreach (var member in patch.Members)
+            //{
+            //    Console.WriteLine(member.Name);
+            //}
 
             //resolver.TryResolve(typeof(PostResource), out IContract contract);
             //var relationship = contract.Relationship(nameof(PostResource.OwnerUser));
 
             //Console.WriteLine("{0} => {1}", relationship.Name, relationship.Inverse(resolver).Name);
+
+            using (var client = new HypermediaSampleClient("http://hypermediasamplewebapi.azurewebsites.net/", ""))
+            {
+                var comments = client.GetCommentsByPostIdAsync(39).Result;
+                Console.WriteLine(comments.Count);
+
+                client.UpdateAsync(comments[0]).Wait();
+            }
         }
 
         /// <summary>

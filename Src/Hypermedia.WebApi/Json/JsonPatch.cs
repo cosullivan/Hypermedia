@@ -54,9 +54,12 @@ namespace Hypermedia.WebApi.Json
         }
 
         /// <summary>
-        /// The list of members that are being patched.
+        /// Returns the list of members that are being patched.
         /// </summary>
-        public IReadOnlyList<IMember> Members => throw new NotImplementedException();
+        public IReadOnlyList<IMember> Members()
+        {
+            throw new NotSupportedException();
+        }
 
         /// <summary>
         /// Gets the resource contract resolver that is to be used for the patching.
