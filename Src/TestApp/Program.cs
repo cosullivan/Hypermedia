@@ -22,7 +22,7 @@ namespace TestApp
             Console.WriteLine(json.Members.Count);
 
             var array = (JsonArray) json.Members[0].Value;
-            var data = new JsonObject(new JsonMember("data", new JsonArray(array.Take(50000).ToList())));
+            var data = new JsonObject(new JsonMember("data", new JsonArray(array.Take(500000).ToList())));
 
             var serializer = new JsonApiSerializer(CreateRtioResolver());
             var timer = new Stopwatch();

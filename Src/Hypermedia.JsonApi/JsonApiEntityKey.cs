@@ -8,39 +8,36 @@ namespace Hypermedia.JsonApi
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="type">The type of the entity.</param>
-        /// <param name="id">The ID of the entity.</param>
-        internal JsonApiEntityKey(string type, string id)
+        /// <param name="jsonObject">The JSON object that contains the key information.</param>
+        internal JsonApiEntityKey(JsonObject jsonObject)
         {
             // ReSharper disable once JoinNullCheckWithUsage
-            if (type == null)
+            if (jsonObject == null)
             {
-                throw new ArgumentNullException(nameof(type));
+                throw new ArgumentNullException(nameof(jsonObject));
             }
 
-            // ReSharper disable once JoinNullCheckWithUsage
-            if (id == null)
+            Type = null;
+            Id = null;
+
+            foreach (var member in jsonObject.Members)
             {
-                throw new ArgumentNullException(nameof(id));
+                switch (member.Name)
+                {
+                    case "type":
+                        Type = ((JsonString)member.Value).Value;
+                        break;
+
+                    case "id":
+                        Id = member.Value.Stringify();
+                        break;
+                }
             }
 
-            Type = type.ToLower();
-            Id = id.ToLower();
-        }
-
-        /// <summary>
-        /// Creates a key representation that is used for comparissons.
-        /// </summary>
-        /// <param name="jsonObject">The JSON object to create the key for.</param>
-        /// <returns>The key that represents the given JSON object.</returns>
-        internal static JsonApiEntityKey CreateKey(JsonObject jsonObject)
-        {
-            if (jsonObject["id"] != null)
+            if (Type == null)
             {
-                return new JsonApiEntityKey(jsonObject["type"].Stringify(), jsonObject["id"].Stringify());
+                throw new ArgumentException("Could not find the type.");
             }
-
-            return new JsonApiEntityKey(jsonObject["type"].Stringify(), String.Empty);
         }
 
         /// <summary>

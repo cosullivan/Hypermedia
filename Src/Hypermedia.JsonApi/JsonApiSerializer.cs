@@ -177,7 +177,7 @@ namespace Hypermedia.JsonApi
         {
             readonly IContractResolver _contractResolver;
             readonly IJsonSerializer _jsonSerializer;
-            readonly HashSet<JsonObject> _visited = new HashSet<JsonObject>(JsonApiEntityKeyEqualityComparer2.Instance);
+            readonly HashSet<JsonApiEntityKey> _visited = new HashSet<JsonApiEntityKey>(JsonApiEntityKeyEqualityComparer.Instance);
 
             /// <summary>
             /// Constructor.
@@ -222,7 +222,7 @@ namespace Hypermedia.JsonApi
             /// <returns>true if the entity represented by the JSON object has been visitied, false if not.</returns>
             bool HasVisited(JsonObject jsonObject)
             {
-                return _visited.Contains(jsonObject);
+                return _visited.Contains(new JsonApiEntityKey(jsonObject));
             }
 
             /// <summary>
@@ -231,7 +231,7 @@ namespace Hypermedia.JsonApi
             /// <param name="jsonObject">The JSON object that represents an entity.</param>
             void Visit(JsonObject jsonObject)
             {
-                _visited.Add(jsonObject);
+                _visited.Add(new JsonApiEntityKey(jsonObject));
             }
 
             /// <summary>
@@ -802,7 +802,7 @@ namespace Hypermedia.JsonApi
             readonly IContractResolver _contractResolver;
             readonly IJsonApiEntityCache _instanceCache;
             readonly IJsonSerializer _jsonSerializer;
-            readonly IJsonApiEntityKeyCache _entityKeyCache;
+            readonly JsonApiObjectCache _objectCache;
 
             /// <summary>
             /// Constructor.
@@ -817,7 +817,7 @@ namespace Hypermedia.JsonApi
                 _contractResolver = contractResolver;
                 _instanceCache = instanceCache;
                 _jsonSerializer = new JsonSerializer(new JsonConverterFactory(), fieldNamingStrategy);
-                _entityKeyCache = new JsonApiEntityKeyCache(rootObject);
+                _objectCache = new JsonApiObjectCache(rootObject);
             }
 
             /// <summary>
@@ -849,14 +849,9 @@ namespace Hypermedia.JsonApi
                     throw new JsonApiException("Can not return a single item as the top level value is an array.");
                 }
 
-
-                HERE: maybe try adding a serialization state
-                 _tracking[object].State = DeserializationState.Unresolved;
-
-
                 return DeserializeEntity(jsonObject);
             }
-
+            
             /// <summary>
             /// Deserialize a JSON object into a CLR type.
             /// </summary>
@@ -864,20 +859,40 @@ namespace Hypermedia.JsonApi
             /// <returns>The instance that was created.</returns>
             object DeserializeEntity(JsonObject jsonObject)
             {
-                // first check to see if the object has been resolved by another operation
-                if (_instanceCache.TryGetValue(_entityKeyCache[jsonObject], out object entity))
+                var key = new JsonApiEntityKey(jsonObject);
+                
+                if (_instanceCache.TryGetValue(key, out object entity))
                 {
                     return entity;
                 }
 
-                var typeAttribute = jsonObject["type"];
-
-                if (_contractResolver.TryResolve(((JsonString)typeAttribute).Value, out IContract contract) == false)
+                if (_contractResolver.TryResolve(key.Type, out IContract contract) == false)
                 {
-                    throw new JsonApiException("Could not find a type for '{0}'.", ((JsonString)typeAttribute).Value);
+                    throw new JsonApiException("Could not find a type for '{0}'.", key.Type);
                 }
 
-                return DeserializeEntity(contract, jsonObject);
+                return DeserializeEntity(contract, key, jsonObject);
+            }
+
+            /// <summary>
+            /// Deserialize an object.
+            /// </summary>
+            /// <param name="contract">The contract of the object to deserialize.</param>
+            /// <param name="key">They key that is to be assigned to the entity that is resolved.</param>
+            /// <param name="jsonObject">The JSON object that represents the object to deserialize.</param>
+            /// <returns>The instance that was deserialized.</returns>
+            object DeserializeEntity(IContract contract, JsonApiEntityKey key, JsonObject jsonObject)
+            {
+                var entity = contract.CreateInstance();
+
+                if (_instanceCache.TryAdd(key, entity) == false)
+                {
+                    // TODO: not sure if anything should be done here if it fails
+                }
+
+                DeserializeEntity(contract, jsonObject, entity);
+
+                return entity;
             }
 
             /// <summary>
@@ -893,34 +908,14 @@ namespace Hypermedia.JsonApi
                     return true;
                 }
 
-                if (_entityKeyCache.TryGetObject(key, out JsonObject jsonObject))
+                if (_objectCache.TryGetObject(key, out JsonObject jsonObject))
                 {
                     entity = DeserializeEntity(jsonObject);
                 }
 
                 return ReferenceEquals(entity, null) == false;
             }
-
-            /// <summary>
-            /// Deserialize an object.
-            /// </summary>
-            /// <param name="contract">The contract of the object to deserialize.</param>
-            /// <param name="jsonObject">The JSON object that represents the object to deserialize.</param>
-            /// <returns>The instance that was deserialized.</returns>
-            object DeserializeEntity(IContract contract, JsonObject jsonObject)
-            {
-                var entity = contract.CreateInstance();
-
-                if (_instanceCache.TryAdd(_entityKeyCache[jsonObject], entity) == false)
-                {
-                    // TODO: not sure if anything should be done here
-                }
-
-                DeserializeEntity(contract, jsonObject, entity);
-
-                return entity;
-            }
-
+            
             /// <summary>
             /// Deserialize an object.
             /// </summary>
@@ -1076,7 +1071,7 @@ namespace Hypermedia.JsonApi
                     }
                 }
 
-                DeserializeBelongsTo(relationship, JsonApiEntityKey.CreateKey(value), entity);
+                DeserializeBelongsTo(relationship, new JsonApiEntityKey(value), entity);
             }
 
             /// <summary>
@@ -1133,9 +1128,7 @@ namespace Hypermedia.JsonApi
             {
                 foreach (var value in values)
                 {
-                    var key = JsonApiEntityKey.CreateKey(value);
-
-                    if (TryResolve(key, out object related))
+                    if (TryResolve(new JsonApiEntityKey(value), out object related))
                     {
                         collection.Add(related);
                     }
@@ -1216,7 +1209,9 @@ namespace Hypermedia.JsonApi
                     throw new JsonApiException("Could not resolve the contract with the CLR type of '{0}'.", type);
                 }
 
-                return DeserializeEntity(contract, (JsonObject)jsonValue);
+                var jsonObject = (JsonObject) jsonValue;
+
+                return DeserializeEntity(contract, new JsonApiEntityKey(jsonObject), jsonObject);
             }
 
             /// <summary>
