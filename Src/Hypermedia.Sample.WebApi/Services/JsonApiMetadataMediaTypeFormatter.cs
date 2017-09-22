@@ -80,6 +80,8 @@ namespace Hypermedia.Sample.WebApi.Services
                 var metadata = new JsonMember("meta", 
                     new JsonObject(
                         new JsonMember("version", new JsonString("1.0.0.0")),
+                        new JsonMember("source", new JsonString("https://mythology.stackexchange.com")),
+                        new JsonMember("attribution", new JsonString("The content published here comes from the Mythology site on the StackExchange network.")),
                         new JsonMember("time", new JsonString(DateTime.Now.ToString("D")))));
 
                 var members = jsonObject.Members.Union(new[] { metadata });

@@ -177,7 +177,7 @@ namespace Hypermedia.JsonApi
         {
             readonly IContractResolver _contractResolver;
             readonly IJsonSerializer _jsonSerializer;
-            readonly HashSet<JsonObject> _visited = new HashSet<JsonObject>(JsonApiEntityKeyEqualityComparer.Instance);
+            readonly HashSet<JsonObject> _visited = new HashSet<JsonObject>(JsonApiEntityKeyEqualityComparer2.Instance);
 
             /// <summary>
             /// Constructor.
@@ -199,8 +199,7 @@ namespace Hypermedia.JsonApi
             {
                 foreach (var entity in entities)
                 {
-                    IContract contract;
-                    if (_contractResolver.TryResolve(entity.GetType(), out contract) == false)
+                    if (_contractResolver.TryResolve(entity.GetType(), out IContract contract) == false)
                     {
                         throw new JsonApiException("Can not serialize an unknown resource type '{0}'.", entity.GetType());
                     }
@@ -803,6 +802,7 @@ namespace Hypermedia.JsonApi
             readonly IContractResolver _contractResolver;
             readonly IJsonApiEntityCache _instanceCache;
             readonly IJsonSerializer _jsonSerializer;
+            readonly IJsonApiEntityKeyCache _entityKeyCache;
 
             /// <summary>
             /// Constructor.
@@ -817,6 +817,7 @@ namespace Hypermedia.JsonApi
                 _contractResolver = contractResolver;
                 _instanceCache = instanceCache;
                 _jsonSerializer = new JsonSerializer(new JsonConverterFactory(), fieldNamingStrategy);
+                _entityKeyCache = new JsonApiEntityKeyCache(rootObject);
             }
 
             /// <summary>
@@ -848,6 +849,11 @@ namespace Hypermedia.JsonApi
                     throw new JsonApiException("Can not return a single item as the top level value is an array.");
                 }
 
+
+                HERE: maybe try adding a serialization state
+                 _tracking[object].State = DeserializationState.Unresolved;
+
+
                 return DeserializeEntity(jsonObject);
             }
 
@@ -859,16 +865,14 @@ namespace Hypermedia.JsonApi
             object DeserializeEntity(JsonObject jsonObject)
             {
                 // first check to see if the object has been resolved by another operation
-                object entity;
-                if (TryResolveFromCache(jsonObject, out entity))
+                if (_instanceCache.TryGetValue(_entityKeyCache[jsonObject], out object entity))
                 {
                     return entity;
                 }
 
                 var typeAttribute = jsonObject["type"];
 
-                IContract contract;
-                if (_contractResolver.TryResolve(((JsonString)typeAttribute).Value, out contract) == false)
+                if (_contractResolver.TryResolve(((JsonString)typeAttribute).Value, out IContract contract) == false)
                 {
                     throw new JsonApiException("Could not find a type for '{0}'.", ((JsonString)typeAttribute).Value);
                 }
@@ -882,59 +886,14 @@ namespace Hypermedia.JsonApi
             /// <param name="key">The entity key to resolve the entity for.</param>
             /// <param name="entity">The entity that was resolved for the given entity key.</param>
             /// <returns>true if an entity could be resolved, false if not.</returns>
-            bool TryResolveFromCache(JsonObject key, out object entity)
+            bool TryResolve(JsonApiEntityKey key, out object entity)
             {
-                return _instanceCache.TryGetValue(key, out entity);
-            }
-
-            /// <summary>
-            /// Attempt to resolve the entity with the given entity key.
-            /// </summary>
-            /// <param name="key">The entity key to resolve the entity for.</param>
-            /// <param name="entity">The entity that was resolved for the given entity key.</param>
-            /// <returns>true if an entity could be resolved, false if not.</returns>
-            bool TryResolve(JsonObject key, out object entity)
-            {
-                if (TryResolveFromCache(key, out entity))
+                if (_instanceCache.TryGetValue(key, out entity))
                 {
                     return true;
                 }
 
-                var included = _rootObject["included"] as JsonArray;
-                if (included != null)
-                {
-                    if (TryResolveFromList(key, included.OfType<JsonObject>(), out entity))
-                    {
-                        return true;
-                    }
-                }
-
-                var data = _rootObject["data"] as JsonArray;
-                if (data != null)
-                {
-                    if (TryResolveFromList(key, data.OfType<JsonObject>(), out entity))
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-
-            /// <summary>
-            /// Attempt to resolve the entity with the given entity key.
-            /// </summary>
-            /// <param name="key">The entity key to resolve the entity for.</param>
-            /// <param name="jsonObjects">The list of JSON objects to attempt to resolve from.</param>
-            /// <param name="entity">The entity that was resolved for the given entity key.</param>
-            /// <returns>true if an entity could be resolved, false if not.</returns>
-            bool TryResolveFromList(JsonObject key, IEnumerable<JsonObject> jsonObjects, out object entity)
-            {
-                entity = null;
-
-                var jsonObject = jsonObjects.FirstOrDefault(j => JsonApiEntityKeyEqualityComparer.Instance.Equals(key, j));
-
-                if (jsonObject != null)
+                if (_entityKeyCache.TryGetObject(key, out JsonObject jsonObject))
                 {
                     entity = DeserializeEntity(jsonObject);
                 }
@@ -952,7 +911,7 @@ namespace Hypermedia.JsonApi
             {
                 var entity = contract.CreateInstance();
 
-                if (_instanceCache.TryAdd(jsonObject, entity) == false)
+                if (_instanceCache.TryAdd(_entityKeyCache[jsonObject], entity) == false)
                 {
                     // TODO: not sure if anything should be done here
                 }
@@ -1103,7 +1062,7 @@ namespace Hypermedia.JsonApi
             /// Deserialize a BelongsTo relationship.
             /// </summary>
             /// <param name="relationship">The relationship to set on the entity.</param>
-            /// <param name="value">The JSON value to set on the entity.</param>
+            /// <param name="value">The JSON object that defines the related entities key.</param>
             /// <param name="entity">The entity to set the value on.</param>
             void DeserializeBelongsTo(IBelongsToRelationship relationship, JsonObject value, object entity)
             {
@@ -1117,13 +1076,25 @@ namespace Hypermedia.JsonApi
                     }
                 }
 
-                if (relationship.Accessor != null && relationship.Accessor.CanWrite)
+                DeserializeBelongsTo(relationship, JsonApiEntityKey.CreateKey(value), entity);
+            }
+
+            /// <summary>
+            /// Deserialize a BelongsTo relationship.
+            /// </summary>
+            /// <param name="relationship">The relationship to set on the entity.</param>
+            /// <param name="key">The JSON key of the entity to set as the value.</param>
+            /// <param name="entity">The entity to set the value on.</param>
+            void DeserializeBelongsTo(IBelongsToRelationship relationship, JsonApiEntityKey key, object entity)
+            {
+                if (relationship.Accessor == null || relationship.Accessor.CanWrite == false)
                 {
-                    object related;
-                    if (TryResolve(value, out related))
-                    {
-                        relationship.SetValue(entity, related);
-                    }
+                    return;
+                }
+
+                if (TryResolve(key, out object related))
+                {
+                    relationship.SetValue(entity, related);
                 }
             }
 
@@ -1131,9 +1102,9 @@ namespace Hypermedia.JsonApi
             /// Deserialize a HasMany relationship.
             /// </summary>
             /// <param name="relationship">The relationship to set on the entity.</param>
-            /// <param name="value">The JSON value to set on the entity.</param>
+            /// <param name="array">The JSON array that contains the keys of the entities to resolve.</param>
             /// <param name="entity">The entity to set the value on.</param>
-            void DeserializeHasMany(IHasManyRelationship relationship, JsonArray value, object entity)
+            void DeserializeHasMany(IHasManyRelationship relationship, JsonArray array, object entity)
             {
                 if (relationship.Accessor == null || relationship.Accessor.CanWrite == false)
                 {
@@ -1148,15 +1119,27 @@ namespace Hypermedia.JsonApi
                         $"Can not deserialize the related collection as an appropriate IList instance could not be created for '{relationship.Accessor.ValueType}'.");
                 }
 
-                foreach (var jsonObject in value.OfType<JsonObject>())
+                DeserializeHasMany(collection, array.OfType<JsonObject>());
+
+                relationship.Accessor.SetValue(entity, collection);
+            }
+
+            /// <summary>
+            /// Deserialize the list of keys into the collection.
+            /// </summary>
+            /// <param name="collection">The collection to add the items to.</param>
+            /// <param name="values">The list of values that represent the entity keys to deserialize.</param>
+            void DeserializeHasMany(IList collection, IEnumerable<JsonObject> values)
+            {
+                foreach (var value in values)
                 {
-                    if (TryResolve(jsonObject, out object related))
+                    var key = JsonApiEntityKey.CreateKey(value);
+
+                    if (TryResolve(key, out object related))
                     {
                         collection.Add(related);
                     }
                 }
-
-                relationship.Accessor.SetValue(entity, collection);
             }
 
             /// <summary>

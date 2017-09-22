@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Linq;
 using Hypermedia.Configuration;
 using Hypermedia.Json;
 using Hypermedia.JsonApi;
@@ -8,6 +10,7 @@ using Hypermedia.Sample.Client;
 using Hypermedia.Sample.Resources;
 using Hypermedia.Sample.WebApi;
 using JsonLite.Ast;
+using TestApp.Test;
 
 namespace TestApp
 {
@@ -15,7 +18,23 @@ namespace TestApp
     {
         static void Main(string[] args)
         {
-            //var json = (JsonObject)JsonLite.Json.CreateAst(System.IO.File.ReadAllText(@"C:\Dev\Hypermedia\Src\Hypermedia.JsonApi.Tests\CanDeserialize.json"));
+            var json = (JsonObject)JsonLite.Json.CreateAst(System.IO.File.ReadAllText(@"C:\Temp\Hypermedia\ComponentActualsResponseContent\ComponentActualsResponseContent.txt"));
+            Console.WriteLine(json.Members.Count);
+
+            var array = (JsonArray) json.Members[0].Value;
+            var data = new JsonObject(new JsonMember("data", new JsonArray(array.Take(50000).ToList())));
+
+            var serializer = new JsonApiSerializer(CreateRtioResolver());
+            var timer = new Stopwatch();
+            timer.Start();
+
+            var entities = serializer.DeserializeMany(data).ToList();
+
+            timer.Stop();
+
+            Console.WriteLine("Count={0} Time Taken={1}ms", entities.Count, timer.ElapsedMilliseconds);
+
+
             //json = new JsonObject(json.Members[1]);
 
             //var resolver = CreateResolver();
@@ -31,13 +50,45 @@ namespace TestApp
 
             //Console.WriteLine("{0} => {1}", relationship.Name, relationship.Inverse(resolver).Name);
 
-            using (var client = new HypermediaSampleClient("http://hypermediasamplewebapi.azurewebsites.net/", ""))
-            {
-                var comments = client.GetCommentsByPostIdAsync(39).Result;
-                Console.WriteLine(comments.Count);
+        }
 
-                client.UpdateAsync(comments[0]).Wait();
-            }
+        static IContractResolver CreateRtioResolver()
+        {
+            var builder = new Builder();
+
+            builder.With<TrackSection>("tracksections")
+                .Id(nameof(TrackSection.Id));
+
+            builder.With<RailModel>("railmodels")
+                .Id(nameof(RailModel.Id))
+                .HasMany<RailComponent>(nameof(RailModel.Components));
+
+            builder.With<RailComponent>("railcomponents")
+                .Id(nameof(RailComponent.Id))
+                .BelongsTo<RailModel>(nameof(RailComponent.Model))
+                .BackingField(nameof(RailComponent.ModelId))
+                .HasMany<TrackSection>(nameof(RailComponent.Sections));
+
+            builder.With<ComponentActual>("componentactuals")
+                .Id(nameof(ComponentActual.Id))
+                .BelongsTo<RailComponent>(nameof(ComponentActual.Component))
+                .BackingField(nameof(ComponentActual.ComponentId))
+                .BelongsTo<TrainJourney>(nameof(ComponentActual.TrainJourney))
+                .BackingField(nameof(ComponentActual.TrainId));
+
+            builder.With<TrainJourney>("trainjourneys")
+                .Id(nameof(TrainJourney.Id))
+                .HasMany<ComponentActual>(nameof(TrainJourney.ComponentActuals))
+                .HasMany<TrackSectionActual>(nameof(TrainJourney.SectionActuals));
+
+            builder.With<TrackSectionActual>("sectionactuals")
+                .Id(nameof(TrackSectionActual.Id))
+                .BelongsTo<TrackSection>(nameof(TrackSectionActual.TrackSection))
+                .BackingField(nameof(TrackSectionActual.TrackSectionId))
+                .BelongsTo<TrainJourney>(nameof(TrackSectionActual.TrainJourney))
+                .BackingField(nameof(TrackSectionActual.TrainJourneyId));
+
+            return builder.Build();
         }
 
         /// <summary>

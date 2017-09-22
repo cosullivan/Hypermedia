@@ -48,6 +48,13 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Test\BaseEntity.cs" />
+    <Compile Include="Test\ComponentActual.cs" />
+    <Compile Include="Test\RailComponent.cs" />
+    <Compile Include="Test\RailModel.cs" />
+    <Compile Include="Test\TrackSection.cs" />
+    <Compile Include="Test\TrackSectionActual.cs" />
+    <Compile Include="Test\TrainJourney.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
