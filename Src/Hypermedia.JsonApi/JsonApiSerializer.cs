@@ -222,7 +222,7 @@ namespace Hypermedia.JsonApi
             /// <returns>true if the entity represented by the JSON object has been visitied, false if not.</returns>
             bool HasVisited(JsonObject jsonObject)
             {
-                return _visited.Contains(new JsonApiEntityKey(jsonObject));
+                return _visited.Contains(JsonApiEntityKey.Create(jsonObject));
             }
 
             /// <summary>
@@ -231,7 +231,7 @@ namespace Hypermedia.JsonApi
             /// <param name="jsonObject">The JSON object that represents an entity.</param>
             void Visit(JsonObject jsonObject)
             {
-                _visited.Add(new JsonApiEntityKey(jsonObject));
+                _visited.Add(JsonApiEntityKey.Create(jsonObject));
             }
 
             /// <summary>
@@ -859,7 +859,7 @@ namespace Hypermedia.JsonApi
             /// <returns>The instance that was created.</returns>
             object DeserializeEntity(JsonObject jsonObject)
             {
-                var key = new JsonApiEntityKey(jsonObject);
+                var key = JsonApiEntityKey.Create(jsonObject);
                 
                 if (_instanceCache.TryGetValue(key, out object entity))
                 {
@@ -1071,7 +1071,7 @@ namespace Hypermedia.JsonApi
                     }
                 }
 
-                DeserializeBelongsTo(relationship, new JsonApiEntityKey(value), entity);
+                DeserializeBelongsTo(relationship, JsonApiEntityKey.Create(value), entity);
             }
 
             /// <summary>
@@ -1128,7 +1128,7 @@ namespace Hypermedia.JsonApi
             {
                 foreach (var value in values)
                 {
-                    if (TryResolve(new JsonApiEntityKey(value), out object related))
+                    if (TryResolve(JsonApiEntityKey.Create(value), out object related))
                     {
                         collection.Add(related);
                     }
@@ -1211,7 +1211,7 @@ namespace Hypermedia.JsonApi
 
                 var jsonObject = (JsonObject) jsonValue;
 
-                return DeserializeEntity(contract, new JsonApiEntityKey(jsonObject), jsonObject);
+                return DeserializeEntity(contract, JsonApiEntityKey.Create(jsonObject), jsonObject);
             }
 
             /// <summary>

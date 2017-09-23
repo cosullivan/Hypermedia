@@ -95,7 +95,8 @@ namespace Hypermedia.Sample.WebApi
                     .BackingField(nameof(PostResource.ApproverId))
                     .Template("/v1/users/{id}", "id", resource => resource.ApproverId)
                 .HasMany<CommentResource>(nameof(PostResource.Comments))
-                    //.Embedded()
+                    //.Serialization()
+                    //    .Embedded()
                     .Inverse(nameof(CommentResource.Post))
                     .Template("/v1/posts/{id}/comments", "id", resource => resource.Id);
 

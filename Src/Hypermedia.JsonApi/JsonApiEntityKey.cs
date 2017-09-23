@@ -8,36 +8,30 @@ namespace Hypermedia.JsonApi
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="jsonObject">The JSON object that contains the key information.</param>
-        internal JsonApiEntityKey(JsonObject jsonObject)
+        /// <param name="type">The type of the entity.</param>
+        /// <param name="id">The ID of the entity.</param>
+        JsonApiEntityKey(string type, string id)
         {
             // ReSharper disable once JoinNullCheckWithUsage
-            if (jsonObject == null)
+            if (type == null)
             {
-                throw new ArgumentNullException(nameof(jsonObject));
+                throw new ArgumentNullException(nameof(type));
             }
 
-            Type = null;
-            Id = null;
+            Type = type;
+            Id = id;
+        }
 
-            foreach (var member in jsonObject.Members)
-            {
-                switch (member.Name)
-                {
-                    case "type":
-                        Type = ((JsonString)member.Value).Value;
-                        break;
+        /// <summary>
+        /// Create an instance of an entity key for the JSON object.
+        /// </summary>
+        /// <param name="jsonObject">The JSON object to create the entity key for.</param>
+        /// <returns>The entity key for the given JSON object.</returns>
+        internal static JsonApiEntityKey Create(JsonObject jsonObject)
+        {
+            var id = jsonObject["id"];
 
-                    case "id":
-                        Id = member.Value.Stringify();
-                        break;
-                }
-            }
-
-            if (Type == null)
-            {
-                throw new ArgumentException("Could not find the type.");
-            }
+            return new JsonApiEntityKey(((JsonString)jsonObject["type"]).Value, id?.Stringify());
         }
 
         /// <summary>

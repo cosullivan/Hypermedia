@@ -43,7 +43,7 @@ namespace Hypermedia.JsonApi
         {
             foreach (var jsonObject in jsonObjects)
             {
-                _objectCache[new JsonApiEntityKey(jsonObject)] = jsonObject;
+                _objectCache[JsonApiEntityKey.Create(jsonObject)] = jsonObject;
             }
         }
 
