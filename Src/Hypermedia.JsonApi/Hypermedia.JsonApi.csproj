@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard1.4</TargetFrameworks>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Authors>Cain O'Sullivan</Authors>
+    <Company></Company>
+    <Product>JSONAPI Hypermedia Serializer</Product>
+    <PackageProjectUrl>https://github.com/cosullivan/Hypermedia</PackageProjectUrl>
+    <Description>A JSONAPI compliant serializer.</Description>
   </PropertyGroup>
 
   <ItemGroup>

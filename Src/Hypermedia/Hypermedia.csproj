@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard1.4</TargetFrameworks>
+    <PackageId>Hypermedia.Core</PackageId>
+    <Authors>Cain O'Sullivan</Authors>
+    <PackageProjectUrl>https://github.com/cosullivan/Hypermedia</PackageProjectUrl>
+    <Description>The core component of the Hypermedia library.</Description>
+    <Company />
+    <Product>Hypermedia Core Library</Product>
   </PropertyGroup>
 
   <ItemGroup>

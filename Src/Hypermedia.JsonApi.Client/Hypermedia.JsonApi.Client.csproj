@@ -3,6 +3,12 @@
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard1.4</TargetFrameworks>
     <Version>2.3.0-Beta2</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Cain O'Sullivan</Authors>
+    <Company />
+    <Product />
+    <PackageProjectUrl>https://github.com/cosullivan/Hypermedia</PackageProjectUrl>
+    <Description>A JSONAPI compatible set of extensions for the HttpClient.</Description>
   </PropertyGroup>
 
   <ItemGroup>
