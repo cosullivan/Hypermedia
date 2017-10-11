@@ -77,6 +77,11 @@ namespace Hypermedia.Json.Converters
                 return new JsonString(((DateTimeOffset)value).UtcDateTime.ToString("yyyy-MM-ddTHH:mm:ssK"));
             }
 
+            if (type == typeof(TimeSpan))
+            {
+                return new JsonString(((TimeSpan)value).ToString());
+            }
+
             throw new NotSupportedException(type.ToString());
         }
 
@@ -144,6 +149,11 @@ namespace Hypermedia.Json.Converters
                 return DateTimeOffset.Parse(((JsonString)jsonValue).Value);
             }
 
+            if (type == typeof(TimeSpan))
+            {
+                return TimeSpan.Parse(((JsonString)jsonValue).Value);
+            }
+
             if (type == typeof(bool))
             {
                 return ((JsonBoolean)jsonValue).Value;
@@ -164,7 +174,8 @@ namespace Hypermedia.Json.Converters
                 || type == typeof(string)
                 || type == typeof(Guid)
                 || type == typeof(DateTime)
-                || type == typeof(DateTimeOffset);
+                || type == typeof(DateTimeOffset)
+                || type == typeof(TimeSpan);
         }
     }
 }

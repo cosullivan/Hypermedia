@@ -17,38 +17,15 @@ namespace TestApp
     {
         static void Main(string[] args)
         {
-            var json = (JsonObject)JsonLite.Json.CreateAst(System.IO.File.ReadAllText(@"C:\Temp\test.json"));
-            Console.WriteLine(json.Members.Count);
+            //var timespan = TimeSpan.FromDays(1);
 
-            var array = (JsonArray) json.Members[0].Value;
-            var data = new JsonObject(new JsonMember("data", new JsonArray(array.Take(500000).ToList())));
+            //var x = TimeSpan.Parse(timespan.ToString());
+            //Console.WriteLine(x);
 
-            var serializer = new JsonApiSerializer(CreateResolver());
-            var timer = new Stopwatch();
-            timer.Start();
-
-            var entities = serializer.DeserializeMany(data).ToList();
-
-            timer.Stop();
-
-            Console.WriteLine("Count={0} Time Taken={1}ms", entities.Count, timer.ElapsedMilliseconds);
-
-
-            //json = new JsonObject(json.Members[1]);
-
-            //var resolver = CreateResolver();
-
-            //var patch = new JsonApiPatch<PostResource>(resolver, new DasherizedFieldNamingStrategy(), json);
-            //foreach (var member in patch.Members)
-            //{
-            //    Console.WriteLine(member.Name);
-            //}
-
-            //resolver.TryResolve(typeof(PostResource), out IContract contract);
-            //var relationship = contract.Relationship(nameof(PostResource.OwnerUser));
-
-            //Console.WriteLine("{0} => {1}", relationship.Name, relationship.Inverse(resolver).Name);
-
+            using (var client = new HypermediaSampleClient("http://hypermediasamplewebapi.azurewebsites.net/", ""))
+            {
+                var post = client.GetPostByIdAsync(38).Result;
+            }
         }
 
         /// <summary>

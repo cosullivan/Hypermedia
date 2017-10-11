@@ -1,4 +1,6 @@
-﻿namespace Hypermedia.Sample.Data
+﻿using System;
+
+namespace Hypermedia.Sample.Data
 {
     public class Post : Entity
     {
