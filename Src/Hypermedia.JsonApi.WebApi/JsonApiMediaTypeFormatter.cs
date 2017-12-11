@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
@@ -92,7 +93,14 @@ namespace Hypermedia.JsonApi.WebApi
 
             if (TypeHelper.IsEnumerable(type))
             {
-                return serializer.DeserializeMany(jsonObject);
+                var collection = TypeHelper.CreateListInstance(type);
+
+                foreach (var item in serializer.DeserializeMany(jsonObject))
+                {
+                    collection.Add(item);
+                }
+
+                return collection;
             }
 
             return serializer.Deserialize(jsonObject);

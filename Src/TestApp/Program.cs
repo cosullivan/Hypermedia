@@ -23,8 +23,9 @@ namespace TestApp
             //Console.WriteLine(x);
 
             using (var client = new HypermediaSampleClient("http://hypermediasamplewebapi.azurewebsites.net/", ""))
+            //using (var client = new HypermediaSampleClient("http://localhost:59074/", ""))
             {
-                var post = client.GetPostByIdAsync(38).Result;
+                client.BatchUpdateAsync(new [] { new CommentResource() }).Wait();
             }
         }
 

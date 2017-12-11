@@ -36,7 +36,9 @@ namespace Hypermedia.Sample.WebApi
                 IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.LocalOnly
             };
 
-            config.MapHttpAttributeRoutes();
+            config.EnableSystemDiagnosticsTracing();
+
+            config.MapHttpAttributeRoutes(new MethodConstrainingRouteProvider());
             config.EnableCors(new EnableCorsAttribute("*", "*", "*"));
             config.Services.Add(typeof(IExceptionLogger), new ExceptionLogger());
 
@@ -57,8 +59,8 @@ namespace Hypermedia.Sample.WebApi
             configuration.Formatters.Remove(configuration.Formatters.XmlFormatter);
             configuration.Formatters.Remove(configuration.Formatters.JsonFormatter);
 
-            configuration.Formatters.Add(new JsonMediaTypeFormatter(contractResolver, DefaultFieldNamingStrategy.Instance));
             configuration.Formatters.Add(new JsonApiMetadataMediaTypeFormatter(contractResolver));
+            configuration.Formatters.Add(new JsonMediaTypeFormatter(contractResolver, DefaultFieldNamingStrategy.Instance));
 
             configuration.ParameterBindingRules.Add(p =>
             {

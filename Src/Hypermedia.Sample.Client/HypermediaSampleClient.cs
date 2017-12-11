@@ -158,6 +158,18 @@ namespace Hypermedia.Sample.Client
         }
 
         /// <summary>
+        /// Update a batch of comments.
+        /// </summary>
+        /// <param name="comments">The comments to update.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A task which asynchronously performs the operation.</returns>
+        public async Task BatchUpdateAsync(IReadOnlyList<CommentResource> comments, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var response = await _httpClient.PutAsync("v1/comments", new JsonApiContent<CommentResource>(comments, _contractResolver), cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()

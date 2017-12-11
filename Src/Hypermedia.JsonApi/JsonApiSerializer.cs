@@ -1106,7 +1106,7 @@ namespace Hypermedia.JsonApi
                     return;
                 }
 
-                var collection = CreateListInstance(relationship.Accessor.ValueType);
+                var collection = TypeHelper.CreateListInstance(relationship.Accessor.ValueType);
 
                 if (collection == null)
                 {
@@ -1133,33 +1133,6 @@ namespace Hypermedia.JsonApi
                         collection.Add(related);
                     }
                 }
-            }
-
-            /// <summary>
-            /// Creates an instance of a list to hold the related items.
-            /// </summary>
-            /// <param name="type">The type to create the list for.</param>
-            /// <returns>The list was created.</returns>
-            static IList CreateListInstance(Type type)
-            {
-                if (TypeHelper.IsList(type))
-                {
-                    return Activator.CreateInstance(type) as IList;
-                }
-
-                if (type.GetTypeInfo().IsInterface)
-                {
-                    var definition = type.GetGenericTypeDefinition();
-
-                    if (definition == typeof (IReadOnlyList<>) || definition == typeof (IList<>) || definition == typeof(ICollection<>))
-                    {
-                        type = typeof (List<>).MakeGenericType(TypeHelper.GetUnderlyingType(type));
-
-                        return Activator.CreateInstance(type) as IList;
-                    }
-                }
-
-                return null;
             }
 
             /// <summary>

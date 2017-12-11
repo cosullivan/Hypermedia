@@ -153,13 +153,37 @@ namespace Hypermedia
         /// <returns>true if a enumerable type was found, false if not.</returns>
         static bool TryGetEnumerableType(TypeInfo type, out Type enumerableType)
         {
-            enumerableType =
-                type.ImplementedInterfaces
-                    .FirstOrDefault(t => t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+            if (IsIEnumerableOfT(type))
+            {
+                enumerableType = type.AsType();
+                return true;
+            }
+
+            enumerableType = type.ImplementedInterfaces.FirstOrDefault(IsIEnumerableOfT);
 
             return enumerableType != null;
         }
-        
+
+        /// <summary>
+        /// Returns a value indicaintg whether or not the type is of the generic IEnumerable.
+        /// </summary>
+        /// <param name="type">The type to test against.</param>
+        /// <returns>true if the type is of the generic IEnumerable, false if not.</returns>
+        static bool IsIEnumerableOfT(Type type)
+        {
+            return IsIEnumerableOfT(type.GetTypeInfo());
+        }
+
+        /// <summary>
+        /// Returns a value indicaintg whether or not the type is of the generic IEnumerable.
+        /// </summary>
+        /// <param name="type">The type to test against.</param>
+        /// <returns>true if the type is of the generic IEnumerable, false if not.</returns>
+        static bool IsIEnumerableOfT(TypeInfo type)
+        {
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>);
+        }
+
         /// <summary>
         /// Gets the underlying element type.
         /// </summary>
@@ -194,6 +218,33 @@ namespace Hypermedia
             }
 
             return type.AsType();
+        }
+
+        /// <summary>
+        /// Creates an instance of a list to hold the related items.
+        /// </summary>
+        /// <param name="type">The type to create the list for.</param>
+        /// <returns>The list was created.</returns>
+        public static IList CreateListInstance(Type type)
+        {
+            if (IsList(type))
+            {
+                return Activator.CreateInstance(type) as IList;
+            }
+
+            if (type.GetTypeInfo().IsInterface)
+            {
+                var definition = type.GetGenericTypeDefinition();
+
+                if (definition == typeof(IReadOnlyList<>) || definition == typeof(IList<>) || definition == typeof(ICollection<>))
+                {
+                    type = typeof(List<>).MakeGenericType(GetUnderlyingType(type));
+
+                    return Activator.CreateInstance(type) as IList;
+                }
+            }
+
+            return null;
         }
     }
 }

@@ -58,7 +58,7 @@ namespace Hypermedia.Json.Converters
                 return DeserializeCollection(serializer, type, jsonArray);
             }
 
-            if (type.GetTypeInfo().IsGenericType && type.GetTypeInfo().GetGenericTypeDefinition() == typeof(IReadOnlyList<>))
+            if (CanDeserializeAsListOfT(type))
             {
                 type = typeof(List<>).MakeGenericType(type.GenericTypeArguments[0]);
 
@@ -66,6 +66,23 @@ namespace Hypermedia.Json.Converters
             }
 
             throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Returns a value indicating whether or not the given type can be deserialized as a generic list.
+        /// </summary>
+        /// <param name="type">The type to test.</param>
+        /// <returns>true if the type can be deserialized to a generic list, false if not.</returns>
+        static bool CanDeserializeAsListOfT(Type type)
+        {
+            if (type.GetTypeInfo().IsGenericType == false)
+            {
+                return false;
+            }
+
+            var definition = type.GetTypeInfo().GetGenericTypeDefinition();
+
+            return new[] { typeof(IReadOnlyList<>), typeof(IReadOnlyCollection<>) }.Contains(definition);
         }
 
         /// <summary>
