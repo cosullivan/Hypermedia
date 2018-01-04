@@ -75,6 +75,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Hypermedia.Json\Hypermedia.Json.csproj">
+      <Project>{87fe9064-66b8-4886-bd63-e3d2cf7b277f}</Project>
+      <Name>Hypermedia.Json</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Hypermedia\Hypermedia.csproj">
       <Project>{8c917c08-b890-40c6-a60f-8af23fe6c335}</Project>
       <Name>Hypermedia</Name>

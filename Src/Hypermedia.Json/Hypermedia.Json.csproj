@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+      <TargetFrameworks>net45;netstandard1.4</TargetFrameworks>
+      <PackageId>Hypermedia.Json</PackageId>
+      <Authors>Cain O'Sullivan</Authors>
+      <PackageProjectUrl>https://github.com/cosullivan/Hypermedia</PackageProjectUrl>
+      <Description>The JSON component of the Hypermedia library.</Description>
+      <Company />
+      <Product>Hypermedia JSON Library</Product>
+      <Version>2.6.0-Beta</Version>
+      <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+      <AssemblyVersion>2.6.0.0</AssemblyVersion>
+      <FileVersion>2.6.0.0</FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Json.Lite" Version="2.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hypermedia\Hypermedia.csproj" />
+  </ItemGroup>
+
+</Project>

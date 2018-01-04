@@ -76,6 +76,10 @@
       <Project>{ad404ceb-4657-49a2-bc81-1eb73b5f60fa}</Project>
       <Name>Hypermedia.JsonApi</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Hypermedia.Json\Hypermedia.Json.csproj">
+      <Project>{87fe9064-66b8-4886-bd63-e3d2cf7b277f}</Project>
+      <Name>Hypermedia.Json</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Hypermedia.Sample.Client\Hypermedia.Sample.Client.csproj">
       <Project>{78E99DDD-2FE3-45A6-89B4-4C755DDEA873}</Project>
       <Name>Hypermedia.Sample.Client</Name>
