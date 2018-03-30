@@ -35,8 +35,7 @@ namespace Hypermedia.JsonApi.WebApi
         /// <returns>A task object representing the asynchronous operation.</returns>
         public override Task ExecuteBindingAsync(ModelMetadataProvider metadataProvider, HttpActionContext actionContext, CancellationToken cancellationToken)
         {
-            IContract root;
-            if (_contractResolver.TryResolve(_resourceType, out root) == false)
+            if (_contractResolver.TryResolve(_resourceType, out var root) == false)
             {
                 return Task.FromResult(0);
             }

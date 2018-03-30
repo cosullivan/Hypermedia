@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Hypermedia.Json;
 using Hypermedia.Metadata;
 using JsonLite.Ast;
 
-namespace Hypermedia.WebApi.Json
+namespace Hypermedia.Json.Converters
 {
-    internal class ContractConverter : IJsonConverter
+    internal sealed class ContractConverter : IJsonConverter
     {
         readonly IContractResolver _contractResolver;
 
@@ -29,10 +28,9 @@ namespace Hypermedia.WebApi.Json
         /// <returns>The JSON value that represents the given CLR value.</returns>
         public JsonValue SerializeValue(IJsonSerializer serializer, Type type, object value)
         {
-            IContract contract;
-            if (_contractResolver.TryResolve(type, out contract) == false)
+            if (_contractResolver.TryResolve(type, out var contract) == false)
             {
-                throw new HypermediaWebApiException($"Could not resolve a contract for {type}.");
+                throw new HypermediaJsonException($"Could not resolve a contract for {type}.");
             }
 
             return new JsonObject(SerializeMembers(serializer, contract, value).Where(IsNotNull).ToList());
@@ -74,10 +72,9 @@ namespace Hypermedia.WebApi.Json
         /// <returns>The CLR object that represents the JSON object.</returns>
         object DeserializeObject(IJsonSerializer serializer, Type type, JsonValue jsonValue)
         {
-            IContract contract;
-            if (_contractResolver.TryResolve(type, out contract) == false)
+            if (_contractResolver.TryResolve(type, out var contract) == false)
             {
-                throw new HypermediaWebApiException($"Could not resolve a contract for {type}.");
+                throw new HypermediaJsonException($"Could not resolve a contract for {type}.");
             }
 
             var instance = Activator.CreateInstance(type);

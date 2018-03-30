@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Hypermedia.Json;
+using Hypermedia.Json.Converters;
 using Hypermedia.Metadata;
 using JsonLite.Ast;
 
