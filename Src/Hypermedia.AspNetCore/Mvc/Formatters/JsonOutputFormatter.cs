@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Hypermedia.Json;
@@ -16,7 +17,6 @@ namespace Hypermedia.AspNetCore.Mvc.Formatters
         public const string JsonMediaTypeName = "application/json";
 
         const string FieldNamingStrategyParameterName = "$fieldnamingstrategy";
-        const string PrettifyParameterName = "$prettify";
 
         /// <summary>
         /// Constructor.
@@ -43,16 +43,27 @@ namespace Hypermedia.AspNetCore.Mvc.Formatters
         /// <inheritdoc />
         public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
         {
+            var jsonValue = SerializeValue(
+                context.ObjectType, 
+                context.Object,
+                GetPerRequestFieldNamingStrategy(context.HttpContext.Request));
+
             using (var writer = context.WriterFactory(context.HttpContext.Response.Body, selectedEncoding))
             {
-                var jsonValue = SerializeValue(
-                    context.ObjectType, 
-                    context.Object,
-                    GetPerRequestFieldNamingStrategy(context.HttpContext.Request));
-
-                await writer.WriteAsync(jsonValue.Stringify());
+                await WriteResponseBodyAsync(writer, jsonValue);
                 await writer.FlushAsync();
             }
+        }
+
+        /// <summary>
+        /// Write the response body.
+        /// </summary>
+        /// <param name="writer">The text writer to write the contents of the response to.</param>
+        /// <param name="jsonValue">The JSON value to write to the output.</param>
+        /// <returns>A task which asychronously performs the operation.</returns>
+        protected virtual async Task WriteResponseBodyAsync(TextWriter writer, JsonValue jsonValue)
+        {
+            await writer.WriteAsync(jsonValue.Stringify());
         }
 
         /// <summary>

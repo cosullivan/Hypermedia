@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;netstandard1.4</TargetFrameworks>
-    <Version>2.6.0-Beta</Version>
+    <TargetFramework>netstandard1.4</TargetFramework>
+    <Version>2.6.1-Beta</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Authors>Cain O'Sullivan</Authors>
     <Company />

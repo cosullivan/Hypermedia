@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Hypermedia.AspNetCore;
 using Hypermedia.Sample.Data;
 using Hypermedia.Sample.Resources;
 using Microsoft.AspNetCore.Mvc;
@@ -38,8 +39,11 @@ namespace Hypermedia.Sample.AspNetCore.Controllers.Posts
         [HttpGet("{id}"), FormatFilter]
         public IActionResult ExecuteAsync(
             int id,
+            IRequestMetadata<PostResource> requestMetadata = null,
             CancellationToken cancellationToken = default(CancellationToken))
         {
+            TODO: work on mapping the request metadata
+
             return Ok(new PostResource());
 
             //var post = await Database.Posts.GetByIdAsync(id, cancellationToken);
