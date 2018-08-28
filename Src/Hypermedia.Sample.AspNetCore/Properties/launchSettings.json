@@ -11,7 +11,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "v1/posts/1",
+      "launchUrl": "v1/posts/1?include=OwnerUser",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

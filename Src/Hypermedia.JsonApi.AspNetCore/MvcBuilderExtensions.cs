@@ -1,5 +1,6 @@
 ﻿using Hypermedia.AspNetCore.Mvc.Formatters;
 using Hypermedia.JsonApi.AspNetCore.Formatters;
+using Hypermedia.JsonApi.AspNetCore.ModelBinding;
 using Hypermedia.Metadata;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Net.Http.Headers;
@@ -30,6 +31,8 @@ namespace Hypermedia.JsonApi.AspNetCore
             {
                 options.OutputFormatters.Insert(0, new JsonOutputFormatter(contractResolver));
                 options.OutputFormatters.Insert(0, new JsonApiOutputFormatter(contractResolver));
+
+                options.ModelBinderProviders.Insert(0, new RequestMetadataModelBinderProvider(contractResolver));
 
                 options.FormatterMappings.SetMediaTypeMappingForFormat(
                     "json", 

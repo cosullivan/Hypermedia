@@ -42,8 +42,6 @@ namespace Hypermedia.Sample.AspNetCore.Controllers.Posts
             IRequestMetadata<PostResource> requestMetadata = null,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            TODO: work on mapping the request metadata
-
             return Ok(new PostResource());
 
             //var post = await Database.Posts.GetByIdAsync(id, cancellationToken);
