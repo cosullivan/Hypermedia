@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
+using Hypermedia.AspNetCore.Json.Formatters;
 using Hypermedia.AspNetCore.Mvc.Formatters;
 using Hypermedia.Json;
 using Hypermedia.Metadata;

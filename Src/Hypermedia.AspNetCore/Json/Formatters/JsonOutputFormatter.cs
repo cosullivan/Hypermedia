@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Hypermedia.AspNetCore.Mvc.Formatters;
 using Hypermedia.Json;
 using Hypermedia.Json.Converters;
 using Hypermedia.Metadata;
@@ -10,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
 
-namespace Hypermedia.AspNetCore.Mvc.Formatters
+namespace Hypermedia.AspNetCore.Json.Formatters
 {
     public class JsonOutputFormatter : HypermediaOutputFormatter
     {
@@ -73,24 +74,7 @@ namespace Hypermedia.AspNetCore.Mvc.Formatters
         /// <returns>The per-request field naming strategy to use.</returns>
         protected IFieldNamingStrategy GetPerRequestFieldNamingStrategy(HttpRequest request)
         {
-            if (request.Query.TryGetValue(FieldNamingStrategyParameterName, out var value))
-            {
-                return FieldNamingStrategy;
-            }
-
-            switch (value)
-            {
-                case "none":
-                    return DefaultFieldNamingStrategy.Instance;
-
-                case "dash":
-                    return DasherizedFieldNamingStrategy.Instance;
-
-                case "snake":
-                    return SnakeCaseNamingStrategy.Instance;
-            }
-
-            return FieldNamingStrategy;
+            return request.GetFieldNamingStrategy(FieldNamingStrategyParameterName) ?? FieldNamingStrategy;
         }
 
         /// <summary>

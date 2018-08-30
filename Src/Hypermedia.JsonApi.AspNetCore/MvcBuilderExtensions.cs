@@ -1,4 +1,5 @@
-﻿using Hypermedia.AspNetCore.Mvc.Formatters;
+﻿using Hypermedia.AspNetCore.Json.Formatters;
+using Hypermedia.AspNetCore.Mvc.Formatters;
 using Hypermedia.JsonApi.AspNetCore.Formatters;
 using Hypermedia.JsonApi.AspNetCore.ModelBinding;
 using Hypermedia.Metadata;
