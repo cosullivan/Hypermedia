@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Hypermedia.JsonApi.Tests</RootNamespace>
     <AssemblyName>Hypermedia.JsonApi.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -75,11 +76,11 @@
       <Name>Hypermedia.Json</Name>
     </ProjectReference>
     <ProjectReference Include="..\Hypermedia.Sample.Client\Hypermedia.Sample.Client.csproj">
-      <Project>{78E99DDD-2FE3-45A6-89B4-4C755DDEA873}</Project>
+      <Project>{197058DC-D621-45BE-BE0F-068C481B55AE}</Project>
       <Name>Hypermedia.Sample.Client</Name>
     </ProjectReference>
     <ProjectReference Include="..\Hypermedia.Sample\Hypermedia.Sample.csproj">
-      <Project>{138B5D8C-040D-404D-818E-57904FB06A67}</Project>
+      <Project>{21CF5AB3-9A7A-4EDC-8692-293698B10A8C}</Project>
       <Name>Hypermedia.Sample</Name>
     </ProjectReference>
     <ProjectReference Include="..\Hypermedia\Hypermedia.csproj">

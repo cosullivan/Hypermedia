@@ -1,31 +1,19 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using Hypermedia.Configuration;
-using Hypermedia.Json;
-using Hypermedia.JsonApi;
-using Hypermedia.JsonApi.WebApi;
+﻿using Hypermedia.Configuration;
 using Hypermedia.Metadata;
 using Hypermedia.Sample.Client;
 using Hypermedia.Sample.Resources;
-using Hypermedia.Sample.WebApi;
-using JsonLite.Ast;
 
-namespace TestApp
+namespace ConsoleApp
 {
     class Program
     {
-    	static void Main(string[] args)
+        static void Main(string[] args)
         {
-            //var timespan = TimeSpan.FromDays(1);
-
-            //var x = TimeSpan.Parse(timespan.ToString());
-            //Console.WriteLine(x);
-
-            using (var client = new HypermediaSampleClient("http://hypermediasamplewebapi.azurewebsites.net/", ""))
-            //using (var client = new HypermediaSampleClient("http://localhost:59074/", ""))
+            //using (var client = new HypermediaSampleClient("http://hypermediasamplewebapi.azurewebsites.net/", ""))
+            using (var client = new HypermediaSampleClient("http://localhost:50419/", ""))
             {
-                client.BatchUpdateAsync(new [] { new CommentResource() }).Wait();
+                //client.BatchUpdateAsync(new [] { new CommentResource() }).Wait();
+                client.UpdateAsync(new CommentResource()).Wait();
             }
         }
 
@@ -57,16 +45,14 @@ namespace TestApp
                 //    .Template("/v1/posts/{id}/comments", "id", resource => resource.Id)
                     ;
 
-            //builder.With<CommentResource>("comments")
-            //    .Id(nameof(CommentResource.Id))
-            //    .BelongsTo<UserResource>(nameof(CommentResource.User))
-            //    .BackingField(nameof(CommentResource.UserId))
-            //    .Template("/v1/users/{id}", "id", resource => resource.UserId)
-            //    .BelongsTo<PostResource>(nameof(CommentResource.Post))
-            //    .BackingField(nameof(CommentResource.PostId))
-            //    .Template("/v1/posts/{id}", "id", resource => resource.PostId);
-
-            //TODO: maybe at the point in which it is built is the best place to link the inversions?
+            builder.With<CommentResource>("comments")
+                .Id(nameof(CommentResource.Id))
+                .BelongsTo<UserResource>(nameof(CommentResource.User))
+                    .BackingField(nameof(CommentResource.UserId))
+                    .Template("/v1/users/{id}", "id", resource => resource.UserId)
+                .BelongsTo<PostResource>(nameof(CommentResource.Post))
+                    .BackingField(nameof(CommentResource.PostId))
+                    .Template("/v1/posts/{id}", "id", resource => resource.PostId);
 
             return builder.Build();
         }

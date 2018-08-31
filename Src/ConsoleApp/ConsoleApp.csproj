@@ -1,13 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Hypermedia.JsonApi.Client\Hypermedia.JsonApi.Client.csproj" />
     <ProjectReference Include="..\Hypermedia.JsonApi\Hypermedia.JsonApi.csproj" />
-    <ProjectReference Include="..\Hypermedia.Sample\Hypermedia.Sample.csproj" />
+    <ProjectReference Include="..\Hypermedia.Sample.Client\Hypermedia.Sample.Client.csproj" />
+    <ProjectReference Include="..\Hypermedia\Hypermedia.csproj" />
   </ItemGroup>
 
 </Project>

@@ -5,10 +5,33 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="App_Data\mythology.stackexchange.com\Badges.xml" />
+    <None Remove="App_Data\mythology.stackexchange.com\Comments.xml" />
+    <None Remove="App_Data\mythology.stackexchange.com\PostHistory.xml" />
+    <None Remove="App_Data\mythology.stackexchange.com\PostLinks.xml" />
+    <None Remove="App_Data\mythology.stackexchange.com\Posts.xml" />
+    <None Remove="App_Data\mythology.stackexchange.com\Tags.xml" />
+    <None Remove="App_Data\mythology.stackexchange.com\Users.xml" />
+    <None Remove="App_Data\mythology.stackexchange.com\Votes.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="App_Data\mythology.stackexchange.com\Badges.xml" />
+    <Content Include="App_Data\mythology.stackexchange.com\Comments.xml" />
+    <Content Include="App_Data\mythology.stackexchange.com\PostHistory.xml" />
+    <Content Include="App_Data\mythology.stackexchange.com\PostLinks.xml" />
+    <Content Include="App_Data\mythology.stackexchange.com\Posts.xml" />
+    <Content Include="App_Data\mythology.stackexchange.com\Tags.xml" />
+    <Content Include="App_Data\mythology.stackexchange.com\Users.xml" />
+    <Content Include="App_Data\mythology.stackexchange.com\Votes.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.8.1" />
     <PackageReference Include="AutoMapper" Version="7.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
   </ItemGroup>

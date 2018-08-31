@@ -7,7 +7,6 @@ using Hypermedia.Json;
 using Hypermedia.Json.Converters;
 using Hypermedia.Metadata;
 using JsonLite.Ast;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
 

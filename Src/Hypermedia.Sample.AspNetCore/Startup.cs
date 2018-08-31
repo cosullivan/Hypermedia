@@ -1,7 +1,10 @@
-﻿using Hypermedia.Configuration;
+﻿using System;
+using System.IO;
+using Hypermedia.Configuration;
 using Hypermedia.JsonApi.AspNetCore;
 using Hypermedia.Metadata;
 using Hypermedia.Sample.Resources;
+using Hypermedia.Sample.StackOverflow;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +24,8 @@ namespace Hypermedia.Sample.AspNetCore
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            AppDomain.CurrentDomain.SetData("DataDirectory", Path.Combine(env.ContentRootPath, "App_Data", "mythology.stackexchange.com"));
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
