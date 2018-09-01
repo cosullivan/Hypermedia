@@ -14,7 +14,7 @@ namespace Hypermedia.Sample.AspNetCore.Controllers.Comments
         /// </summary>
         /// <returns>The HTTP action result that represents the result of the action.</returns>
         [HttpOptions, HttpPatch, FormatFilter]
-        public async Task<IActionResult> ExecuteAsync(int id, IPatch<CommentResource> patch)
+        public async Task<IActionResult> ExecuteAsync(int id, [FromBody] IPatch<CommentResource> patch)
         {
             await Task.CompletedTask;
 

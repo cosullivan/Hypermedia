@@ -13,7 +13,8 @@ namespace ConsoleApp
             using (var client = new HypermediaSampleClient("http://localhost:50419/", ""))
             {
                 //client.BatchUpdateAsync(new [] { new CommentResource() }).Wait();
-                client.UpdateAsync(new CommentResource()).Wait();
+                //client.UpdateAsync(new CommentResource()).Wait();
+                client.CreateAsync(new CommentResource()).Wait();
             }
         }
 

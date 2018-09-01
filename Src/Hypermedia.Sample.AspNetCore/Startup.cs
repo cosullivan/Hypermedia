@@ -4,7 +4,6 @@ using Hypermedia.Configuration;
 using Hypermedia.JsonApi.AspNetCore;
 using Hypermedia.Metadata;
 using Hypermedia.Sample.Resources;
-using Hypermedia.Sample.StackOverflow;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,6 +31,7 @@ namespace Hypermedia.Sample.AspNetCore
             }
 
             app.UseMvc();
+            
         }
 
         /// <summary>

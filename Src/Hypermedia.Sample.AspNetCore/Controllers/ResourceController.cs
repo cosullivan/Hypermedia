@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Hypermedia.AspNetCore;
@@ -55,24 +53,6 @@ namespace Hypermedia.Sample.AspNetCore.Controllers
             var executedContext = await next();
             OnActionExecuted(executedContext);
         }
-
-        ///// <summary>
-        ///// Returns a NoContent response.
-        ///// </summary>
-        ///// <returns>The action result that represents no content.</returns>
-        //protected IHttpActionResult NoContent()
-        //{
-        //    return StatusCode(HttpStatusCode.NoContent);
-        //}
-
-        ///// <summary>
-        ///// Returns a Forbidden response.
-        ///// </summary>
-        ///// <returns>The action result that represents a forbidden response.</returns>
-        //protected IHttpActionResult Forbidden()
-        //{
-        //    return StatusCode(HttpStatusCode.Forbidden);
-        //}
         
         /// <summary>
         /// The database instance for the scope of the controller.

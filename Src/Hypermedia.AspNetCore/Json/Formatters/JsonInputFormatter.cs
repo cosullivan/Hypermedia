@@ -40,6 +40,27 @@ namespace Hypermedia.AspNetCore.Json.Formatters
             FieldNamingStrategy = fieldNamingStrategy;
         }
         
+        /// <summary>
+        /// Determines whether this <see cref="T:Microsoft.AspNetCore.Mvc.Formatters.InputFormatter" /> can deserialize an object of the given
+        /// <paramref name="type" />.
+        /// </summary>
+        /// <param name="type">The <see cref="T:System.Type" /> of object that will be read.</param>
+        /// <returns><c>true</c> if the <paramref name="type" /> can be read, otherwise <c>false</c>.</returns>
+        protected override bool CanReadType(Type type)
+        {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IPatch<>))
+            {
+                return ContractResolver.CanResolve(type.GetGenericArguments()[0]);
+            }
+
+            return base.CanReadType(type);
+        }
+
         /// <summary>Reads an object from the request body.</summary>
         /// <param name="context">The <see cref="T:Microsoft.AspNetCore.Mvc.Formatters.InputFormatterContext" />.</param>
         /// <param name="encoding">The <see cref="T:System.Text.Encoding" /> used to read the request body.</param>

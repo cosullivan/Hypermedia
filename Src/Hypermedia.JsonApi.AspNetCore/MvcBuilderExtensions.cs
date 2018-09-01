@@ -37,6 +37,7 @@ namespace Hypermedia.JsonApi.AspNetCore
                 options.InputFormatters.Insert(0, new JsonApiInputFormatter(contractResolver));
 
                 options.ModelBinderProviders.Insert(0, new RequestMetadataModelBinderProvider(contractResolver));
+                //options.ModelBinderProviders.Insert(1, new JsonApiPatchModelBinderProvider(contractResolver));
 
                 options.FormatterMappings.SetMediaTypeMappingForFormat(
                     "json", 
