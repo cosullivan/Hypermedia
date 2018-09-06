@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using Hypermedia.Configuration;
 
 namespace Hypermedia.Metadata.Runtime
 {
     [DebuggerDisplay("Name={Name} Type={ClrType}")]
-    internal class RuntimeContract : IContract
+    public class RuntimeContract : IContract
     {
         /// <summary>
         /// Constructor.
@@ -40,11 +41,24 @@ namespace Hypermedia.Metadata.Runtime
         /// </summary>
         /// <param name="type">The CLR type that the entity is mapped to.</param>
         /// <returns>The entity type that represents a default configuration of the given entity type.</returns>
-        internal static IContract CreateRuntimeType(Type type)
+        public static IContract CreateRuntimeType(Type type)
         {
             var name = Inflector.Pluralize(type.Name.ToLower());
 
-            return new RuntimeContract(name, type, CreateRuntimeFields(type));
+            return new RuntimeContract(name, type, CreateRuntimeFields(type, FieldDiscovery.Shallow));
+        }
+
+        /// <summary>
+        /// Create a default runtime type from the given entity type.
+        /// </summary>
+        /// <param name="type">The CLR type that the entity is mapped to.</param>
+        /// <param name="fieldDiscovery">The field discovery instance to use for determining what fields are available.</param>
+        /// <returns>The entity type that represents a default configuration of the given entity type.</returns>
+        public static IContract CreateRuntimeType(Type type, IFieldDiscovery fieldDiscovery)
+        {
+            var name = Inflector.Pluralize(type.Name.ToLower());
+
+            return new RuntimeContract(name, type, CreateRuntimeFields(type, fieldDiscovery));
         }
 
         /// <summary>
@@ -53,19 +67,32 @@ namespace Hypermedia.Metadata.Runtime
         /// <param name="type">The CLR type that the entity is mapped to.</param>
         /// <param name="name">The name of the runtime type.</param>
         /// <returns>The entity type that represents a default configuration of the given entity type.</returns>
-        internal static IContract CreateRuntimeType(Type type, string name)
+        public static IContract CreateRuntimeType(Type type, string name)
         {
-            return new RuntimeContract(name, type, CreateRuntimeFields(type));
+            return new RuntimeContract(name, type, CreateRuntimeFields(type, FieldDiscovery.Shallow));
+        }
+
+        /// <summary>
+        /// Create a default runtime type from the given entity.
+        /// </summary>
+        /// <param name="type">The CLR type that the entity is mapped to.</param>
+        /// <param name="name">The name of the runtime type.</param>
+        /// <param name="fieldDiscovery">The field discovery instance to use for determining what fields are available.</param>
+        /// <returns>The entity type that represents a default configuration of the given entity type.</returns>
+        public static IContract CreateRuntimeType(Type type, string name, IFieldDiscovery fieldDiscovery)
+        {
+            return new RuntimeContract(name, type, CreateRuntimeFields(type, fieldDiscovery));
         }
 
         /// <summary>
         /// Creates the runtime fields for a given type.
         /// </summary>
         /// <param name="type">The type to create the runtime fields for.</param>
+        /// <param name="fieldDiscovery">The field discovery instance to use for determining what fields are available.</param>
         /// <returns>The list of runtime fields for the given type.</returns>
-        internal static IReadOnlyList<RuntimeField> CreateRuntimeFields(Type type)
+        internal static IReadOnlyList<RuntimeField> CreateRuntimeFields(Type type, IFieldDiscovery fieldDiscovery)
         {
-            return type.GetTypeInfo().DeclaredProperties.Select(RuntimeField.CreateRuntimeField).ToList();
+            return fieldDiscovery.Discover(type.GetTypeInfo()).Select(RuntimeField.CreateRuntimeField).ToList();
         }
 
         /// <summary>
@@ -89,7 +116,7 @@ namespace Hypermedia.Metadata.Runtime
         public static IResourceInflector Inflector { get; set; }
     }
 
-    internal sealed class RuntimeContract<T> : RuntimeContract
+    public sealed class RuntimeContract<T> : RuntimeContract
     {
         /// <summary>
         /// Constructor.
@@ -102,7 +129,7 @@ namespace Hypermedia.Metadata.Runtime
         /// Create a default runtime type from the given entity.
         /// </summary>
         /// <returns>The entity type that represents a default configuration of the given entity type.</returns>
-        internal static IContract CreateRuntimeType()
+        public static IContract CreateRuntimeType()
         {
             var name = Inflector.Pluralize(typeof(T).Name.ToLower());
 
@@ -114,7 +141,7 @@ namespace Hypermedia.Metadata.Runtime
         /// </summary>
         /// <param name="name">The name of the runtime type.</param>
         /// <returns>The entity type that represents a default configuration of the given entity type.</returns>
-        internal static IContract CreateRuntimeType(string name)
+        public static IContract CreateRuntimeType(string name)
         {
             return new RuntimeContract<T>(name, CreateRuntimeFields());
         }

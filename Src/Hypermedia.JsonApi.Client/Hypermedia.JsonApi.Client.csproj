@@ -2,15 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.4</TargetFramework>
-    <Version>2.6.1-Beta</Version>
+    <Version>2.7.0</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Authors>Cain O'Sullivan</Authors>
     <Company />
     <Product />
     <PackageProjectUrl>https://github.com/cosullivan/Hypermedia</PackageProjectUrl>
     <Description>A JSONAPI compatible set of extensions for the HttpClient.</Description>
-    <AssemblyVersion>2.6.0.0</AssemblyVersion>
-    <FileVersion>2.6.0.0</FileVersion>
+    <AssemblyVersion>2.7.0.0</AssemblyVersion>
+    <FileVersion>2.7.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

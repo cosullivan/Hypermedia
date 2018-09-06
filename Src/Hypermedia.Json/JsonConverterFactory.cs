@@ -49,7 +49,7 @@ namespace Hypermedia.Json
 
             try
             {
-                if (_resolvedConverters.TryGetValue(type, out IJsonConverter converter))
+                if (_resolvedConverters.TryGetValue(type, out var converter))
                 {
                     return converter;
                 }
@@ -83,9 +83,7 @@ namespace Hypermedia.Json
         /// <returns>The JSON converter for the given type.</returns>
         IJsonConverter DiscoverConverter(Type type)
         {
-            var attribute = type.GetTypeInfo().GetCustomAttribute(typeof(JsonConverterAttribute), false) as JsonConverterAttribute;
-
-            if (attribute != null)
+            if (type.GetTypeInfo().GetCustomAttribute(typeof(JsonConverterAttribute), false) is JsonConverterAttribute attribute)
             {
                 var converter = Activator.CreateInstance(attribute.ConverterType) as IJsonConverter;
 

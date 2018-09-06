@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Hypermedia.Json;
 using Hypermedia.Metadata;
 using JsonLite.Ast;
@@ -199,7 +198,7 @@ namespace Hypermedia.JsonApi
             {
                 foreach (var entity in entities)
                 {
-                    if (_contractResolver.TryResolve(entity.GetType(), out IContract contract) == false)
+                    if (_contractResolver.TryResolve(entity.GetType(), out var contract) == false)
                     {
                         throw new JsonApiException("Can not serialize an unknown resource type '{0}'.", entity.GetType());
                     }
@@ -376,7 +375,7 @@ namespace Hypermedia.JsonApi
             /// <returns>The JSON value that represents the actual relationship data, or null if no data link can be created.</returns>
             JsonValue SerializeRelationshipData(IRelationship relationship, object entity)
             {
-                if (_contractResolver.TryResolve(relationship.RelatedTo, out IContract contract) == false)
+                if (_contractResolver.TryResolve(relationship.RelatedTo, out var contract) == false)
                 {
                     throw new JsonApiException(
                         "Could not find the related type '{0}' for the relationship '{1}'.", relationship.RelatedTo, relationship.Name);
@@ -536,8 +535,7 @@ namespace Hypermedia.JsonApi
 
                 foreach (var entity in entities)
                 {
-                    IContract contract;
-                    if (_contractResolver.TryResolve(entity.GetType(), out contract) == false)
+                    if (_contractResolver.TryResolve(entity.GetType(), out var contract) == false)
                     {
                         throw new JsonApiException("Could not find the entity type for the CLR type of '{0}'.", entity.GetType());
                     }
@@ -574,8 +572,7 @@ namespace Hypermedia.JsonApi
             /// <returns>The list of types to include for the entity.</returns>
             IEnumerable<JsonObject> SerializeIncluded(IRelationship relationship, object entity)
             {
-                IContract contract;
-                if (_contractResolver.TryResolve(relationship.RelatedTo, out contract) == false)
+                if (_contractResolver.TryResolve(relationship.RelatedTo, out var contract) == false)
                 {
                     throw new JsonApiException(
                         "Could not find the related type '{0}' for the relationship '{1}'.", relationship.RelatedTo, relationship.Name);
@@ -759,8 +756,7 @@ namespace Hypermedia.JsonApi
             /// <remarks>This is called by the JsonSerializer when it is to serialize an embedded field/relationship which is a complex object.</remarks>
             JsonValue IJsonConverter.SerializeValue(IJsonSerializer serializer, Type type, object value)
             {
-                IContract contract;
-                if (_contractResolver.TryResolve(type, out contract) == false)
+                if (_contractResolver.TryResolve(type, out var contract) == false)
                 {
                     throw new JsonApiException("Could not resolve the contract with the CLR type of '{0}'.", type);
                 }
@@ -811,7 +807,11 @@ namespace Hypermedia.JsonApi
             /// <param name="contractResolver">The resource contract resolver.</param>
             /// <param name="fieldNamingStrategy">The field naming strategy for deserialization.</param>
             /// <param name="instanceCache">The entity cache to use for reusing existing instances in the object graph.</param>
-            internal Deserializer(JsonObject rootObject, IContractResolver contractResolver, IFieldNamingStrategy fieldNamingStrategy, IJsonApiEntityCache instanceCache)
+            internal Deserializer(
+                JsonObject rootObject, 
+                IContractResolver contractResolver, 
+                IFieldNamingStrategy fieldNamingStrategy, 
+                IJsonApiEntityCache instanceCache)
             {
                 _rootObject = rootObject;
                 _contractResolver = contractResolver;
@@ -861,12 +861,12 @@ namespace Hypermedia.JsonApi
             {
                 var key = JsonApiEntityKey.Create(jsonObject);
                 
-                if (_instanceCache.TryGetValue(key, out object entity))
+                if (_instanceCache.TryGetValue(key, out var entity))
                 {
                     return entity;
                 }
 
-                if (_contractResolver.TryResolve(key.Type, out IContract contract) == false)
+                if (_contractResolver.TryResolve(key.Type, out var contract) == false)
                 {
                     throw new JsonApiException("Could not find a type for '{0}'.", key.Type);
                 }
@@ -935,14 +935,12 @@ namespace Hypermedia.JsonApi
                     }
                 }
 
-                var attributes = jsonObject["attributes"] as JsonObject;
-                if (attributes != null)
+                if (jsonObject["attributes"] is JsonObject attributes)
                 {
-                    DeserializeFields(contract.Fields(ShouldDeserialize).ToList(), attributes.Members, entity);
+                    DeserializeFields(contract.Fields, attributes.Members, entity);
                 }
 
-                var relationships = jsonObject["relationships"] as JsonObject;
-                if (relationships != null)
+                if (jsonObject["relationships"] is JsonObject relationships)
                 {
                     DeserializeRelationships(contract.Relationships(ShouldDeserialize).ToList(), relationships.Members, entity);
                 }
@@ -960,9 +958,16 @@ namespace Hypermedia.JsonApi
                 {
                     var field = fields.SingleOrDefault(f => String.Equals(f.Name, _jsonSerializer.FieldNamingStrategy.ResolveName(member.Name), StringComparison.OrdinalIgnoreCase));
 
-                    if (field != null)
+                    if (ShouldDeserialize(field))
                     {
                         DeserializeField(field, member.Value, entity);
+                        continue;
+                    }
+
+                    if (field == null && entity is IJsonExtension jsonExtension)
+                    {
+                        jsonExtension.Data = jsonExtension.Data ?? new List<JsonMember>();
+                        jsonExtension.Data.Add(member);
                     }
                 }
             }
@@ -1142,7 +1147,7 @@ namespace Hypermedia.JsonApi
             /// <returns>true if the field should be included, false if not.</returns>
             static bool ShouldDeserialize(IField field)
             {
-                return field.IsNot(FieldOptions.Id | FieldOptions.Relationship) && field.Is(FieldOptions.Deserializable);
+                return field != null && field.IsNot(FieldOptions.Id | FieldOptions.Relationship) && field.Is(FieldOptions.Deserializable);
             }
 
             /// <summary>

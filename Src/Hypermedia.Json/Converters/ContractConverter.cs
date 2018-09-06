@@ -93,7 +93,7 @@ namespace Hypermedia.Json.Converters
         /// <param name="instance">The instance to deserialize into.</param>
         internal void DeserializeObject(IJsonSerializer serializer, JsonObject jsonObject, IContract contract, object instance)
         {
-            DeserializeFields(serializer, jsonObject, contract.Fields.Where(ShouldDeserializeField).ToList(), instance);
+            DeserializeFields(serializer, jsonObject, contract.Fields, instance);
         }
 
         /// <summary>
@@ -109,7 +109,17 @@ namespace Hypermedia.Json.Converters
             {
                 var field = fields.SingleOrDefault(f => String.Equals(f.Name, serializer.FieldNamingStrategy.ResolveName(member.Name), StringComparison.OrdinalIgnoreCase));
 
-                field?.SetValue(instance, serializer.DeserializeValue(field.Accessor.ValueType, member.Value));
+                if (field != null && ShouldDeserializeField(field))
+                {
+                    field.SetValue(instance, serializer.DeserializeValue(field.Accessor.ValueType, member.Value));
+                    continue;
+                }
+
+                if (instance is IJsonExtension jsonExtension)
+                {
+                    jsonExtension.Data = jsonExtension.Data ?? new List<JsonMember>();
+                    jsonExtension.Data.Add(member);
+                }
             }
         }
 

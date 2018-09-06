@@ -64,7 +64,17 @@ namespace Hypermedia.Json.Converters
             {
                 var property = type.GetRuntimeProperty(serializer.FieldNamingStrategy.ResolveName(member.Name));
 
-                property?.SetValue(entity, serializer.DeserializeValue(property.PropertyType, member.Value));
+                if (property != null)
+                {
+                    property.SetValue(entity, serializer.DeserializeValue(property.PropertyType, member.Value));
+                    continue;
+                }
+
+                if (entity is IJsonExtension jsonExtension)
+                {
+                    jsonExtension.Data = jsonExtension.Data ?? new List<JsonMember>();
+                    jsonExtension.Data.Add(member);
+                }
             }
 
             return entity;

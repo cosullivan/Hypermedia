@@ -5,6 +5,22 @@ namespace Hypermedia.Configuration
 {
     public sealed class ReflectionTypeDiscovery : ITypeDiscovery
     {
+        readonly IFieldDiscovery _fieldDiscovery;
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public ReflectionTypeDiscovery() : this(FieldDiscovery.Deep) { }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="fieldDiscovery">The field discovery to use.</param>
+        public ReflectionTypeDiscovery(IFieldDiscovery fieldDiscovery)
+        {
+            _fieldDiscovery = fieldDiscovery;
+        }
+
         /// <summary>
         /// Discover the details about the given type.
         /// </summary>
@@ -26,19 +42,14 @@ namespace Hypermedia.Configuration
         /// <typeparam name="TEntity">The entity type.</typeparam>
         /// <param name="builder">The parent builder to add to.</param>
         /// <param name="type">The type to discover the properties from.</param>
-        static void Discover<TEntity>(ContractBuilder<TEntity> builder, TypeInfo type)
+        void Discover<TEntity>(ContractBuilder<TEntity> builder, TypeInfo type)
         {
-            foreach (var property in type.DeclaredProperties)
+            foreach (var property in _fieldDiscovery.Discover(type))
             {
                 builder
                     .Field(property.Name)
                     .Accessor(new RuntimeFieldAccessor(property))
                     .Options(RuntimeField.CreateDefaultOptions(property));
-            }
-
-            if (type.BaseType != null && type.BaseType != typeof(object))
-            {
-                Discover(builder, type.BaseType.GetTypeInfo());
             }
         }
     }
