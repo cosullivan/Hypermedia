@@ -51,7 +51,19 @@ namespace Hypermedia.JsonApi.Client
         /// <returns>The list of JSON API entities.</returns>
         public TEntity Get<TEntity>(IContractResolver contractResolver, IJsonApiEntityCache cache)
         {
-            return Get<TEntity>(new JsonApiSerializer(contractResolver), cache);
+            return Get<TEntity>(new JsonApiSerializerOptions(contractResolver), cache);
+        }
+
+        /// <summary>
+        /// Gets a single entity.
+        /// </summary>
+        /// <typeparam name="TEntity">The element type.</typeparam>
+        /// <param name="serializerOptions">The serializer options.</param>
+        /// <param name="cache">The entity cache to use for resolving existing instances in the object graph.</param>
+        /// <returns>The list of JSON API entities.</returns>
+        public TEntity Get<TEntity>(JsonApiSerializerOptions serializerOptions, IJsonApiEntityCache cache)
+        {
+            return Get<TEntity>(new JsonApiSerializer(serializerOptions), cache);
         }
 
         /// <summary>
@@ -98,7 +110,19 @@ namespace Hypermedia.JsonApi.Client
         /// <returns>The list of JSON API entities.</returns>
         public IEnumerable<TEntity> GetMany<TEntity>(IContractResolver contractResolver, IJsonApiEntityCache cache)
         {
-            return GetMany<TEntity>(new JsonApiSerializer(contractResolver), cache);
+            return GetMany<TEntity>(new JsonApiSerializer(new JsonApiSerializerOptions(contractResolver)), cache);
+        }
+
+        /// <summary>
+        /// Gets a list of entities.
+        /// </summary>
+        /// <typeparam name="TEntity">The element type.</typeparam>
+        /// <param name="serializerOptions">The serializer options.</param>
+        /// <param name="cache">The entity cache to use for resolving existing instances in the object graph.</param>
+        /// <returns>The list of JSON API entities.</returns>
+        public IEnumerable<TEntity> GetMany<TEntity>(JsonApiSerializerOptions serializerOptions, IJsonApiEntityCache cache)
+        {
+            return GetMany<TEntity>(new JsonApiSerializer(serializerOptions), cache);
         }
 
         /// <summary>

@@ -12,19 +12,23 @@ namespace Hypermedia.JsonApi.AspNetCore.Formatters
     {
         public const string JsonApiMediaTypeName = "application/vnd.api+json";
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="contractResolver">The contract resolver to use.</param>
-        public JsonApiOutputFormatter(IContractResolver contractResolver) : this(contractResolver, DasherizedFieldNamingStrategy.Instance) { }
+        readonly JsonApiSerializerOptions _serializerOptions;
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="contractResolver">The contract resolver to use.</param>
-        /// <param name="fieldNamingStrategy">The field naming strategy when serializing and deserializing the JSON.</param>
-        public JsonApiOutputFormatter(IContractResolver contractResolver, IFieldNamingStrategy fieldNamingStrategy) 
-            : base(JsonApiMediaTypeName, contractResolver, fieldNamingStrategy) { }
+        public JsonApiOutputFormatter(IContractResolver contractResolver) : this(new JsonApiSerializerOptions(contractResolver)) { }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="serializerOptions">The serializer options.</param>
+        public JsonApiOutputFormatter(JsonApiSerializerOptions serializerOptions) 
+            : base(JsonApiMediaTypeName, serializerOptions.ContractResolver, serializerOptions.FieldNamingStrategy)
+        {
+            _serializerOptions = serializerOptions;
+        }
 
         /// <summary>
         /// Serialize the value into an JSON AST.
@@ -49,6 +53,25 @@ namespace Hypermedia.JsonApi.AspNetCore.Formatters
         }
 
         /// <summary>
+        /// Create an instance of a serializer with the specified field naming strategy as an override.
+        /// </summary>
+        /// <param name="fieldNamingStrategy">The field naming strategy to override with.</param>
+        /// <returns>The serializer instance to use.</returns>
+        JsonApiSerializer CreateJsonApiSerializer(IFieldNamingStrategy fieldNamingStrategy)
+        {
+            if (_serializerOptions.FieldNamingStrategy == fieldNamingStrategy)
+            {
+                return new JsonApiSerializer(_serializerOptions);
+            }
+
+            var serializerOptions = _serializerOptions.Clone();
+            
+            serializerOptions.FieldNamingStrategy = fieldNamingStrategy;
+
+            return new JsonApiSerializer(serializerOptions);
+        }
+
+        /// <summary>
         /// Serialize the value into an JSON AST.
         /// </summary>
         /// <param name="type">The type to serialize from.</param>
@@ -57,7 +80,7 @@ namespace Hypermedia.JsonApi.AspNetCore.Formatters
         /// <returns>The JSON object that represents the serialized value.</returns>
         JsonValue SerializeContract(Type type, object value, IFieldNamingStrategy fieldNamingStrategy)
         {
-            var serializer = new JsonApiSerializer(ContractResolver, fieldNamingStrategy);
+            var serializer = CreateJsonApiSerializer(fieldNamingStrategy);
 
             if (TypeHelper.IsEnumerable(type))
             {

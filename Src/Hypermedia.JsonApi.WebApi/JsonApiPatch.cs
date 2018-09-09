@@ -58,12 +58,17 @@ namespace Hypermedia.JsonApi.WebApi
             {
                 var jsonObject = _jsonValue["data"] as JsonObject;
 
-                if (TryResolveContact(contractResolver, jsonObject, out IContract contract) == false)
+                if (TryResolveContact(contractResolver, jsonObject, out var contract) == false)
                 {
                     return false;
                 }
 
-                var serializer = new JsonApiSerializer(contractResolver, _fieldNamingStratgey);
+                var serializer = new JsonApiSerializer(
+                    new JsonApiSerializerOptions(new ContractResolver(contract))
+                    {
+                        FieldNamingStrategy = _fieldNamingStratgey
+                    });
+
                 serializer.DeserializeEntity(contract, jsonObject, entity);
 
                 return true;
@@ -81,7 +86,7 @@ namespace Hypermedia.JsonApi.WebApi
         {
             var jsonObject = _jsonValue["data"] as JsonObject;
 
-            if (TryResolveContact(ContractResolver, jsonObject, out IContract contract) == false)
+            if (TryResolveContact(ContractResolver, jsonObject, out var contract) == false)
             {
                 return new IMember[0];
             }
@@ -99,8 +104,7 @@ namespace Hypermedia.JsonApi.WebApi
         {
             var dictionary = contract.Fields.ToDictionary(k => _fieldNamingStratgey.GetName(k.Name));
 
-            var attributes = jsonObject["attributes"] as JsonObject;
-            if (attributes != null)
+            if (jsonObject["attributes"] is JsonObject attributes)
             {
                 foreach (var attribute in attributes.Members)
                 {
@@ -111,8 +115,7 @@ namespace Hypermedia.JsonApi.WebApi
                 }
             }
 
-            var relationships = jsonObject["relationships"] as JsonObject;
-            if (relationships != null)
+            if (jsonObject["relationships"] is JsonObject relationships)
             {
                 foreach (var relationship in relationships.Members)
                 {

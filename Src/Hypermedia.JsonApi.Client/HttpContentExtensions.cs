@@ -63,7 +63,28 @@ namespace Hypermedia.JsonApi.Client
             IContractResolver contractResolver, 
             IJsonApiEntityCache cache)
         {
-            var serializer = new JsonApiSerializer(contractResolver, new DasherizedFieldNamingStrategy());
+            var serializer = new JsonApiSerializer(
+                new JsonApiSerializerOptions(contractResolver)
+                {
+                    FieldNamingStrategy = DasherizedFieldNamingStrategy.Instance
+                });
+
+            return httpContent.ReadAsJsonApiAsync<TEntity>(serializer, cache);
+        }
+
+        /// <summary>
+        /// Read the content as a JSONAPI response object.
+        /// </summary>
+        /// <param name="httpContent">The HTTP content to read the JSONAPI response from.</param>
+        /// <param name="serializerOptions">The options to use for the serializer.</param>
+        /// <param name="cache">The entity cache to use for resolving existing instances in the object graph.</param>
+        /// <returns>The JSONAPI response element that was read from the stream in the HTTP content.</returns>
+        public static Task<TEntity> ReadAsJsonApiAsync<TEntity>(
+            this HttpContent httpContent, 
+            JsonApiSerializerOptions serializerOptions, 
+            IJsonApiEntityCache cache)
+        {
+            var serializer = new JsonApiSerializer(serializerOptions);
 
             return httpContent.ReadAsJsonApiAsync<TEntity>(serializer, cache);
         }
@@ -119,7 +140,25 @@ namespace Hypermedia.JsonApi.Client
         /// <returns>The JSONAPI response element that was read from the stream in the HTTP content.</returns>
         public static Task<List<TEntity>> ReadAsJsonApiManyAsync<TEntity>(this HttpContent httpContent, IContractResolver contractResolver, IJsonApiEntityCache cache)
         {
-            var serializer = new JsonApiSerializer(contractResolver, new DasherizedFieldNamingStrategy());
+            var serializer = new JsonApiSerializer(
+                new JsonApiSerializerOptions(contractResolver)
+                {
+                    FieldNamingStrategy = DasherizedFieldNamingStrategy.Instance
+                });
+
+            return httpContent.ReadAsJsonApiManyAsync<TEntity>(serializer, cache);
+        }
+
+        /// <summary>
+        /// Read the content as a JSONAPI response object.
+        /// </summary>
+        /// <param name="httpContent">The HTTP content to read the JSONAPI response from.</param>
+        /// <param name="serializerOptions">The serializer options.</param>
+        /// <param name="cache">The entity cache to use for resolving existing instances in the object graph.</param>
+        /// <returns>The JSONAPI response element that was read from the stream in the HTTP content.</returns>
+        public static Task<List<TEntity>> ReadAsJsonApiManyAsync<TEntity>(this HttpContent httpContent, JsonApiSerializerOptions serializerOptions, IJsonApiEntityCache cache)
+        {
+            var serializer = new JsonApiSerializer(serializerOptions);
 
             return httpContent.ReadAsJsonApiManyAsync<TEntity>(serializer, cache);
         }

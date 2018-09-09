@@ -10,7 +10,7 @@ namespace Hypermedia.JsonApi.Tests
         public void CanDeserialize()
         {
             // arrange
-            var serializer = new JsonApiSerializer(HypermediaSampleClient.CreateResolver());
+            var serializer = new JsonApiSerializer(new JsonApiSerializerOptions(HypermediaSampleClient.CreateResolver()));
 
             // act
             var resource = (PostResource)serializer.Deserialize(JsonContent.GetObject(nameof(CanDeserialize)));
@@ -25,7 +25,7 @@ namespace Hypermedia.JsonApi.Tests
         public void CanDeserializeNullHasManyRelationship()
         {
             // arrange
-            var serializer = new JsonApiSerializer(HypermediaSampleClient.CreateResolver());
+            var serializer = new JsonApiSerializer(new JsonApiSerializerOptions(HypermediaSampleClient.CreateResolver()));
 
             // act
             var resource = (PostResource)serializer.Deserialize(JsonContent.GetObject(nameof(CanDeserializeNullHasManyRelationship)));
@@ -39,7 +39,7 @@ namespace Hypermedia.JsonApi.Tests
         public void CanDeserializeNullBelongsRelationship()
         {
             // arrange
-            var serializer = new JsonApiSerializer(HypermediaSampleClient.CreateResolver());
+            var serializer = new JsonApiSerializer(new JsonApiSerializerOptions(HypermediaSampleClient.CreateResolver()));
 
             // act
             var resource = (PostResource)serializer.Deserialize(JsonContent.GetObject(nameof(CanDeserializeNullBelongsRelationship)));

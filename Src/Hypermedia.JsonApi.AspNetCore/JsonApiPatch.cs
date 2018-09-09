@@ -63,7 +63,12 @@ namespace Hypermedia.JsonApi.AspNetCore
                     return false;
                 }
 
-                var serializer = new JsonApiSerializer(contractResolver, _fieldNamingStratgey);
+                var serializer = new JsonApiSerializer(
+                    new JsonApiSerializerOptions(new ContractResolver(contract))
+                    {
+                        FieldNamingStrategy = _fieldNamingStratgey
+                    });
+
                 serializer.DeserializeEntity(contract, jsonObject, entity);
 
                 return true;

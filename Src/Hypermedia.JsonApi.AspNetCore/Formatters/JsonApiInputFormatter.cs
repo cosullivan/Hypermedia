@@ -12,11 +12,22 @@ namespace Hypermedia.JsonApi.AspNetCore.Formatters
     {
         const string MediaTypeName = "application/vnd.api+json";
 
+        readonly JsonApiSerializerOptions _serializerOptions;
+
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="contractResolver">The contract resolver to use.</param>
-        public JsonApiInputFormatter(IContractResolver contractResolver) : base(MediaTypeName, contractResolver, DefaultFieldNamingStrategy.Instance) { }
+        public JsonApiInputFormatter(IContractResolver contractResolver) : this(new JsonApiSerializerOptions(contractResolver)) { }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="serializerOptions">The serializer options to use.</param>
+        public JsonApiInputFormatter(JsonApiSerializerOptions serializerOptions) : base(MediaTypeName, serializerOptions.ContractResolver, serializerOptions.FieldNamingStrategy)
+        {
+            _serializerOptions = serializerOptions;
+        }
 
         /// <summary>
         /// Creates an instance of the patch object for the media type.
@@ -37,6 +48,25 @@ namespace Hypermedia.JsonApi.AspNetCore.Formatters
         }
 
         /// <summary>
+        /// Create an instance of a serializer with the specified field naming strategy as an override.
+        /// </summary>
+        /// <param name="fieldNamingStrategy">The field naming strategy to override with.</param>
+        /// <returns>The serializer instance to use.</returns>
+        JsonApiSerializer CreateJsonApiSerializer(IFieldNamingStrategy fieldNamingStrategy)
+        {
+            if (_serializerOptions.FieldNamingStrategy == fieldNamingStrategy)
+            {
+                return new JsonApiSerializer(_serializerOptions);
+            }
+
+            var serializerOptions = _serializerOptions.Clone();
+            
+            serializerOptions.FieldNamingStrategy = fieldNamingStrategy;
+
+            return new JsonApiSerializer(serializerOptions);
+        }
+
+        /// <summary>
         /// Deserialize an object.
         /// </summary>
         /// <param name="type">The type of the object to deserialize.</param>
@@ -51,7 +81,7 @@ namespace Hypermedia.JsonApi.AspNetCore.Formatters
                 throw new HypermediaAspNetCoreException("The top level JSON value must be an Object.");
             }
 
-            var serializer = new JsonApiSerializer(ContractResolver, fieldNamingStrategy);
+            var serializer = CreateJsonApiSerializer(fieldNamingStrategy);
 
             if (TypeHelper.IsEnumerable(type))
             {

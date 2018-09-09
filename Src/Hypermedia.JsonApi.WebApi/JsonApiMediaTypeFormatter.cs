@@ -88,7 +88,11 @@ namespace Hypermedia.JsonApi.WebApi
                 throw new HypermediaWebApiException("The top level JSON value must be an Object.");
             }
 
-            var serializer = new JsonApiSerializer(ContractResolver, FieldNamingStrategy);
+            var serializer = new JsonApiSerializer(
+                new JsonApiSerializerOptions(ContractResolver)
+                {
+                    FieldNamingStrategy = FieldNamingStrategy
+                });
 
             if (TypeHelper.IsEnumerable(type))
             {
@@ -134,7 +138,11 @@ namespace Hypermedia.JsonApi.WebApi
         /// <returns>The JSON object that represents the serialized value.</returns>
         JsonValue SerializeContract(Type type, object value)
         {
-            var serializer = new JsonApiSerializer(ContractResolver, FieldNamingStrategy);
+            var serializer = new JsonApiSerializer(
+                new JsonApiSerializerOptions(ContractResolver)
+                {
+                    FieldNamingStrategy = FieldNamingStrategy
+                });
 
             if (TypeHelper.IsEnumerable(type))
             {
