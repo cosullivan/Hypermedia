@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>C:\dev\windows\Hypermedia\Src\Hypermedia.Json\Hypermedia.Json.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\Hypermedia.Json.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

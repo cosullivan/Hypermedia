@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>C:\dev\windows\Hypermedia\Src\Hypermedia.JsonApi.AspNetCore\Hypermedia.JsonApi.AspNetCore.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\Hypermedia.JsonApi.AspNetCore.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

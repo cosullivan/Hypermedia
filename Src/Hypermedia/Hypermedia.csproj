@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.4|AnyCPU'">
-    <DocumentationFile>C:\dev\windows\Hypermedia\Src\Hypermedia\Hypermedia.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\Hypermedia.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

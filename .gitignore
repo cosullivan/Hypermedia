@@ -144,8 +144,3 @@ FakesAssemblies/
 
 # Node.js Tools for Visual Studio
 .ntvs_analysis.dat
-
-# XMLDoc Build Output
-*.xml
-# except any xml data in Hypermedia.Sample** folders
-!**/Hypermedia.Sample*/**/*.xml
