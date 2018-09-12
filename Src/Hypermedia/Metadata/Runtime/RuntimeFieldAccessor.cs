@@ -28,7 +28,9 @@ namespace Hypermedia.Metadata.Runtime
 
             if (property == null)
             {
-                throw new Exception($"\"{field}\" property not found on type \"{typeof(T).FullName}\".\nCheck your contract resolver configuration.");
+                throw new ArgumentException(
+                    $"\"{field}\" property not found on type \"{typeof(T).FullName}\".\nCheck your contract resolver configuration.",
+                    nameof(field));
             }
 
             return new RuntimeFieldAccessor(property);
