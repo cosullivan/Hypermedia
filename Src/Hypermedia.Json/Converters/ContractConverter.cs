@@ -9,14 +9,17 @@ namespace Hypermedia.Json.Converters
     internal sealed class ContractConverter : IJsonConverter
     {
         readonly IContractResolver _contractResolver;
+        readonly IFieldNamingStrategy _fieldNamingStrategy;
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="contractResolver">The contract resolver.</param>
-        public ContractConverter(IContractResolver contractResolver)
+        /// <param name="fieldNamingStrategy">The field naming strategy.</param>
+        public ContractConverter(IContractResolver contractResolver, IFieldNamingStrategy fieldNamingStrategy)
         {
             _contractResolver = contractResolver;
+            _fieldNamingStrategy = fieldNamingStrategy;
         }
 
         /// <summary>
@@ -43,11 +46,11 @@ namespace Hypermedia.Json.Converters
         /// <param name="contract">The contract of the object to serialize the members from.</param>
         /// <param name="value">The value to serialize the members from.</param>
         /// <returns>The list of members that make up the object.</returns>
-        static IEnumerable<JsonMember> SerializeMembers(IJsonSerializer serializer, IContract contract, object value)
+        IEnumerable<JsonMember> SerializeMembers(IJsonSerializer serializer, IContract contract, object value)
         {
             foreach (var field in contract.Fields.Where(ShouldSerializeField))
             {
-                yield return new JsonMember(serializer.FieldNamingStrategy.GetName(field.Name), serializer.SerializeValue(field.GetValue(value)));
+                yield return new JsonMember(_fieldNamingStrategy.GetName(field.Name), serializer.SerializeValue(field.GetValue(value)));
             }
         }
 
@@ -107,7 +110,7 @@ namespace Hypermedia.Json.Converters
         {
             foreach (var member in jsonObject.Members)
             {
-                var field = fields.SingleOrDefault(f => String.Equals(f.Name, serializer.FieldNamingStrategy.ResolveName(member.Name), StringComparison.OrdinalIgnoreCase));
+                var field = fields.SingleOrDefault(f => String.Equals(f.Name, _fieldNamingStrategy.ResolveName(member.Name), StringComparison.OrdinalIgnoreCase));
 
                 if (field != null && ShouldDeserializeField(field))
                 {

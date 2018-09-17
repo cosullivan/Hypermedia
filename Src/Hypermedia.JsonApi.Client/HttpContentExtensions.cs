@@ -154,6 +154,17 @@ namespace Hypermedia.JsonApi.Client
         /// </summary>
         /// <param name="httpContent">The HTTP content to read the JSONAPI response from.</param>
         /// <param name="serializerOptions">The serializer options.</param>
+        /// <returns>The JSONAPI response element that was read from the stream in the HTTP content.</returns>
+        public static Task<List<TEntity>> ReadAsJsonApiManyAsync<TEntity>(this HttpContent httpContent, JsonApiSerializerOptions serializerOptions)
+        {
+            return httpContent.ReadAsJsonApiManyAsync<TEntity>(serializerOptions, new JsonApiEntityCache());
+        }
+
+        /// <summary>
+        /// Read the content as a JSONAPI response object.
+        /// </summary>
+        /// <param name="httpContent">The HTTP content to read the JSONAPI response from.</param>
+        /// <param name="serializerOptions">The serializer options.</param>
         /// <param name="cache">The entity cache to use for resolving existing instances in the object graph.</param>
         /// <returns>The JSONAPI response element that was read from the stream in the HTTP content.</returns>
         public static Task<List<TEntity>> ReadAsJsonApiManyAsync<TEntity>(this HttpContent httpContent, JsonApiSerializerOptions serializerOptions, IJsonApiEntityCache cache)

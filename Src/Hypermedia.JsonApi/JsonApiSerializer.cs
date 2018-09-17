@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Hypermedia.Json;
+using Hypermedia.Json.Converters;
 using Hypermedia.Metadata;
 using JsonLite.Ast;
 
@@ -176,7 +177,11 @@ namespace Hypermedia.JsonApi
             internal Serializer(JsonApiSerializerOptions options)
             {
                 _options = options;
-                _jsonSerializer = new JsonSerializer(new JsonConverterFactory(), options.FieldNamingStrategy);
+
+                _jsonSerializer = new JsonSerializer(
+                    new JsonConverterFactory(
+                        JsonConverterFactory.Default, 
+                        new ComplexConverter(options.FieldNamingStrategy)));
             }
 
             /// <summary>
@@ -283,12 +288,16 @@ namespace Hypermedia.JsonApi
                 if (field.Is(FieldOptions.Relationship | FieldOptions.SerializeAsEmbedded))
                 {
                     // the IJsonConvertFactory will delegate complex objects back to the serializer so they can be serialized using the JSON API format
-                    var jsonSerializer = new JsonSerializer(new JsonConverterFactory(this), _jsonSerializer.FieldNamingStrategy);
+                    var jsonSerializer = new JsonSerializer(
+                        new JsonConverterFactory(
+                            JsonConverterFactory.Default, 
+                            this,
+                            new ComplexConverter(_options.FieldNamingStrategy)));
 
-                    return new JsonMember(jsonSerializer.FieldNamingStrategy.GetName(field.Name), jsonSerializer.SerializeValue(field.GetValue(entity)));
+                    return new JsonMember(_options.FieldNamingStrategy.GetName(field.Name), jsonSerializer.SerializeValue(field.GetValue(entity)));
                 }
                 
-                return new JsonMember(_jsonSerializer.FieldNamingStrategy.GetName(field.Name), _jsonSerializer.SerializeValue(field.GetValue(entity)));
+                return new JsonMember(_options.FieldNamingStrategy.GetName(field.Name), _jsonSerializer.SerializeValue(field.GetValue(entity)));
             }
 
             /// <summary>
@@ -354,7 +363,7 @@ namespace Hypermedia.JsonApi
 
                 return members.Count == 0 
                     ? null
-                    : new JsonMember(_jsonSerializer.FieldNamingStrategy.GetName(relationship.Name), new JsonObject(members));
+                    : new JsonMember(_options.FieldNamingStrategy.GetName(relationship.Name), new JsonObject(members));
             }
 
             /// <summary>
@@ -804,7 +813,7 @@ namespace Hypermedia.JsonApi
                 _rootObject = rootObject;
                 _options = options;
                 _instanceCache = instanceCache;
-                _jsonSerializer = new JsonSerializer(new JsonConverterFactory(), options.FieldNamingStrategy);
+                _jsonSerializer = new JsonSerializer(options.FieldNamingStrategy);
                 _objectCache = new JsonApiObjectCache(rootObject);
             }
 
@@ -821,7 +830,15 @@ namespace Hypermedia.JsonApi
                     throw new JsonApiException("Can not return a sequence of items as the top level value is only a single entity.");
                 }
 
-                return jsonArray.OfType<JsonObject>().Select(DeserializeEntity);
+                foreach (var jsonObject in jsonArray.OfType<JsonObject>())
+                {
+                    var entity = DeserializeEntity(jsonObject);
+
+                    if (entity != null)
+                    {
+                        yield return entity;
+                    }
+                }
             }
 
             /// <summary>
@@ -854,12 +871,14 @@ namespace Hypermedia.JsonApi
                     return entity;
                 }
 
-                if (_options.ContractResolver.TryResolve(key.Type, out var contract) == false)
+                if (_options.ContractResolver.TryResolve(key.Type, out var contract))
                 {
-                    throw new JsonApiException("Could not find a type for '{0}'.", key.Type);
+                    return DeserializeEntity(contract, key, jsonObject);
                 }
 
-                return DeserializeEntity(contract, key, jsonObject);
+                _options.MissingContractHandler(new MissingContractContext(key.Type, jsonObject));
+                
+                return null;
             }
 
             /// <summary>
@@ -896,7 +915,7 @@ namespace Hypermedia.JsonApi
                     return true;
                 }
 
-                if (_objectCache.TryGetObject(key, out JsonObject jsonObject))
+                if (_objectCache.TryGetObject(key, out var jsonObject))
                 {
                     entity = DeserializeEntity(jsonObject);
                 }
@@ -944,7 +963,7 @@ namespace Hypermedia.JsonApi
             {
                 foreach (var member in members)
                 {
-                    var field = fields.SingleOrDefault(f => String.Equals(f.Name, _jsonSerializer.FieldNamingStrategy.ResolveName(member.Name), StringComparison.OrdinalIgnoreCase));
+                    var field = fields.SingleOrDefault(f => String.Equals(f.Name, _options.FieldNamingStrategy.ResolveName(member.Name), StringComparison.OrdinalIgnoreCase));
 
                     if (ShouldDeserialize(field))
                     {
@@ -976,7 +995,7 @@ namespace Hypermedia.JsonApi
                 if (field.Is(FieldOptions.Relationship | FieldOptions.DeserializeAsEmbedded))
                 {
                     // the IJsonConvertFactory will delegate complex objects back to the serializer so they can be deserialized using the JSON API format
-                    var jsonSerializer = new JsonSerializer(new JsonConverterFactory(this), _jsonSerializer.FieldNamingStrategy);
+                    var jsonSerializer = new JsonSerializer(_options.FieldNamingStrategy);
 
                     field.SetValue(entity, jsonSerializer.DeserializeValue(field.Accessor.ValueType, value));
 
@@ -996,7 +1015,7 @@ namespace Hypermedia.JsonApi
             {
                 foreach (var member in members.Where(HasDataMember))
                 {
-                    var relationship = relationships.SingleOrDefault(r => String.Equals(r.Name, _jsonSerializer.FieldNamingStrategy.ResolveName(member.Name), StringComparison.OrdinalIgnoreCase));
+                    var relationship = relationships.SingleOrDefault(r => String.Equals(r.Name, _options.FieldNamingStrategy.ResolveName(member.Name), StringComparison.OrdinalIgnoreCase));
 
                     if (relationship == null)
                     {
@@ -1170,9 +1189,9 @@ namespace Hypermedia.JsonApi
             /// <returns>The object that represents the CLR version of the given JSON value.</returns>
             object IJsonConverter.DeserializeValue(IJsonSerializer serializer, Type type, JsonValue jsonValue)
             {
-                if (_options.ContractResolver.TryResolve(type, out IContract contract) == false)
+                if (_options.ContractResolver.TryResolve(type, out var contract) == false)
                 {
-                    throw new JsonApiException("Could not resolve the contract with the CLR type of '{0}'.", type);
+                    throw new InvalidOperationException(String.Format("The DeserializeValue method should never have been called for '{0}'.", type));
                 }
 
                 var jsonObject = (JsonObject) jsonValue;

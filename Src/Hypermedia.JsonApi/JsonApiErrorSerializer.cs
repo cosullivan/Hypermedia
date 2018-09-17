@@ -22,7 +22,7 @@ namespace Hypermedia.JsonApi
                 throw new ArgumentNullException(nameof(errors));
             }
 
-            var serializer = new JsonSerializer(new JsonConverterFactory());
+            var serializer = new JsonSerializer();
 
             return new JsonObject(
                 new JsonMember(

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -10,15 +9,17 @@ namespace Hypermedia.Json
 {
     public sealed class JsonConverterFactory : IJsonConverterFactory
     {
-        static readonly IReadOnlyList<IJsonConverter> KnownConverters = new[]
+        static readonly IJsonConverter[] KnownConverters = new[]
         {
             PrimitiveConverter.Instance,
             NullableConverter.Instance,
             EnumConverter.Instance,
-            EnumerableConverter.Instance,
-            ComplexConverter.Instance
+            EnumerableConverter.Instance
         };
 
+        public static IJsonConverterFactory Default = new JsonConverterFactory(KnownConverters);
+
+        readonly IJsonConverterFactory _fallbackConverterFactory;
         readonly IReadOnlyList<IJsonConverter> _converters;
         readonly IDictionary<Type, IJsonConverter> _resolvedConverters = new Dictionary<Type, IJsonConverter>();
         readonly ReaderWriterLockSlim _resolvedConvertersLock = new ReaderWriterLockSlim();
@@ -26,14 +27,17 @@ namespace Hypermedia.Json
         /// <summary>
         /// Constructor.
         /// </summary>
-        public JsonConverterFactory() : this(new IJsonConverter[0]) { }
+        /// <param name="converters">The list of available converters.</param>
+        JsonConverterFactory(params IJsonConverter[] converters) : this(Default, converters) { }
 
         /// <summary>
         /// Constructor.
         /// </summary>
+        /// <param name="fallbackConverterFactory">The fallback converter factory to use if no overrides are present.</param>
         /// <param name="converters">The list of available converters.</param>
-        public JsonConverterFactory(params IJsonConverter[] converters)
+        public JsonConverterFactory(IJsonConverterFactory fallbackConverterFactory, params IJsonConverter[] converters)
         {
+            _fallbackConverterFactory = fallbackConverterFactory;
             _converters = converters.Union(KnownConverters).ToList();
         }
 
@@ -44,6 +48,29 @@ namespace Hypermedia.Json
         /// <returns>The JSON converter for the given type.</returns>
         /// <remarks>This will always ensure that a converter is returned.</remarks>
         public IJsonConverter CreateInstance(Type type)
+        {
+            var converter = GetOrCreateInstance(type);
+
+            if (converter != null)
+            {
+                return converter;
+            }
+
+            if (_fallbackConverterFactory != null)
+            {
+                return _fallbackConverterFactory.CreateInstance(type);
+            }
+
+            throw new InvalidOperationException($"No converter could be found for the type '{type}'.");
+        }
+
+        /// <summary>
+        /// Create an instance of the JSON converter for the given type.
+        /// </summary>
+        /// <param name="type">The type to create the converter for.</param>
+        /// <returns>The JSON converter for the given type.</returns>
+        /// <remarks>This will always ensure that a converter is returned.</remarks>
+        IJsonConverter GetOrCreateInstance(Type type)
         {
             _resolvedConvertersLock.EnterUpgradeableReadLock();
 
@@ -59,7 +86,6 @@ namespace Hypermedia.Json
                 try
                 {
                     converter = DiscoverConverter(type);
-                    Debug.Assert(converter != null, "Could not find a converter.");
 
                     _resolvedConverters[type] = converter;
 
@@ -95,7 +121,7 @@ namespace Hypermedia.Json
                 return converter;
             }
 
-            return _converters.First(converter => converter.CanConvert(type));
+            return _converters.FirstOrDefault(converter => converter.CanConvert(type));
         }
     }
 }

@@ -41,9 +41,13 @@ namespace Hypermedia.AspNetCore.Json
                     return false;
                 }
 
-                var serializer = new JsonSerializer(new JsonConverterFactory(new ContractConverter(ContractResolver)), _fieldNamingStratgey);
+                var serializer = new JsonSerializer(
+                    new JsonConverterFactory(
+                        JsonConverterFactory.Default,
+                        new ContractConverter(ContractResolver, _fieldNamingStratgey),
+                        new ComplexConverter(_fieldNamingStratgey)));
 
-                var converter = new ContractConverter(contractResolver);
+                var converter = new ContractConverter(contractResolver, _fieldNamingStratgey);
                 converter.DeserializeObject(serializer, (JsonObject)_jsonValue, contract, entity);
 
                 return true;

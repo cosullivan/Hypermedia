@@ -1,31 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
+using Hypermedia.Json.Converters;
 using JsonLite.Ast;
 
 namespace Hypermedia.Json
 {
     public sealed class JsonSerializer : IJsonSerializer
     {
+        readonly IJsonConverterFactory _jsonConverterFactory;
+
         /// <summary>
         /// Constructor.
         /// </summary>
-        public JsonSerializer() : this(new JsonConverterFactory(), new DefaultFieldNamingStrategy()) { }
+        public JsonSerializer() : this(new DefaultFieldNamingStrategy()) { }
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="jsonConverterFactory">The JSON converter factory.</param>
-        public JsonSerializer(IJsonConverterFactory jsonConverterFactory) : this(jsonConverterFactory, new DefaultFieldNamingStrategy()) { }
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="jsonConverterFactory">The JSON converter factory.</param>
-        /// <param name="fieldNamingStrategy">The field naming strategy.</param>
-        public JsonSerializer(IJsonConverterFactory jsonConverterFactory, IFieldNamingStrategy fieldNamingStrategy)
+        public JsonSerializer(IJsonConverterFactory jsonConverterFactory)
         {
-            JsonConverterFactory = jsonConverterFactory;
-            FieldNamingStrategy = fieldNamingStrategy;
+            _jsonConverterFactory = jsonConverterFactory;
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="fieldNamingStrategy">The field naming strategy.</param>
+        public JsonSerializer(IFieldNamingStrategy fieldNamingStrategy)
+        {
+            _jsonConverterFactory = new JsonConverterFactory(
+                JsonConverterFactory.Default,
+                new ComplexConverter(fieldNamingStrategy));
         }
 
         /// <summary>
@@ -35,7 +41,7 @@ namespace Hypermedia.Json
         /// <returns>The JSON value which represents the inline serialization of the value.</returns>
         public JsonValue SerializeValue(object value)
         {
-            return new Serializer(JsonConverterFactory, FieldNamingStrategy).SerializeValue(value);
+            return new Serializer(_jsonConverterFactory).SerializeValue(value);
         }
 
         /// <summary>
@@ -51,36 +57,25 @@ namespace Hypermedia.Json
                 return null;
             }
 
-            var converter = JsonConverterFactory.CreateInstance(type);
+            var converter = _jsonConverterFactory.CreateInstance(type);
 
             return converter.DeserializeValue(this, type, jsonValue);
         }
-
-        /// <summary>
-        /// The JSON converter factory.
-        /// </summary>
-        public IJsonConverterFactory JsonConverterFactory { get; }
-
-        /// <summary>
-        /// The field naming strategy.
-        /// </summary>
-        public IFieldNamingStrategy FieldNamingStrategy { get; }
 
         #region Serializer
 
         class Serializer : IJsonSerializer
         {
+            readonly IJsonConverterFactory _jsonConverterFactory;
             readonly Stack<object> _visited = new Stack<object>();
 
             /// <summary>
             /// Constructor.
             /// </summary>
             /// <param name="jsonConverterFactory">The JSON converter factory.</param>
-            /// <param name="fieldNamingStrategy">The field naming strategy.</param>
-            public Serializer(IJsonConverterFactory jsonConverterFactory, IFieldNamingStrategy fieldNamingStrategy)
+            public Serializer(IJsonConverterFactory jsonConverterFactory)
             {
-                JsonConverterFactory = jsonConverterFactory;
-                FieldNamingStrategy = fieldNamingStrategy;
+                _jsonConverterFactory = jsonConverterFactory;
             }
 
             /// <summary>
@@ -98,7 +93,7 @@ namespace Hypermedia.Json
                 _visited.Push(value);
 
                 var type = value.GetType();
-                var converter = JsonConverterFactory.CreateInstance(type);
+                var converter = _jsonConverterFactory.CreateInstance(type);
 
                 var jsonValue = converter.SerializeValue(this, type, value);
 
@@ -117,16 +112,6 @@ namespace Hypermedia.Json
             {
                 throw new NotImplementedException();
             }
-
-            /// <summary>
-            /// The JSON converter factory.
-            /// </summary>
-            public IJsonConverterFactory JsonConverterFactory { get; }
-
-            /// <summary>
-            /// The field naming strategy.
-            /// </summary>
-            public IFieldNamingStrategy FieldNamingStrategy { get; }
         }
 
         #endregion

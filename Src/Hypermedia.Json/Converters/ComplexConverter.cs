@@ -6,9 +6,18 @@ using JsonLite.Ast;
 
 namespace Hypermedia.Json.Converters
 {
-    internal sealed class ComplexConverter : IJsonConverter
+    public sealed class ComplexConverter : IJsonConverter
     {
-        internal static readonly IJsonConverter Instance = new ComplexConverter();
+        readonly IFieldNamingStrategy _fieldNamingStrategy;
+        
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="fieldNamingStrategy">The field naming strategy.</param>
+        public ComplexConverter(IFieldNamingStrategy fieldNamingStrategy)
+        {
+            _fieldNamingStrategy = fieldNamingStrategy;
+        }
 
         /// <summary>
         /// Serialize the value.
@@ -29,11 +38,11 @@ namespace Hypermedia.Json.Converters
         /// <param name="type">The type of the object to serialize the members from.</param>
         /// <param name="value">The value to serialize the members from.</param>
         /// <returns>The list of members that make up the object.</returns>
-        static IEnumerable<JsonMember> SerializeMembers(IJsonSerializer serializer, Type type, object value)
+        IEnumerable<JsonMember> SerializeMembers(IJsonSerializer serializer, Type type, object value)
         {
             foreach (var property in type.GetRuntimeProperties().Where(p => p.CanRead))
             {
-                yield return new JsonMember(serializer.FieldNamingStrategy.GetName(property.Name), serializer.SerializeValue(property.GetValue(value)));
+                yield return new JsonMember(_fieldNamingStrategy.GetName(property.Name), serializer.SerializeValue(property.GetValue(value)));
             }
         }
 
@@ -56,13 +65,13 @@ namespace Hypermedia.Json.Converters
         /// <param name="type">The type of the object to deserialize to.</param>
         /// <param name="jsonObject">The JSON object to deserialize from.</param>
         /// <returns>The CLR object that represents the JSON object.</returns>
-        static object DeserializeObject(IJsonSerializer serializer, Type type, JsonObject jsonObject)
+        object DeserializeObject(IJsonSerializer serializer, Type type, JsonObject jsonObject)
         {
             var entity = Activator.CreateInstance(type);
 
             foreach (var member in jsonObject.Members)
             {
-                var property = type.GetRuntimeProperty(serializer.FieldNamingStrategy.ResolveName(member.Name));
+                var property = type.GetRuntimeProperty(_fieldNamingStrategy.ResolveName(member.Name));
 
                 if (property != null)
                 {

@@ -86,7 +86,11 @@ namespace Hypermedia.AspNetCore.Json.Formatters
         /// <returns>The JSON object that represents the serialized value.</returns>
         protected virtual JsonValue SerializeValue(Type type, object value, IFieldNamingStrategy fieldNamingStrategy)
         {
-            var serializer = new JsonSerializer(new JsonConverterFactory(new ContractConverter(ContractResolver)), fieldNamingStrategy);
+            var serializer = new JsonSerializer(
+                new JsonConverterFactory(
+                    JsonConverterFactory.Default,
+                    new ContractConverter(ContractResolver, fieldNamingStrategy),
+                    new ComplexConverter(fieldNamingStrategy)));
 
             return serializer.SerializeValue(value);
         }

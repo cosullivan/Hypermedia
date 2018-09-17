@@ -5,6 +5,8 @@ namespace Hypermedia.JsonApi
 {
     public sealed class JsonApiSerializerOptions
     {
+        public delegate void MissingContractHandlerDelegate(MissingContractContext context);
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -22,7 +24,8 @@ namespace Hypermedia.JsonApi
         {
             return new JsonApiSerializerOptions(ContractResolver)
             {
-                FieldNamingStrategy = FieldNamingStrategy
+                FieldNamingStrategy = FieldNamingStrategy,
+                MissingContractHandler = MissingContractHandler
             };
         }
 
@@ -35,5 +38,10 @@ namespace Hypermedia.JsonApi
         /// The field naming strategy.
         /// </summary>
         public IFieldNamingStrategy FieldNamingStrategy { get; set; } = DasherizedFieldNamingStrategy.Instance;
+
+        /// <summary>
+        /// The handler to run when a contract is missing.
+        /// </summary>
+        public MissingContractHandlerDelegate MissingContractHandler { get; set; } = context => throw new JsonApiException("Could not find a type for '{0}'.", context.Type);
     }
 }

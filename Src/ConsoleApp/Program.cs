@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using Hypermedia.Json;
+using Hypermedia.JsonApi;
 using Hypermedia.Metadata.Runtime;
 using JsonLite.Ast;
 using PostResource = Hypermedia.Sample.Resources.PostResource;
@@ -63,20 +64,20 @@ namespace ConsoleApp
 
         static async Task Main(string[] args)
         {
-            //using (var client = new HypermediaSampleClient("http://hypermediasamplewebapi.azurewebsites.net/", ""))
-            using (var client = new HypermediaSampleClient("http://localhost:50419/", ""))
-            {
-                //client.BatchUpdateAsync(new [] { new CommentResource() }).Wait();
-                //client.UpdateAsync(new CommentResource()).Wait();
-                //client.CreateAsync(new CommentResource()).Wait();            
+            ////using (var client = new HypermediaSampleClient("http://hypermediasamplewebapi.azurewebsites.net/", ""))
+            //using (var client = new HypermediaSampleClient("http://localhost:50419/", ""))
+            //{
+            //    //client.BatchUpdateAsync(new [] { new CommentResource() }).Wait();
+            //    //client.UpdateAsync(new CommentResource()).Wait();
+            //    //client.CreateAsync(new CommentResource()).Wait();            
 
-                var posts = client.GetPostsAsync().Result;
+            //    var posts = client.GetPostsAsync().Result;
 
-                foreach (var post in posts)
-                {
-                    Console.WriteLine(post);
-                }
-            }
+            //    foreach (var post in posts)
+            //    {
+            //        Console.WriteLine(post);
+            //    }
+            //}
 
             var contractResolver = new Builder()
                 //.With<PostResource>("posts")
@@ -90,8 +91,13 @@ namespace ConsoleApp
                 var response = await httpClient.GetAsync($"v1/posts?skip=0&take=1");
                 response.EnsureSuccessStatusCode();
 
-                var entities = await response.Content.ReadAsJsonApiManyAsync<Entity>(new CustomContractResolver(contractResolver));
-                //var entities = await response.Content.ReadAsJsonApiManyAsync<Entity>(contractResolver);
+                var serializerOptions = new JsonApiSerializerOptions(contractResolver)
+                {
+                    MissingContractHandler = type => Console.WriteLine("The '{0}' is missing")
+                };
+
+                //var entities = await response.Content.ReadAsJsonApiManyAsync<Entity>(new CustomContractResolver(contractResolver));
+                var entities = await response.Content.ReadAsJsonApiManyAsync<Entity>(serializerOptions);
 
                 foreach (var entity in entities)
                 {

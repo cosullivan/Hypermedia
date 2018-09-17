@@ -132,7 +132,11 @@ namespace Hypermedia.AspNetCore.Json.Formatters
         /// <param name="jsonValue">The JSON value that represents the object to deserialize.</param>
         protected virtual object DeserializeValue(Type type, IFieldNamingStrategy fieldNamingStrategy, JsonValue jsonValue)
         {
-            var serializer = new JsonSerializer(new JsonConverterFactory(new ContractConverter(ContractResolver)), fieldNamingStrategy);
+            var serializer = new JsonSerializer(
+                new JsonConverterFactory(
+                    JsonConverterFactory.Default,
+                    new ContractConverter(ContractResolver, fieldNamingStrategy),
+                    new ComplexConverter(fieldNamingStrategy)));
 
             return serializer.DeserializeValue(type, jsonValue);
         }
