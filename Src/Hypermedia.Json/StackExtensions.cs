@@ -20,7 +20,7 @@ namespace Hypermedia.Json
 
             stack.Push(value);
 
-            return new DelegatingDisposable(()=> stack.Pop());
+            return new DelegatingDisposable(() => stack.Pop());
         }
     }
 }

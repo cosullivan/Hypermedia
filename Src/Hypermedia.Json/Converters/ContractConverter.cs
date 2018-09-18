@@ -57,23 +57,23 @@ namespace Hypermedia.Json.Converters
         /// <summary>
         /// Deserialize a JSON value to a defined CLR type.
         /// </summary>
-        /// <param name="serializer">The serializer to utilize when deserializing nested objects.</param>
+        /// <param name="deserializer">The deserializer to utilize when deserializing nested objects.</param>
         /// <param name="type">The CLR type to deserialize the JSON value to.</param>
         /// <param name="jsonValue">The JSON value to deserialize.</param>
         /// <returns>The object that represents the CLR version of the given JSON value.</returns>
-        public object DeserializeValue(IJsonSerializer serializer, Type type, JsonValue jsonValue)
+        public object DeserializeValue(IJsonDeserializer deserializer, Type type, JsonValue jsonValue)
         {
-            return DeserializeObject(serializer, type, jsonValue);
+            return DeserializeObject(deserializer, type, jsonValue);
         }
 
         /// <summary>
         /// Deserialize a JSON object.
         /// </summary>
-        /// <param name="serializer">The serializer to utilize when deserializing nested objects.</param>
+        /// <param name="deserializer">The deserializer to utilize when deserializing nested objects.</param>
         /// <param name="type">The type of the object to deserialize to.</param>
         /// <param name="jsonValue">The JSON value to deserialize from.</param>
         /// <returns>The CLR object that represents the JSON object.</returns>
-        object DeserializeObject(IJsonSerializer serializer, Type type, JsonValue jsonValue)
+        object DeserializeObject(IJsonDeserializer deserializer, Type type, JsonValue jsonValue)
         {
             if (_contractResolver.TryResolve(type, out var contract) == false)
             {
@@ -82,7 +82,7 @@ namespace Hypermedia.Json.Converters
 
             var instance = Activator.CreateInstance(type);
 
-            DeserializeObject(serializer, (JsonObject)jsonValue, contract, instance);
+            DeserializeObject(deserializer, (JsonObject)jsonValue, contract, instance);
             
             return instance;
         }
@@ -90,23 +90,23 @@ namespace Hypermedia.Json.Converters
         /// <summary>
         /// Deserialize into the given instance.
         /// </summary>
-        /// <param name="serializer">The serializer to utilize when deserializing nested objects.</param>
+        /// <param name="deserializer">The deserializer to utilize when deserializing nested objects.</param>
         /// <param name="jsonObject">The JSON object to deserialize from.</param>
         /// <param name="contract">The contract for the type that is being deserialized.</param>
         /// <param name="instance">The instance to deserialize into.</param>
-        internal void DeserializeObject(IJsonSerializer serializer, JsonObject jsonObject, IContract contract, object instance)
+        internal void DeserializeObject(IJsonDeserializer deserializer, JsonObject jsonObject, IContract contract, object instance)
         {
-            DeserializeFields(serializer, jsonObject, contract.Fields, instance);
+            DeserializeFields(deserializer, jsonObject, contract.Fields, instance);
         }
 
         /// <summary>
         /// Deserialize the fields for the given instance.
         /// </summary>
-        /// <param name="serializer">The serializer to utilize when deserializing nested objects.</param>
+        /// <param name="deserializer">The deserializer to utilize when deserializing nested objects.</param>
         /// <param name="jsonObject">The JSON object to deserialize from.</param>
         /// <param name="fields">The list of fields to deserialize.</param>
         /// <param name="instance">The instance to deserialize into.</param>
-        void DeserializeFields(IJsonSerializer serializer, JsonObject jsonObject, IReadOnlyList<IField> fields, object instance)
+        void DeserializeFields(IJsonDeserializer deserializer, JsonObject jsonObject, IReadOnlyList<IField> fields, object instance)
         {
             foreach (var member in jsonObject.Members)
             {
@@ -114,7 +114,7 @@ namespace Hypermedia.Json.Converters
 
                 if (field != null && ShouldDeserializeField(field))
                 {
-                    field.SetValue(instance, serializer.DeserializeValue(field.Accessor.ValueType, member.Value));
+                    field.SetValue(instance, deserializer.DeserializeValue(field.Accessor.ValueType, member.Value));
                     continue;
                 }
 

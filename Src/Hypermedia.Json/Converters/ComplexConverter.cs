@@ -49,23 +49,23 @@ namespace Hypermedia.Json.Converters
         /// <summary>
         /// Deserialize a JSON value to a defined CLR type.
         /// </summary>
-        /// <param name="serializer">The serializer to utilize when deserializing nested objects.</param>
+        /// <param name="deserializer">The deserializer to utilize when deserializing nested objects.</param>
         /// <param name="type">The CLR type to deserialize the JSON value to.</param>
         /// <param name="jsonValue">The JSON value to deserialize.</param>
         /// <returns>The object that represents the CLR version of the given JSON value.</returns>
-        public object DeserializeValue(IJsonSerializer serializer, Type type, JsonValue jsonValue)
+        public object DeserializeValue(IJsonDeserializer deserializer, Type type, JsonValue jsonValue)
         {
-            return DeserializeObject(serializer, type, (JsonObject)jsonValue);
+            return DeserializeObject(deserializer, type, (JsonObject)jsonValue);
         }
 
         /// <summary>
         /// Deserialize a JSON object.
         /// </summary>
-        /// <param name="serializer">The serializer to utilize when deserializing nested objects.</param>
+        /// <param name="deserializer">The deserializer to utilize when deserializing nested objects.</param>
         /// <param name="type">The type of the object to deserialize to.</param>
         /// <param name="jsonObject">The JSON object to deserialize from.</param>
         /// <returns>The CLR object that represents the JSON object.</returns>
-        object DeserializeObject(IJsonSerializer serializer, Type type, JsonObject jsonObject)
+        object DeserializeObject(IJsonDeserializer deserializer, Type type, JsonObject jsonObject)
         {
             var entity = Activator.CreateInstance(type);
 
@@ -75,7 +75,7 @@ namespace Hypermedia.Json.Converters
 
                 if (property != null)
                 {
-                    property.SetValue(entity, serializer.DeserializeValue(property.PropertyType, member.Value));
+                    property.SetValue(entity, deserializer.DeserializeValue(property.PropertyType, member.Value));
                     continue;
                 }
 

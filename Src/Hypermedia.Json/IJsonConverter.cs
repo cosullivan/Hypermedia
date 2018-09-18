@@ -17,11 +17,11 @@ namespace Hypermedia.Json
         /// <summary>
         /// Deserialize a JSON value to a defined CLR type.
         /// </summary>
-        /// <param name="serializer">The serializer to utilize when deserializing nested objects.</param>
+        /// <param name="deserializer">The deserializer to utilize when deserializing nested objects.</param>
         /// <param name="type">The CLR type to deserialize the JSON value to.</param>
         /// <param name="jsonValue">The JSON value to deserialize.</param>
         /// <returns>The object that represents the CLR version of the given JSON value.</returns>
-        object DeserializeValue(IJsonSerializer serializer, Type type, JsonValue jsonValue);
+        object DeserializeValue(IJsonDeserializer deserializer, Type type, JsonValue jsonValue);
 
         /// <summary>
         /// Returns a value indicating whether or not the converter can convert the given type.

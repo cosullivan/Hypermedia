@@ -5,7 +5,7 @@ using JsonLite.Ast;
 
 namespace Hypermedia.Json
 {
-    public sealed class JsonSerializer : IJsonSerializer
+    public sealed class JsonSerializer : IJsonSerializer, IJsonDeserializer
     {
         readonly IJsonConverterFactory _jsonConverterFactory;
 
@@ -97,17 +97,6 @@ namespace Hypermedia.Json
                 {
                     return converter.SerializeValue(this, type, value);
                 }
-            }
-
-            /// <summary>
-            /// Deserialize the given JSON value according to the specified CLR type.
-            /// </summary>
-            /// <param name="type">The CLR type to deserialize the JSON value to.</param>
-            /// <param name="jsonValue">The JSON value to deserialize.</param>
-            /// <returns>The CLR object that the JSON value was deserialized from.</returns>
-            object IJsonSerializer.DeserializeValue(Type type, JsonValue jsonValue)
-            {
-                throw new NotImplementedException();
             }
         }
 

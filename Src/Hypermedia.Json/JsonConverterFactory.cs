@@ -19,7 +19,7 @@ namespace Hypermedia.Json
 
         public static IJsonConverterFactory Default = new JsonConverterFactory(KnownConverters);
 
-        readonly IJsonConverterFactory _fallbackConverterFactory;
+        readonly IJsonConverterFactory _defaultConverterFactory;
         readonly IReadOnlyList<IJsonConverter> _converters;
         readonly IDictionary<Type, IJsonConverter> _resolvedConverters = new Dictionary<Type, IJsonConverter>();
         readonly ReaderWriterLockSlim _resolvedConvertersLock = new ReaderWriterLockSlim();
@@ -33,11 +33,11 @@ namespace Hypermedia.Json
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="fallbackConverterFactory">The fallback converter factory to use if no overrides are present.</param>
+        /// <param name="defaultConverterFactory">The default converter factory to use.</param>
         /// <param name="converters">The list of available converters.</param>
-        public JsonConverterFactory(IJsonConverterFactory fallbackConverterFactory, params IJsonConverter[] converters)
+        public JsonConverterFactory(IJsonConverterFactory defaultConverterFactory, params IJsonConverter[] converters)
         {
-            _fallbackConverterFactory = fallbackConverterFactory;
+            _defaultConverterFactory = defaultConverterFactory;
             _converters = converters.Union(KnownConverters).ToList();
         }
 
@@ -49,16 +49,23 @@ namespace Hypermedia.Json
         /// <remarks>This will always ensure that a converter is returned.</remarks>
         public IJsonConverter CreateInstance(Type type)
         {
-            var converter = GetOrCreateInstance(type);
+            IJsonConverter converter;
+
+            if (_defaultConverterFactory != null)
+            {
+                converter = _defaultConverterFactory.CreateInstance(type);
+
+                if (converter != null)
+                {
+                    return converter;
+                }
+            }
+
+            converter = GetOrCreateInstance(type);
 
             if (converter != null)
             {
                 return converter;
-            }
-
-            if (_fallbackConverterFactory != null)
-            {
-                return _fallbackConverterFactory.CreateInstance(type);
             }
 
             throw new InvalidOperationException($"No converter could be found for the type '{type}'.");

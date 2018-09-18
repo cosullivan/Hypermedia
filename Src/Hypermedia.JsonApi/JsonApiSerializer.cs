@@ -766,11 +766,11 @@ namespace Hypermedia.JsonApi
             /// <summary>
             /// Deserialize a JSON value to a defined CLR type.
             /// </summary>
-            /// <param name="serializer">The serializer to utilize when deserializing nested objects.</param>
+            /// <param name="deserializer">The deserializer to utilize when deserializing nested objects.</param>
             /// <param name="type">The CLR type to deserialize the JSON value to.</param>
             /// <param name="jsonValue">The JSON value to deserialize.</param>
             /// <returns>The object that represents the CLR version of the given JSON value.</returns>
-            object IJsonConverter.DeserializeValue(IJsonSerializer serializer, Type type, JsonValue jsonValue)
+            object IJsonConverter.DeserializeValue(IJsonDeserializer deserializer, Type type, JsonValue jsonValue)
             {
                 // this will never get called under this context
                 throw new NotImplementedException();
@@ -796,7 +796,7 @@ namespace Hypermedia.JsonApi
             readonly JsonObject _rootObject;
             readonly JsonApiSerializerOptions _options;
             readonly IJsonApiEntityCache _instanceCache;
-            readonly IJsonSerializer _jsonSerializer;
+            readonly IJsonDeserializer _jsonSerializer;
             readonly JsonApiObjectCache _objectCache;
 
             /// <summary>
@@ -1183,11 +1183,11 @@ namespace Hypermedia.JsonApi
             /// <summary>
             /// Deserialize a JSON value to a defined CLR type.
             /// </summary>
-            /// <param name="serializer">The serializer to utilize when deserializing nested objects.</param>
+            /// <param name="deserializer">The deserializer to utilize when deserializing nested objects.</param>
             /// <param name="type">The CLR type to deserialize the JSON value to.</param>
             /// <param name="jsonValue">The JSON value to deserialize.</param>
             /// <returns>The object that represents the CLR version of the given JSON value.</returns>
-            object IJsonConverter.DeserializeValue(IJsonSerializer serializer, Type type, JsonValue jsonValue)
+            object IJsonConverter.DeserializeValue(IJsonDeserializer deserializer, Type type, JsonValue jsonValue)
             {
                 if (_options.ContractResolver.TryResolve(type, out var contract) == false)
                 {
