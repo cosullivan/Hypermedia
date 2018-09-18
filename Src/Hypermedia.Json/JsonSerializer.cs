@@ -90,16 +90,13 @@ namespace Hypermedia.Json
                     return JsonNull.Instance;
                 }
 
-                _visited.Push(value);
-
                 var type = value.GetType();
                 var converter = _jsonConverterFactory.CreateInstance(type);
 
-                var jsonValue = converter.SerializeValue(this, type, value);
-
-                _visited.Pop();
-
-                return jsonValue;
+                using (_visited.Visit(value))
+                {
+                    return converter.SerializeValue(this, type, value);
+                }
             }
 
             /// <summary>
