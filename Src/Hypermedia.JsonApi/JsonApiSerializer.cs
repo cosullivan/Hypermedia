@@ -876,9 +876,7 @@ namespace Hypermedia.JsonApi
                     return DeserializeEntity(contract, key, jsonObject);
                 }
 
-                _options.MissingContractHandler(new MissingContractContext(key.Type, jsonObject));
-                
-                return null;
+                return _options.MissingContractHandler(new MissingContractContext(key.Type, jsonObject));
             }
 
             /// <summary>

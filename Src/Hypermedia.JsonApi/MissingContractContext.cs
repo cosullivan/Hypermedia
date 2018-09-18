@@ -23,6 +23,11 @@ namespace Hypermedia.JsonApi
         /// <summary>
         /// The JSON object that contains the type that was missing.
         /// </summary>
-        public JsonObject JsonObject { get;  }
+        public JsonObject JsonObject { get; }
+        
+        /// <summary>
+        /// The entity to resolve as a place holder.
+        /// </summary>
+        public object Entity { get; set; }
     }
 }

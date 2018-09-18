@@ -93,7 +93,11 @@ namespace ConsoleApp
 
                 var serializerOptions = new JsonApiSerializerOptions(contractResolver)
                 {
-                    MissingContractHandler = type => Console.WriteLine("The '{0}' is missing")
+                    MissingContractHandler = context =>
+                    {
+                        Console.WriteLine("The resource '{0}' is missing", context.Type);
+                        return null;
+                    }
                 };
 
                 //var entities = await response.Content.ReadAsJsonApiManyAsync<Entity>(new CustomContractResolver(contractResolver));

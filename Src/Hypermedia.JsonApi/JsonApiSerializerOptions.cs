@@ -5,7 +5,12 @@ namespace Hypermedia.JsonApi
 {
     public sealed class JsonApiSerializerOptions
     {
-        public delegate void MissingContractHandlerDelegate(MissingContractContext context);
+        /// <summary>
+        /// The delegate to use when a contract could not be resolved during deserialization.
+        /// </summary>
+        /// <param name="context">The context for the operation.</param>
+        /// <returns>The entity to return as a placeholder.</returns>
+        public delegate object MissingContractHandlerDelegate(MissingContractContext context);
 
         /// <summary>
         /// Constructor.
