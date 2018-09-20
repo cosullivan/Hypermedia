@@ -13,6 +13,10 @@
     <FileVersion>2.7.0.0</FileVersion>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\Hypermedia.JsonApi.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Json.Lite" Version="2.0.2" />
   </ItemGroup>

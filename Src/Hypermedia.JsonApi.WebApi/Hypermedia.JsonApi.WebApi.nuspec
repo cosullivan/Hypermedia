@@ -14,6 +14,11 @@
         <file src="bin\Release\Hypermedia.JsonApi.dll" target="lib\Net45" />
         <file src="bin\Release\Hypermedia.JsonApi.WebApi.dll" target="lib\Net45" />
         <file src="bin\Release\Hypermedia.WebApi.dll" target="lib\Net45" />
+        <file src="bin\Release\Hypermedia.xml" target="lib\Net45" />
+        <file src="bin\Release\Hypermedia.Json.xml" target="lib\Net45" />
+        <file src="bin\Release\Hypermedia.JsonApi.xml" target="lib\Net45" />
+        <file src="bin\Release\Hypermedia.JsonApi.WebApi.xml" target="lib\Net45" />
+        <file src="bin\Release\Hypermedia.WebApi.xml" target="lib\Net45" />
         <file src="bin\Release\JsonLite.dll" target="lib\Net45" />
     </files>
 </package>

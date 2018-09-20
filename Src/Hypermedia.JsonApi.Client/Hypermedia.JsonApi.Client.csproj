@@ -13,6 +13,10 @@
     <FileVersion>2.7.0.0</FileVersion>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\Hypermedia.JsonApi.Client.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="System.Net.Http" Version="4.3.2" />
   </ItemGroup>
