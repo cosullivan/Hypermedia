@@ -8,8 +8,8 @@
     <Product>JSONAPI Hypermedia Serializer</Product>
     <PackageProjectUrl>https://github.com/cosullivan/Hypermedia</PackageProjectUrl>
     <Description>A JSONAPI compliant serializer.</Description>
-    <Version>2.7.0</Version>
-    <AssemblyVersion>2.7.0.0</AssemblyVersion>
+    <Version>3.0.0</Version>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
     <FileVersion>2.7.0.0</FileVersion>
   </PropertyGroup>
 
