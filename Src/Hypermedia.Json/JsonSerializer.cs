@@ -59,6 +59,11 @@ namespace Hypermedia.Json
 
             var converter = _jsonConverterFactory.CreateInstance(type);
 
+            if (converter == null)
+            {
+                throw new InvalidOperationException($"No converter could be found for the type '{type}'.");
+            }
+
             return converter.DeserializeValue(this, type, jsonValue);
         }
 
@@ -92,6 +97,11 @@ namespace Hypermedia.Json
 
                 var type = value.GetType();
                 var converter = _jsonConverterFactory.CreateInstance(type);
+
+                if (converter == null)
+                {
+                    throw new InvalidOperationException($"No converter could be found for the type '{type}'.");
+                }
 
                 using (_visited.Visit(value))
                 {

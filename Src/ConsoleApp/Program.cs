@@ -64,56 +64,56 @@ namespace ConsoleApp
 
         static async Task Main(string[] args)
         {
-            ////using (var client = new HypermediaSampleClient("http://hypermediasamplewebapi.azurewebsites.net/", ""))
-            //using (var client = new HypermediaSampleClient("http://localhost:50419/", ""))
-            //{
-            //    //client.BatchUpdateAsync(new [] { new CommentResource() }).Wait();
-            //    //client.UpdateAsync(new CommentResource()).Wait();
-            //    //client.CreateAsync(new CommentResource()).Wait();            
-
-            //    var posts = client.GetPostsAsync().Result;
-
-            //    foreach (var post in posts)
-            //    {
-            //        Console.WriteLine(post);
-            //    }
-            //}
-
-            var contractResolver = new Builder()
-                //.With<PostResource>("posts")
-                //    .Id(nameof(PostResource.Id))
-                .Build();
-
-            using (var httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:50419") })
+            //using (var client = new HypermediaSampleClient("http://hypermediasamplewebapi.azurewebsites.net/", ""))
+            using (var client = new HypermediaSampleClient("http://localhost:50419/", ""))
             {
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.api+json"));
+                //client.BatchUpdateAsync(new [] { new CommentResource() }).Wait();
+                //client.UpdateAsync(new CommentResource()).Wait();
+                //client.CreateAsync(new CommentResource()).Wait();            
 
-                var response = await httpClient.GetAsync($"v1/posts?skip=0&take=1");
-                response.EnsureSuccessStatusCode();
+                var posts = client.GetPostsAsync().Result;
 
-                var serializerOptions = new JsonApiSerializerOptions(contractResolver)
+                foreach (var post in posts)
                 {
-                    MissingContractHandler = context =>
-                    {
-                        Console.WriteLine("The resource '{0}' is missing", context.Type);
-                        return null;
-                    }
-                };
-
-                //var entities = await response.Content.ReadAsJsonApiManyAsync<Entity>(new CustomContractResolver(contractResolver));
-                var entities = await response.Content.ReadAsJsonApiManyAsync<Entity>(serializerOptions);
-
-                foreach (var entity in entities)
-                {
-                    Console.WriteLine(entity.Id);
-                    Console.WriteLine(entity.CreationDate);
-
-                    foreach (var jsonMember in ((IJsonExtension) entity).Data)
-                    {
-                        Console.WriteLine("{0} = {1}", jsonMember.Name, jsonMember.Value.Stringify());
-                    }
+                    Console.WriteLine(post.Title);
                 }
             }
+
+            //var contractResolver = new Builder()
+            //    //.With<PostResource>("posts")
+            //    //    .Id(nameof(PostResource.Id))
+            //    .Build();
+
+            //using (var httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:50419") })
+            //{
+            //    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.api+json"));
+
+            //    var response = await httpClient.GetAsync($"v1/posts?skip=0&take=1");
+            //    response.EnsureSuccessStatusCode();
+
+            //    var serializerOptions = new JsonApiSerializerOptions(contractResolver)
+            //    {
+            //        MissingContractHandler = context =>
+            //        {
+            //            Console.WriteLine("The resource '{0}' is missing", context.Type);
+            //            return null;
+            //        }
+            //    };
+
+            //    //var entities = await response.Content.ReadAsJsonApiManyAsync<Entity>(new CustomContractResolver(contractResolver));
+            //    var entities = await response.Content.ReadAsJsonApiManyAsync<Entity>(serializerOptions);
+
+            //    foreach (var entity in entities)
+            //    {
+            //        Console.WriteLine(entity.Id);
+            //        Console.WriteLine(entity.CreationDate);
+
+            //        foreach (var jsonMember in ((IJsonExtension) entity).Data)
+            //        {
+            //            Console.WriteLine("{0} = {1}", jsonMember.Name, jsonMember.Value.Stringify());
+            //        }
+            //    }
+            //}
         }
 
         /// <summary>

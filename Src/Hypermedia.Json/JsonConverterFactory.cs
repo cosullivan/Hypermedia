@@ -49,11 +49,9 @@ namespace Hypermedia.Json
         /// <remarks>This will always ensure that a converter is returned.</remarks>
         public IJsonConverter CreateInstance(Type type)
         {
-            IJsonConverter converter;
-
             if (_defaultConverterFactory != null)
             {
-                converter = _defaultConverterFactory.CreateInstance(type);
+                var converter = _defaultConverterFactory.CreateInstance(type);
 
                 if (converter != null)
                 {
@@ -61,14 +59,7 @@ namespace Hypermedia.Json
                 }
             }
 
-            converter = GetOrCreateInstance(type);
-
-            if (converter != null)
-            {
-                return converter;
-            }
-
-            throw new InvalidOperationException($"No converter could be found for the type '{type}'.");
+            return GetOrCreateInstance(type);
         }
 
         /// <summary>
