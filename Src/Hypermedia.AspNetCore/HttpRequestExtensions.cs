@@ -29,6 +29,9 @@ namespace Hypermedia.AspNetCore
                 case "none":
                     return DefaultFieldNamingStrategy.Instance;
 
+                case "camel":
+                    return CamelCaseFieldNamingStrategy.Instance;
+
                 case "dash":
                     return DasherizedFieldNamingStrategy.Instance;
 

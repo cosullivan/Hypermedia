@@ -28,6 +28,13 @@ namespace Hypermedia.AspNetCore.Json.Formatters
         /// <summary>
         /// Constructor.
         /// </summary>
+        /// <param name="contractResolver">The contract resolver to use.</param>
+        /// <param name="fieldNamingStrategy">The field naming strategy when serializing and deserializing the JSON.</param>
+        public JsonOutputFormatter(IContractResolver contractResolver, IFieldNamingStrategy fieldNamingStrategy) : this(JsonMediaTypeName, contractResolver, fieldNamingStrategy) { }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         /// <param name="mediaTypeName">The media type name that the output is handling.</param>
         /// <param name="contractResolver">The contract resolver to use.</param>
         /// <param name="fieldNamingStrategy">The field naming strategy when serializing and deserializing the JSON.</param>

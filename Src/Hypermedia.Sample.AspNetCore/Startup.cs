@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Hypermedia.Configuration;
+using Hypermedia.Json;
 using Hypermedia.JsonApi.AspNetCore;
 using Hypermedia.Metadata;
 using Hypermedia.Sample.Resources;
@@ -16,7 +17,7 @@ namespace Hypermedia.Sample.AspNetCore
         {
             var contractResolver = CreateContractResolver();
 
-            services.AddMvc().UseHypermediaFormatters(contractResolver);
+            services.AddMvc().AddHypermediaFormatters(contractResolver, CamelCaseFieldNamingStrategy.Instance);
 
             services.AddRouting(routing => { });
         }

@@ -8,9 +8,9 @@
       <Description>The JSON component of the Hypermedia library.</Description>
       <Company />
       <Product>Hypermedia JSON Library</Product>
-      <Version>3.1.0</Version>
+      <Version>3.2.0</Version>
       <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-      <AssemblyVersion>3.1.0.0</AssemblyVersion>
+      <AssemblyVersion>3.2.0.0</AssemblyVersion>
       <FileVersion>3.1.0.0</FileVersion>
       <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
