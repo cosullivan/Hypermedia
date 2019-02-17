@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Hypermedia.Json;
+using Hypermedia.Json.Converters;
 using JsonLite.Ast;
 
 namespace Hypermedia.JsonApi
@@ -22,7 +23,10 @@ namespace Hypermedia.JsonApi
                 throw new ArgumentNullException(nameof(errors));
             }
 
-            var serializer = new JsonSerializer();
+            var serializer = new JsonSerializer(
+                new JsonConverterFactory(
+                    JsonConverterFactory.Default, 
+                    new [] { new ComplexConverter(DefaultFieldNamingStrategy.Instance) }));
 
             return new JsonObject(
                 new JsonMember(

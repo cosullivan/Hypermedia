@@ -44,8 +44,10 @@ namespace Hypermedia.AspNetCore.Json
                 var serializer = new JsonSerializer(
                     new JsonConverterFactory(
                         JsonConverterFactory.Default,
-                        new ContractConverter(ContractResolver, _fieldNamingStratgey),
-                        new ComplexConverter(_fieldNamingStratgey)));
+                        new IJsonConverter[] {
+                            new ContractConverter(ContractResolver, _fieldNamingStratgey),
+                            new ComplexConverter(_fieldNamingStratgey)
+                        }));
 
                 var converter = new ContractConverter(contractResolver, _fieldNamingStratgey);
                 converter.DeserializeObject(serializer, (JsonObject)_jsonValue, contract, entity);

@@ -181,14 +181,14 @@ namespace Hypermedia.JsonApi
                 _jsonSerializer = new JsonSerializer(
                     new JsonConverterFactory(
                         JsonConverterFactory.Default, 
-                        new ComplexConverter(options.FieldNamingStrategy)));
+                        new[] { new ComplexConverter(options.FieldNamingStrategy) }.Union(_options.JsonConverters ?? new IJsonConverter[0])));
             }
 
             /// <summary>
             /// Serialize the list of entities.
             /// </summary>
             /// <param name="entities">The list of entities to serialize.</param>
-            /// <returns>The list of entities that were serialzied.</returns>
+            /// <returns>The list of entities that were serialized.</returns>
             internal IEnumerable<JsonObject> Serialize(IEnumerable entities)
             {
                 foreach (var entity in entities)
@@ -287,12 +287,15 @@ namespace Hypermedia.JsonApi
             {
                 if (field.Is(FieldOptions.Relationship | FieldOptions.SerializeAsEmbedded))
                 {
-                    // the IJsonConvertFactory will delegate complex objects back to the serializer so they can be serialized using the JSON API format
-                    var jsonSerializer = new JsonSerializer(
-                        new JsonConverterFactory(
-                            JsonConverterFactory.Default, 
-                            this,
-                            new ComplexConverter(_options.FieldNamingStrategy)));
+                    var converters = new IJsonConverter[]
+                    {
+                        // the IJsonConvertFactory will delegate complex objects back to the serializer so they can be serialized using the JSON API format
+                        this,
+                        new ComplexConverter(_options.FieldNamingStrategy)
+                    }
+                    .Union(_options.JsonConverters ?? new IJsonConverter[0]);
+
+                    var jsonSerializer = new JsonSerializer(new JsonConverterFactory(JsonConverterFactory.Default, converters));
 
                     return new JsonMember(_options.FieldNamingStrategy.GetName(field.Name), jsonSerializer.SerializeValue(field.GetValue(entity)));
                 }
@@ -813,8 +816,12 @@ namespace Hypermedia.JsonApi
                 _rootObject = rootObject;
                 _options = options;
                 _instanceCache = instanceCache;
-                _jsonSerializer = new JsonSerializer(options.FieldNamingStrategy);
                 _objectCache = new JsonApiObjectCache(rootObject);
+
+                _jsonSerializer = new JsonSerializer(
+                    new JsonConverterFactory(
+                        JsonConverterFactory.Default, 
+                        new[] { new ComplexConverter(options.FieldNamingStrategy) }.Union(_options.JsonConverters ?? new IJsonConverter[0])));
             }
 
             /// <summary>
@@ -993,7 +1000,10 @@ namespace Hypermedia.JsonApi
                 if (field.Is(FieldOptions.Relationship | FieldOptions.DeserializeAsEmbedded))
                 {
                     // the IJsonConvertFactory will delegate complex objects back to the serializer so they can be deserialized using the JSON API format
-                    var jsonSerializer = new JsonSerializer(_options.FieldNamingStrategy);
+                    var jsonSerializer = new JsonSerializer(
+                        new JsonConverterFactory(
+                            JsonConverterFactory.Default, 
+                            new [] { new ComplexConverter(_options.FieldNamingStrategy) }));
 
                     field.SetValue(entity, jsonSerializer.DeserializeValue(field.Accessor.ValueType, value));
 

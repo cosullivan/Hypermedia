@@ -64,8 +64,9 @@ namespace Hypermedia.JsonApi.AspNetCore
                 }
 
                 var serializer = new JsonApiSerializer(
-                    new JsonApiSerializerOptions(new ContractResolver(contract))
+                    new JsonApiSerializerOptions
                     {
+                        ContractResolver = new ContractResolver(contract),
                         FieldNamingStrategy = _fieldNamingStratgey
                     });
 
@@ -98,7 +99,7 @@ namespace Hypermedia.JsonApi.AspNetCore
         /// Determine the members that are defined in the patch content.
         /// </summary>
         /// <param name="contract">The contract to use to return the members from.</param>
-        /// <param name="jsonObject">The JSON object that defines the attributes & relationships.</param>
+        /// <param name="jsonObject">The JSON object that defines the attributes and relationships.</param>
         /// <returns>The list of members that are defined in the patch content.</returns>
         IEnumerable<IMember> ExtractMembers(IContract contract, JsonObject jsonObject)
         {

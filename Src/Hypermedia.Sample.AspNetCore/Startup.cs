@@ -32,7 +32,6 @@ namespace Hypermedia.Sample.AspNetCore
             }
 
             app.UseMvc();
-            
         }
 
         /// <summary>

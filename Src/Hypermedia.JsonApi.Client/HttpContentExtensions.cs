@@ -64,8 +64,9 @@ namespace Hypermedia.JsonApi.Client
             IJsonApiEntityCache cache)
         {
             var serializer = new JsonApiSerializer(
-                new JsonApiSerializerOptions(contractResolver)
+                new JsonApiSerializerOptions
                 {
+                    ContractResolver = contractResolver,
                     FieldNamingStrategy = DasherizedFieldNamingStrategy.Instance
                 });
 
@@ -141,8 +142,9 @@ namespace Hypermedia.JsonApi.Client
         public static Task<List<TEntity>> ReadAsJsonApiManyAsync<TEntity>(this HttpContent httpContent, IContractResolver contractResolver, IJsonApiEntityCache cache)
         {
             var serializer = new JsonApiSerializer(
-                new JsonApiSerializerOptions(contractResolver)
+                new JsonApiSerializerOptions
                 {
+                    ContractResolver = contractResolver,
                     FieldNamingStrategy = DasherizedFieldNamingStrategy.Instance
                 });
 

@@ -51,7 +51,7 @@ namespace Hypermedia.JsonApi.Client
         /// <returns>The list of JSON API entities.</returns>
         public TEntity Get<TEntity>(IContractResolver contractResolver, IJsonApiEntityCache cache)
         {
-            return Get<TEntity>(new JsonApiSerializerOptions(contractResolver), cache);
+            return Get<TEntity>(new JsonApiSerializerOptions { ContractResolver = contractResolver }, cache);
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace Hypermedia.JsonApi.Client
         /// <returns>The list of JSON API entities.</returns>
         public IEnumerable<TEntity> GetMany<TEntity>(IContractResolver contractResolver, IJsonApiEntityCache cache)
         {
-            return GetMany<TEntity>(new JsonApiSerializer(new JsonApiSerializerOptions(contractResolver)), cache);
+            return GetMany<TEntity>(new JsonApiSerializer(new JsonApiSerializerOptions { ContractResolver = contractResolver }), cache);
         }
 
         /// <summary>

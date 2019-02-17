@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Hypermedia.Json.Converters;
 using JsonLite.Ast;
 
 namespace Hypermedia.Json
@@ -12,26 +11,10 @@ namespace Hypermedia.Json
         /// <summary>
         /// Constructor.
         /// </summary>
-        public JsonSerializer() : this(new DefaultFieldNamingStrategy()) { }
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
         /// <param name="jsonConverterFactory">The JSON converter factory.</param>
         public JsonSerializer(IJsonConverterFactory jsonConverterFactory)
         {
             _jsonConverterFactory = jsonConverterFactory;
-        }
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="fieldNamingStrategy">The field naming strategy.</param>
-        public JsonSerializer(IFieldNamingStrategy fieldNamingStrategy)
-        {
-            _jsonConverterFactory = new JsonConverterFactory(
-                JsonConverterFactory.Default,
-                new ComplexConverter(fieldNamingStrategy));
         }
 
         /// <summary>

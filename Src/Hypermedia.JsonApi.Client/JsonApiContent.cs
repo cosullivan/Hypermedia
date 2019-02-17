@@ -14,7 +14,7 @@ namespace Hypermedia.JsonApi.Client
         /// </summary>
         /// <param name="entity">The entity to serialize.</param>
         /// <param name="contractResolver">The contract resolver.</param>
-        public JsonApiContent(TEntity entity, IContractResolver contractResolver) : this(entity, new JsonApiSerializerOptions(contractResolver)) { }
+        public JsonApiContent(TEntity entity, IContractResolver contractResolver) : this(entity, new JsonApiSerializerOptions { ContractResolver = contractResolver }) { }
 
         /// <summary>
         /// Constructor.
@@ -28,7 +28,7 @@ namespace Hypermedia.JsonApi.Client
         /// </summary>
         /// <param name="entities">The entities to serialize.</param>
         /// <param name="contractResolver">The contract resolver.</param>
-        public JsonApiContent(IEnumerable<TEntity> entities, IContractResolver contractResolver) : this(entities, new JsonApiSerializerOptions(contractResolver)) { }
+        public JsonApiContent(IEnumerable<TEntity> entities, IContractResolver contractResolver) : this(entities, new JsonApiSerializerOptions { ContractResolver = contractResolver }) { }
 
         /// <summary>
         /// Constructor.

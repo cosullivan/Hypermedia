@@ -13,22 +13,14 @@ namespace Hypermedia.JsonApi
         public delegate object MissingContractHandlerDelegate(MissingContractContext context);
 
         /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="contractResolver">The contract resolver to use.</param>
-        public JsonApiSerializerOptions(IContractResolver contractResolver)
-        {
-            ContractResolver = contractResolver;
-        }
-
-        /// <summary>
         /// Clone the current instance.
         /// </summary>
         /// <returns>The new instance that was cloned from the current instance.</returns>
         public JsonApiSerializerOptions Clone()
         {
-            return new JsonApiSerializerOptions(ContractResolver)
+            return new JsonApiSerializerOptions
             {
+                ContractResolver = ContractResolver,
                 FieldNamingStrategy = FieldNamingStrategy,
                 MissingContractHandler = MissingContractHandler
             };
@@ -37,7 +29,7 @@ namespace Hypermedia.JsonApi
         /// <summary>
         /// The contract resolver to use.
         /// </summary>
-        public IContractResolver ContractResolver { get; }
+        public IContractResolver ContractResolver { get; set; }
 
         /// <summary>
         /// The field naming strategy.
@@ -48,5 +40,10 @@ namespace Hypermedia.JsonApi
         /// The handler to run when a contract is missing.
         /// </summary>
         public MissingContractHandlerDelegate MissingContractHandler { get; set; } = context => throw new JsonApiException("Could not find a type for '{0}'.", context.Type);
+
+        /// <summary>
+        /// An optional list of JSON converters.
+        /// </summary>
+        public IJsonConverter[] JsonConverters { get; set; }
     }
 }

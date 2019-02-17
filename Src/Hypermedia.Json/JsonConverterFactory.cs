@@ -35,7 +35,7 @@ namespace Hypermedia.Json
         /// </summary>
         /// <param name="defaultConverterFactory">The default converter factory to use.</param>
         /// <param name="converters">The list of available converters.</param>
-        public JsonConverterFactory(IJsonConverterFactory defaultConverterFactory, params IJsonConverter[] converters)
+        public JsonConverterFactory(IJsonConverterFactory defaultConverterFactory, IEnumerable<IJsonConverter> converters)
         {
             _defaultConverterFactory = defaultConverterFactory;
             _converters = converters.Union(KnownConverters).ToList();
