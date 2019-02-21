@@ -64,8 +64,9 @@ namespace Hypermedia.JsonApi.WebApi
                 }
 
                 var serializer = new JsonApiSerializer(
-                    new JsonApiSerializerOptions(new ContractResolver(contract))
+                    new JsonApiSerializerOptions
                     {
+                        ContractResolver = new ContractResolver(contract),
                         FieldNamingStrategy = _fieldNamingStratgey
                     });
 

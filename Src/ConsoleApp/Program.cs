@@ -68,15 +68,15 @@ namespace ConsoleApp
             using (var client = new HypermediaSampleClient("http://localhost:50419/", ""))
             {
                 //client.BatchUpdateAsync(new [] { new CommentResource() }).Wait();
-                //client.UpdateAsync(new CommentResource()).Wait();
-                //client.CreateAsync(new CommentResource()).Wait();            
+                //client.UpdateAsync(new CommentResource { Text = "Hello World!" }).Wait();
+                client.CreateAsync(new CommentResource { Text = "Hello World!" }).Wait();
 
-                var posts = client.GetPostsAsync().Result;
+                //var posts = client.GetPostsAsync().Result;
 
-                foreach (var post in posts)
-                {
-                    Console.WriteLine(post.Title);
-                }
+                //foreach (var post in posts)
+                //{
+                //    Console.WriteLine(post.Title);
+                //}
             }
 
             //var contractResolver = new Builder()

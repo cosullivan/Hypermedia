@@ -199,8 +199,11 @@ namespace Hypermedia.WebApi.Json
             var serializer = new JsonSerializer(
                 new JsonConverterFactory(
                     JsonConverterFactory.Default,
-                    new ContractConverter(ContractResolver, FieldNamingStrategy),
-                    new ComplexConverter(FieldNamingStrategy)));
+                    new IJsonConverter[]
+                    {
+                        new ContractConverter(ContractResolver, FieldNamingStrategy),
+                        new ComplexConverter(FieldNamingStrategy)
+                    }));
 
             return serializer.DeserializeValue(type, jsonValue);
         }
@@ -238,8 +241,10 @@ namespace Hypermedia.WebApi.Json
             var serializer = new JsonSerializer(
                 new JsonConverterFactory(
                     JsonConverterFactory.Default,
-                    new ContractConverter(ContractResolver, FieldNamingStrategy),
-                    new ComplexConverter(FieldNamingStrategy)));
+                    new IJsonConverter[] {
+                        new ContractConverter(ContractResolver, FieldNamingStrategy),
+                        new ComplexConverter(FieldNamingStrategy)
+                    }));
 
             return serializer.SerializeValue(value);
         }

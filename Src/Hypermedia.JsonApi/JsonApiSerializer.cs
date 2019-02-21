@@ -181,7 +181,7 @@ namespace Hypermedia.JsonApi
                 _jsonSerializer = new JsonSerializer(
                     new JsonConverterFactory(
                         JsonConverterFactory.Default, 
-                        new[] { new ComplexConverter(options.FieldNamingStrategy) }.Union(_options.JsonConverters ?? new IJsonConverter[0])));
+                        _options.JsonConverters.DefaultIfNull().Union(new ComplexConverter(options.FieldNamingStrategy))));
             }
 
             /// <summary>
@@ -287,13 +287,13 @@ namespace Hypermedia.JsonApi
             {
                 if (field.Is(FieldOptions.Relationship | FieldOptions.SerializeAsEmbedded))
                 {
-                    var converters = new IJsonConverter[]
-                    {
-                        // the IJsonConvertFactory will delegate complex objects back to the serializer so they can be serialized using the JSON API format
-                        this,
-                        new ComplexConverter(_options.FieldNamingStrategy)
-                    }
-                    .Union(_options.JsonConverters ?? new IJsonConverter[0]);
+                    var converters = _options.JsonConverters.DefaultIfEmpty().Union(
+                        new IJsonConverter[]
+                        {
+                            // the IJsonConvertFactory will delegate complex objects back to the serializer so they can be serialized using the JSON API format
+                            this,
+                            new ComplexConverter(_options.FieldNamingStrategy)
+                        });
 
                     var jsonSerializer = new JsonSerializer(new JsonConverterFactory(JsonConverterFactory.Default, converters));
 
@@ -820,8 +820,8 @@ namespace Hypermedia.JsonApi
 
                 _jsonSerializer = new JsonSerializer(
                     new JsonConverterFactory(
-                        JsonConverterFactory.Default, 
-                        new[] { new ComplexConverter(options.FieldNamingStrategy) }.Union(_options.JsonConverters ?? new IJsonConverter[0])));
+                        JsonConverterFactory.Default,
+                        _options.JsonConverters.DefaultIfNull().Union(new ComplexConverter(options.FieldNamingStrategy))));
             }
 
             /// <summary>
@@ -1002,8 +1002,8 @@ namespace Hypermedia.JsonApi
                     // the IJsonConvertFactory will delegate complex objects back to the serializer so they can be deserialized using the JSON API format
                     var jsonSerializer = new JsonSerializer(
                         new JsonConverterFactory(
-                            JsonConverterFactory.Default, 
-                            new [] { new ComplexConverter(_options.FieldNamingStrategy) }));
+                            JsonConverterFactory.Default,
+                            _options.JsonConverters.DefaultIfNull().Union(new ComplexConverter(_options.FieldNamingStrategy))));
 
                     field.SetValue(entity, jsonSerializer.DeserializeValue(field.Accessor.ValueType, value));
 

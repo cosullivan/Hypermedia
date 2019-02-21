@@ -89,8 +89,9 @@ namespace Hypermedia.JsonApi.WebApi
             }
 
             var serializer = new JsonApiSerializer(
-                new JsonApiSerializerOptions(ContractResolver)
+                new JsonApiSerializerOptions
                 {
+                    ContractResolver = ContractResolver,
                     FieldNamingStrategy = FieldNamingStrategy
                 });
 
@@ -139,8 +140,9 @@ namespace Hypermedia.JsonApi.WebApi
         JsonValue SerializeContract(Type type, object value)
         {
             var serializer = new JsonApiSerializer(
-                new JsonApiSerializerOptions(ContractResolver)
+                new JsonApiSerializerOptions
                 {
+                    ContractResolver = ContractResolver,
                     FieldNamingStrategy = FieldNamingStrategy
                 });
 

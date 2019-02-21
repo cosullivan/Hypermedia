@@ -82,8 +82,8 @@ namespace Hypermedia.JsonApi.AspNetCore
 
                 var jsonApiSerializerOptions = options.CoalesceJsonApiSerializeOptions();
 
-                mvcOptions.OutputFormatters.Insert(0, new JsonApiOutputFormatter(jsonApiSerializerOptions));
-                mvcOptions.InputFormatters.Insert(0, new JsonApiInputFormatter(jsonApiSerializerOptions));
+                mvcOptions.OutputFormatters.Insert(1, new JsonApiOutputFormatter(jsonApiSerializerOptions));
+                mvcOptions.InputFormatters.Insert(1, new JsonApiInputFormatter(jsonApiSerializerOptions));
 
                 mvcOptions.ModelBinderProviders.Insert(0, new RequestMetadataModelBinderProvider(options.ContractResolver));
 
@@ -96,36 +96,5 @@ namespace Hypermedia.JsonApi.AspNetCore
                     MediaTypeHeaderValue.Parse(JsonApiOutputFormatter.JsonApiMediaTypeName));
             });
         }
-    }
-
-    public sealed class HypermediaFormattingOptions
-    {
-        /// <summary>
-        /// Create a default set of options.
-        /// </summary>
-        /// <returns>The default set of JSON API serializer options.</returns>
-        internal JsonApiSerializerOptions CoalesceJsonApiSerializeOptions()
-        {
-            return new JsonApiSerializerOptions
-            {
-                ContractResolver = JsonApiSerializerOptions?.ContractResolver ?? ContractResolver,
-                FieldNamingStrategy = JsonApiSerializerOptions?.FieldNamingStrategy ?? FieldNamingStrategy
-            };
-        }
-
-        /// <summary>
-        /// The contract resolver to use.
-        /// </summary>
-        public IContractResolver ContractResolver { get; set; }
-
-        /// <summary>
-        /// The default field naming strategy.
-        /// </summary>
-        public IFieldNamingStrategy FieldNamingStrategy { get; set; }
-
-        /// <summary>
-        /// The JSON API serializer options.
-        /// </summary>
-        public JsonApiSerializerOptions JsonApiSerializerOptions { get; set; }
     }
 }

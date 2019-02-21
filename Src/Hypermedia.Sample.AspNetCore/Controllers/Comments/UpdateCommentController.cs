@@ -18,6 +18,12 @@ namespace Hypermedia.Sample.AspNetCore.Controllers.Comments
         {
             await Task.CompletedTask;
 
+            var comment = new CommentResource();
+            if (patch.TryPatch(comment))
+            {
+                
+            }
+
             return NoContent();
         }
     }
