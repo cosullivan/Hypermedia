@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 
-namespace Hypermedia.JsonApi
+namespace Hypermedia
 {
     public static class EnumerableExtensions
     {
@@ -24,14 +24,14 @@ namespace Hypermedia.JsonApi
         /// <param name="source">The sequence to append the element to.</param>
         /// <param name="element">The element to append to the sequence.</param>
         /// <returns>The sequence with the element appended.</returns>
-        public static IEnumerable<T> Union<T>(this IEnumerable<T> source, T element)
+        public static IEnumerable<T> Union<T>(this IEnumerable<T> source, params T[] element)
         {
             if (source == null)
             {
                 throw new ArgumentNullException(nameof(source));
             }
 
-            return source.Union(new T[] { element });
+            return source.Union(element.ToList());
         }
     }
 }

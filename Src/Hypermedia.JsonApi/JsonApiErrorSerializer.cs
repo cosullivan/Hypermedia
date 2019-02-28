@@ -25,8 +25,8 @@ namespace Hypermedia.JsonApi
 
             var serializer = new JsonSerializer(
                 new JsonConverterFactory(
-                    JsonConverterFactory.Default, 
-                    new [] { new ComplexConverter(DefaultFieldNamingStrategy.Instance) }));
+                    JsonConverterFactory.DefaultConverters.Union(
+                        new ComplexConverter(DefaultFieldNamingStrategy.Instance))));
 
             return new JsonObject(
                 new JsonMember(

@@ -22,7 +22,8 @@ namespace Hypermedia.JsonApi
             {
                 ContractResolver = ContractResolver,
                 FieldNamingStrategy = FieldNamingStrategy,
-                MissingContractHandler = MissingContractHandler
+                MissingContractHandler = MissingContractHandler,
+                JsonConverters = JsonConverters
             };
         }
 

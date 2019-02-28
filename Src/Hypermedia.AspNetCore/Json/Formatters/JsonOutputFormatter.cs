@@ -95,11 +95,10 @@ namespace Hypermedia.AspNetCore.Json.Formatters
         {
             var serializer = new JsonSerializer(
                 new JsonConverterFactory(
-                    JsonConverterFactory.Default,
-                    new IJsonConverter[] {
+                    JsonConverterFactory.DefaultConverters.Union(
                         new ContractConverter(ContractResolver, fieldNamingStrategy),
                         new ComplexConverter(fieldNamingStrategy)
-                    }));
+                    )));
 
             return serializer.SerializeValue(value);
         }

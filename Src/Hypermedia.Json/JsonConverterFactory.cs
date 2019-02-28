@@ -9,7 +9,7 @@ namespace Hypermedia.Json
 {
     public sealed class JsonConverterFactory : IJsonConverterFactory
     {
-        static readonly IJsonConverter[] KnownConverters = new[]
+        public static IJsonConverter[] DefaultConverters = new[]
         {
             PrimitiveConverter.Instance,
             NullableConverter.Instance,
@@ -17,9 +17,6 @@ namespace Hypermedia.Json
             EnumerableConverter.Instance
         };
 
-        public static IJsonConverterFactory Default = new JsonConverterFactory(KnownConverters);
-
-        readonly IJsonConverterFactory _defaultConverterFactory;
         readonly IReadOnlyList<IJsonConverter> _converters;
         readonly IDictionary<Type, IJsonConverter> _resolvedConverters = new Dictionary<Type, IJsonConverter>();
         readonly ReaderWriterLockSlim _resolvedConvertersLock = new ReaderWriterLockSlim();
@@ -28,17 +25,9 @@ namespace Hypermedia.Json
         /// Constructor.
         /// </summary>
         /// <param name="converters">The list of available converters.</param>
-        JsonConverterFactory(params IJsonConverter[] converters) : this(Default, converters) { }
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="defaultConverterFactory">The default converter factory to use.</param>
-        /// <param name="converters">The list of available converters.</param>
-        public JsonConverterFactory(IJsonConverterFactory defaultConverterFactory, IEnumerable<IJsonConverter> converters)
+        public JsonConverterFactory(IEnumerable<IJsonConverter> converters)
         {
-            _defaultConverterFactory = defaultConverterFactory;
-            _converters = converters.Union(KnownConverters).ToList();
+            _converters = converters.ToList();
         }
 
         /// <summary>
@@ -49,16 +38,6 @@ namespace Hypermedia.Json
         /// <remarks>This will always ensure that a converter is returned.</remarks>
         public IJsonConverter CreateInstance(Type type)
         {
-            if (_defaultConverterFactory != null)
-            {
-                var converter = _defaultConverterFactory.CreateInstance(type);
-
-                if (converter != null)
-                {
-                    return converter;
-                }
-            }
-
             return GetOrCreateInstance(type);
         }
 

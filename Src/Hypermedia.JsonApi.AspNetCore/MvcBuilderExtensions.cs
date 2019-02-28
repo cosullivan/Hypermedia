@@ -72,21 +72,31 @@ namespace Hypermedia.JsonApi.AspNetCore
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            var options = new HypermediaFormattingOptions();
+            var options = new HypermediaFormattingOptions
+            {
+                FieldNamingStrategy = DefaultFieldNamingStrategy.Instance,
+                JsonApiSerializerOptions = new JsonApiSerializerOptions
+                {
+                    FieldNamingStrategy = DefaultFieldNamingStrategy.Instance
+                }
+            };
+
             configure(options);
 
+            // ensure the defaults are set for the JsonApiSerializerOptions
+            options.JsonApiSerializerOptions.ContractResolver = options.JsonApiSerializerOptions.ContractResolver ?? options.ContractResolver;
+            options.JsonApiSerializerOptions.FieldNamingStrategy = options.JsonApiSerializerOptions.FieldNamingStrategy ?? options.FieldNamingStrategy;
+            
             return builder.AddMvcOptions(mvcOptions =>
             {
-                var jsonApiSerializerOptions = options.CoalesceJsonApiSerializeOptions();
-
                 // note that the order these formatters are registered is very important due to the way they are selected
                 // the selection is based on Content-Type specificity so that when we output the application/json outputer
                 // wont attempt to write the output for application/vnd.api+json because it's less specific
                 mvcOptions.OutputFormatters.Insert(0, new JsonOutputFormatter(options.ContractResolver, options.FieldNamingStrategy));
-                mvcOptions.OutputFormatters.Insert(1, new JsonApiOutputFormatter(jsonApiSerializerOptions));
+                mvcOptions.OutputFormatters.Insert(1, new JsonApiOutputFormatter(options.JsonApiSerializerOptions));
 
                 // the order of the input formatters needs to be reversed from the output formatters
-                mvcOptions.InputFormatters.Insert(0, new JsonApiInputFormatter(jsonApiSerializerOptions));
+                mvcOptions.InputFormatters.Insert(0, new JsonApiInputFormatter(options.JsonApiSerializerOptions));
                 mvcOptions.InputFormatters.Insert(1, new JsonInputFormatter(options.ContractResolver, options.FieldNamingStrategy));
 
                 mvcOptions.ModelBinderProviders.Insert(0, new RequestMetadataModelBinderProvider(options.ContractResolver));
