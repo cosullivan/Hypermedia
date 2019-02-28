@@ -77,13 +77,17 @@ namespace Hypermedia.JsonApi.AspNetCore
 
             return builder.AddMvcOptions(mvcOptions =>
             {
-                mvcOptions.OutputFormatters.Insert(0, new JsonOutputFormatter(options.ContractResolver, options.FieldNamingStrategy));
-                mvcOptions.InputFormatters.Insert(0, new JsonInputFormatter(options.ContractResolver, options.FieldNamingStrategy));
-
                 var jsonApiSerializerOptions = options.CoalesceJsonApiSerializeOptions();
 
+                // note that the order these formatters are registered is very important due to the way they are selected
+                // the selection is based on Content-Type specificity so that when we output the application/json outputer
+                // wont attempt to write the output for application/vnd.api+json because it's less specific
+                mvcOptions.OutputFormatters.Insert(0, new JsonOutputFormatter(options.ContractResolver, options.FieldNamingStrategy));
                 mvcOptions.OutputFormatters.Insert(1, new JsonApiOutputFormatter(jsonApiSerializerOptions));
-                mvcOptions.InputFormatters.Insert(1, new JsonApiInputFormatter(jsonApiSerializerOptions));
+
+                // the order of the input formatters needs to be reversed from the output formatters
+                mvcOptions.InputFormatters.Insert(0, new JsonApiInputFormatter(jsonApiSerializerOptions));
+                mvcOptions.InputFormatters.Insert(1, new JsonInputFormatter(options.ContractResolver, options.FieldNamingStrategy));
 
                 mvcOptions.ModelBinderProviders.Insert(0, new RequestMetadataModelBinderProvider(options.ContractResolver));
 

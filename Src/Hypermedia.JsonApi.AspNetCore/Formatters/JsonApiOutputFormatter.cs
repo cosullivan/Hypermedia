@@ -8,7 +8,7 @@ using JsonLite.Ast;
 
 namespace Hypermedia.JsonApi.AspNetCore.Formatters
 {
-    public sealed class JsonApiOutputFormatter : JsonOutputFormatter
+    public class JsonApiOutputFormatter : JsonOutputFormatter
     {
         public const string JsonApiMediaTypeName = "application/vnd.api+json";
 
