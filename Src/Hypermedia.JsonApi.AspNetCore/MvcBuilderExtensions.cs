@@ -75,10 +75,7 @@ namespace Hypermedia.JsonApi.AspNetCore
             var options = new HypermediaFormattingOptions
             {
                 FieldNamingStrategy = DefaultFieldNamingStrategy.Instance,
-                JsonApiSerializerOptions = new JsonApiSerializerOptions
-                {
-                    FieldNamingStrategy = DefaultFieldNamingStrategy.Instance
-                }
+                JsonApiSerializerOptions = new JsonApiSerializerOptions { }
             };
 
             configure(options);

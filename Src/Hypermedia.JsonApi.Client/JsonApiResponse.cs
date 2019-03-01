@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Hypermedia.Json;
 using Hypermedia.Metadata;
 using Hypermedia.Metadata.Runtime;
 using JsonLite.Ast;
@@ -51,7 +52,7 @@ namespace Hypermedia.JsonApi.Client
         /// <returns>The list of JSON API entities.</returns>
         public TEntity Get<TEntity>(IContractResolver contractResolver, IJsonApiEntityCache cache)
         {
-            return Get<TEntity>(new JsonApiSerializerOptions { ContractResolver = contractResolver }, cache);
+            return Get<TEntity>(new JsonApiSerializerOptions { ContractResolver = contractResolver, FieldNamingStrategy = DasherizedFieldNamingStrategy.Instance }, cache);
         }
 
         /// <summary>
@@ -110,7 +111,10 @@ namespace Hypermedia.JsonApi.Client
         /// <returns>The list of JSON API entities.</returns>
         public IEnumerable<TEntity> GetMany<TEntity>(IContractResolver contractResolver, IJsonApiEntityCache cache)
         {
-            return GetMany<TEntity>(new JsonApiSerializer(new JsonApiSerializerOptions { ContractResolver = contractResolver }), cache);
+            return GetMany<TEntity>(
+                new JsonApiSerializer(
+                    new JsonApiSerializerOptions { ContractResolver = contractResolver, FieldNamingStrategy = DasherizedFieldNamingStrategy.Instance }), 
+                cache);
         }
 
         /// <summary>

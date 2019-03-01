@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using Hypermedia.Json;
 using Hypermedia.Metadata;
 
 namespace Hypermedia.JsonApi.Client
@@ -14,7 +15,9 @@ namespace Hypermedia.JsonApi.Client
         /// </summary>
         /// <param name="entity">The entity to serialize.</param>
         /// <param name="contractResolver">The contract resolver.</param>
-        public JsonApiContent(TEntity entity, IContractResolver contractResolver) : this(entity, new JsonApiSerializerOptions { ContractResolver = contractResolver }) { }
+        public JsonApiContent(TEntity entity, IContractResolver contractResolver) : this(
+            entity, 
+            new JsonApiSerializerOptions { ContractResolver = contractResolver, FieldNamingStrategy = DasherizedFieldNamingStrategy.Instance }) { }
 
         /// <summary>
         /// Constructor.
@@ -28,7 +31,8 @@ namespace Hypermedia.JsonApi.Client
         /// </summary>
         /// <param name="entities">The entities to serialize.</param>
         /// <param name="contractResolver">The contract resolver.</param>
-        public JsonApiContent(IEnumerable<TEntity> entities, IContractResolver contractResolver) : this(entities, new JsonApiSerializerOptions { ContractResolver = contractResolver }) { }
+        public JsonApiContent(IEnumerable<TEntity> entities, IContractResolver contractResolver) : this(
+            entities, new JsonApiSerializerOptions { ContractResolver = contractResolver, FieldNamingStrategy = DasherizedFieldNamingStrategy.Instance }) { }
 
         /// <summary>
         /// Constructor.

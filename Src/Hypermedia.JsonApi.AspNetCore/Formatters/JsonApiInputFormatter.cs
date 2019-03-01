@@ -18,7 +18,7 @@ namespace Hypermedia.JsonApi.AspNetCore.Formatters
         /// Constructor.
         /// </summary>
         /// <param name="contractResolver">The contract resolver to use.</param>
-        public JsonApiInputFormatter(IContractResolver contractResolver) : this(new JsonApiSerializerOptions { ContractResolver = contractResolver }) { }
+        public JsonApiInputFormatter(IContractResolver contractResolver) : this(new JsonApiSerializerOptions { ContractResolver = contractResolver, FieldNamingStrategy = DasherizedFieldNamingStrategy.Instance }) { }
 
         /// <summary>
         /// Constructor.

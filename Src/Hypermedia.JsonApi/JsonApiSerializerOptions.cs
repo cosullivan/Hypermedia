@@ -35,7 +35,7 @@ namespace Hypermedia.JsonApi
         /// <summary>
         /// The field naming strategy.
         /// </summary>
-        public IFieldNamingStrategy FieldNamingStrategy { get; set; } = DasherizedFieldNamingStrategy.Instance;
+        public IFieldNamingStrategy FieldNamingStrategy { get; set; }
 
         /// <summary>
         /// The handler to run when a contract is missing.
