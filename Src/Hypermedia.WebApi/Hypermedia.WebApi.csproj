@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Hypermedia.WebApi</RootNamespace>
     <AssemblyName>Hypermedia.WebApi</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -32,8 +32,8 @@
     <DocumentationFile>bin\Release\Hypermedia.WebApi.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="JsonLite, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Json.Lite.2.0.2\lib\net45\JsonLite.dll</HintPath>
+    <Reference Include="JsonLite, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Json.Lite.2.1.0\lib\net45\JsonLite.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>

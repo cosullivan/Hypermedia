@@ -8,10 +8,10 @@
     <Description>The core component of the Hypermedia library.</Description>
     <Company />
     <Product>Hypermedia Core Library</Product>
-    <Version>3.1.1</Version>
+    <Version>3.1.2</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <AssemblyVersion>3.1.1.0</AssemblyVersion>
-    <FileVersion>3.0.1.0</FileVersion>
+    <AssemblyVersion>3.1.2.0</AssemblyVersion>
+    <FileVersion>3.1.2.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -19,7 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Json.Lite" Version="2.0.2" />
+    <PackageReference Include="Json.Lite" Version="2.1.0" />
   </ItemGroup>
 
 </Project>

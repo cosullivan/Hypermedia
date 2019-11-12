@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Hypermedia.JsonApi.WebApi</RootNamespace>
     <AssemblyName>Hypermedia.JsonApi.WebApi</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -32,8 +32,8 @@
     <DocumentationFile>bin\Release\Hypermedia.JsonApi.WebApi.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="JsonLite, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Json.Lite.2.0.2\lib\net45\JsonLite.dll</HintPath>
+    <Reference Include="JsonLite, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Json.Lite.2.1.0\lib\net45\JsonLite.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Win32.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Win32.Primitives.4.3.0\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>
