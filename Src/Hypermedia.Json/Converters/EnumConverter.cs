@@ -31,7 +31,11 @@ namespace Hypermedia.Json.Converters
         {
             var text = ((JsonString)jsonValue).Value;
 
-            return Enum.Parse(type, text, true);
+            if (Enum.TryParse(type, text, true, out object res))
+            {
+                return res;
+            }
+            return System.Text.Json.JsonSerializer.Deserialize(jsonValue.Stringify(), type);
         }
 
         /// <summary>
