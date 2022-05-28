@@ -96,7 +96,7 @@ namespace Hypermedia.Json.Converters
         {
             if (type == typeof(string))
             {
-                return ((JsonString)jsonValue).Value;
+                return jsonValue.Stringify();
             }
 
             if (type == typeof(Guid))
