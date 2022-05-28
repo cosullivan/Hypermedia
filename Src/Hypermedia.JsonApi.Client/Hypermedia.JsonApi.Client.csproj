@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.4</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <Version>3.1.3</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Authors>Cain O'Sullivan</Authors>
@@ -11,6 +11,7 @@
     <Description>A JSONAPI compatible set of extensions for the HttpClient.</Description>
     <AssemblyVersion>3.1.3.0</AssemblyVersion>
     <FileVersion>3.1.3.0</FileVersion>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
