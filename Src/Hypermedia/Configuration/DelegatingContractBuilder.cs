@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reflection;
+using System.Text.Json.Serialization;
 using Hypermedia.Metadata;
 
 namespace Hypermedia.Configuration
@@ -42,6 +44,20 @@ namespace Hypermedia.Configuration
         public FieldBuilder<T> Field(string name)
         {
             return Builder.Field(name);
+        }
+        
+        public FieldBuilder<T> RenameFieldUsingJsonPropertyName(string name)
+        {
+            string oldName = GetJsonPropertyName(name);
+            return Builder.Field(name).Deserialization().Rename(oldName);
+        }
+        
+        private static string GetJsonPropertyName(string fieldName)
+        {
+            PropertyInfo? field = typeof(T).GetProperty(fieldName);
+            if (field is null) return fieldName;
+            JsonPropertyNameAttribute? att = field.GetCustomAttribute(typeof(JsonPropertyNameAttribute)) as JsonPropertyNameAttribute;
+            return att?.Name ?? field.Name;
         }
 
         /// <summary>
