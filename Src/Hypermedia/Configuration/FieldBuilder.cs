@@ -67,7 +67,7 @@ namespace Hypermedia.Configuration
             {
                 Accessor(RuntimeFieldAccessor.From<T>(Instance.Name));
             }
-
+            
             Instance.Name = name;
 
             return this;

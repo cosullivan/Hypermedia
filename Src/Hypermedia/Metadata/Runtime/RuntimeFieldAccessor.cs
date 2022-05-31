@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 
 namespace Hypermedia.Metadata.Runtime
@@ -21,10 +22,11 @@ namespace Hypermedia.Metadata.Runtime
         /// </summary>
         /// <typeparam name="T">The entity type to return the accessor for.</typeparam>
         /// <param name="field">The name of the field.</param>
+        /// <param name="allowNonPublic">Searches for non-public properties of the same name too</param>
         /// <returns>The field accessor for the given field name.</returns>
         internal static IFieldAccessor From<T>(string field)
         {
-            var property = typeof(T).GetRuntimeProperty(field);
+            var property = typeof(T).GetRuntimeProperties().First(rp => rp.Name == field);
 
             if (property == null)
             {

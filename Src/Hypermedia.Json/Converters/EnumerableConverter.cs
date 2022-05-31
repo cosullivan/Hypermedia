@@ -82,7 +82,7 @@ namespace Hypermedia.Json.Converters
 
             var definition = type.GetTypeInfo().GetGenericTypeDefinition();
 
-            return new[] { typeof(IReadOnlyList<>), typeof(IReadOnlyCollection<>) }.Contains(definition);
+            return new[] { typeof(IReadOnlyList<>), typeof(IReadOnlyList<>) }.Contains(definition);
         }
 
         /// <summary>
