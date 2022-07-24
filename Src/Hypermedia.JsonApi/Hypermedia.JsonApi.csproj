@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>netstandard1.4</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Authors>Cain O'Sullivan</Authors>
     <Company></Company>
@@ -11,7 +11,6 @@
     <Version>3.1.3</Version>
     <AssemblyVersion>3.1.3.0</AssemblyVersion>
     <FileVersion>3.1.2.0</FileVersion>
-    <LangVersion>default</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

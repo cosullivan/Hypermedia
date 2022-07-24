@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-      <TargetFramework>net6.0</TargetFramework>
+      <TargetFramework>netstandard1.4</TargetFramework>
       <PackageId>Hypermedia.Json</PackageId>
       <Authors>Cain O'Sullivan</Authors>
       <PackageProjectUrl>https://github.com/cosullivan/Hypermedia</PackageProjectUrl>
@@ -13,7 +13,6 @@
       <AssemblyVersion>3.3.2.0</AssemblyVersion>
       <FileVersion>3.3.2.0</FileVersion>
       <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-      <LangVersion>default</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
