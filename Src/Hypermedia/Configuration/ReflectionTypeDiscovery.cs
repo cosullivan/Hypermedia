@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Linq;
+using System.Reflection;
 using Hypermedia.Metadata.Runtime;
 
 namespace Hypermedia.Configuration
@@ -44,8 +45,10 @@ namespace Hypermedia.Configuration
         /// <param name="type">The type to discover the properties from.</param>
         void Discover<TEntity>(ContractBuilder<TEntity> builder, TypeInfo type)
         {
+            bool isRecordType = typeof(TEntity).GetRuntimeMethods().Any(m => m.Name == "<Clone>$");
             foreach (var property in _fieldDiscovery.Discover(type))
             {
+                if (isRecordType && property.Name == "EqualityContract") continue;
                 builder
                     .Field(property.Name)
                     .Accessor(new RuntimeFieldAccessor(property))
